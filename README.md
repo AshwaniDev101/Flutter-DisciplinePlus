@@ -1,6 +1,6 @@
-# discipline_plus
+# DisciplinePlus
 
-DisciplinePlus is a productivity app designed to help you build strong habits and master self-discipline. Set daily goals, track your progress, and stay motivated with smart reminders and fun daily memory challenges.
+A productivity app designed to help you build strong habits and master self-discipline. Set daily goals, track your progress, and stay motivated with smart reminders and fun daily memory challenges.
 
 ## Getting Started
 
