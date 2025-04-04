@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Super Helper',
+        title: 'DisciplinePlus',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
 
