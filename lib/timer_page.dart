@@ -65,7 +65,7 @@ class _TimerPageState extends State<TimerPage> {
     // compute next‐task title without advancing index
     nextTaskTitle = TaskManager.instance.peekNextTaskTitle();
 
-    if (task.isDone) {
+    if (task.isComplete) {
       isChecked = true;
       isPaused = true;
     } else {
@@ -144,7 +144,7 @@ class _TimerPageState extends State<TimerPage> {
   void _onManualComplete(bool? v) {
     setState(() {
       isChecked = v ?? false;
-      if (isChecked && !task.isDone) _onComplete();
+      if (isChecked && !task.isComplete) _onComplete();
     });
   }
 

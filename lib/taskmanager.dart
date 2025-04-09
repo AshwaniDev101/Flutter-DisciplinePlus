@@ -10,7 +10,6 @@ class TaskManager {
 
 
   // 2) Raw data and flattened list
-  final List<Undertaking> _undertakingList = [];
   final List<BaseTask> baseTaskList = [];
 
   // 3) Pointer to current task
@@ -40,8 +39,8 @@ class TaskManager {
       ..clear()
       ..addAll(
         _undertakingList.expand<BaseTask>((ut) {
-          if (ut.initiatives.isEmpty) return [ut];
-          return ut.initiatives;
+          if (ut.basetask.isEmpty) return [ut];
+          return ut.basetask;
         }),
       );
   }
@@ -55,7 +54,7 @@ class TaskManager {
 
   /// Marks the current task done
   void markCurrentDone() {
-    currentTask?.isDone = true;
+    currentTask?.isComplete = true;
   }
 
 
@@ -63,35 +62,35 @@ class TaskManager {
   int taskCounter = 0;
   bool expectingBreak = false;
 
-  BaseTask? nextTask() {
-    if (expectingBreak) {
-      // We're due for a break
-      if (taskCounter == 3) {
-        taskCounter = 0; // Reset after long break
-        expectingBreak = false;
-        return longBreak();
-      } else {
-        expectingBreak = false;
-        return shortBreak();
-      }
-    } else {
-      // Time for actual task
-      final task = actualTask();
-      if (task != null) {
-        taskCounter++;
-        expectingBreak = true;
-      }
-      return task;
-    }
-  }
+  // BaseTask? nextTask() {
+  //   if (expectingBreak) {
+  //     // We're due for a break
+  //     if (taskCounter == 3) {
+  //       taskCounter = 0; // Reset after long break
+  //       expectingBreak = false;
+  //       return longBreak();
+  //     } else {
+  //       expectingBreak = false;
+  //       return shortBreak();
+  //     }
+  //   } else {
+  //     // Time for actual task
+  //     final task = actualTask();
+  //     if (task != null) {
+  //       taskCounter++;
+  //       expectingBreak = true;
+  //     }
+  //     return task;
+  //   }
+  // }
 
 
   /// Advances to the next *undone* task, returns it or null if none left
-  BaseTask? actualTask() {
+  BaseTask? nextTask() {
     while (currentBaseTaskIndex < baseTaskList.length - 1) {
       currentBaseTaskIndex+=1;
 
-      if (!baseTaskList[currentBaseTaskIndex].isDone) {
+      if (!baseTaskList[currentBaseTaskIndex].isComplete) {
         return baseTaskList[currentBaseTaskIndex];
       }
     }
@@ -99,15 +98,15 @@ class TaskManager {
     return null; // No more tasks
   }
 
-  BaseTask shortBreak(){
-    return Initiative(dynamicTime: AppTime(7, 7),title: "Short Break",completionTime: AppTime(0, 10));
-  }
-  BaseTask mediumBreak(){
-    return Initiative(dynamicTime: AppTime(7, 7),title: "Medium Break",completionTime: AppTime(0, 20));
-  }
-  BaseTask longBreak(){
-    return Initiative(dynamicTime: AppTime(7, 7),title: "Long Break",completionTime: AppTime(0, 30));
-  }
+  // BaseTask shortBreak(){
+  //   return Initiative(dynamicTime: AppTime(7, 7),title: "Short Break",completionTime: AppTime(0, 10));
+  // }
+  // BaseTask mediumBreak(){
+  //   return Initiative(dynamicTime: AppTime(7, 7),title: "Medium Break",completionTime: AppTime(0, 20));
+  // }
+  // BaseTask longBreak(){
+  //   return Initiative(dynamicTime: AppTime(7, 7),title: "Long Break",completionTime: AppTime(0, 30));
+  // }
 
   // helper: look ahead for next undone task
   String peekNextTaskTitle() {
@@ -115,7 +114,7 @@ class TaskManager {
     for (int i = tmi.currentBaseTaskIndex + 1;
     i < tmi.baseTaskList.length;
     i++) {
-      if (!tmi.baseTaskList[i].isDone) {
+      if (!tmi.baseTaskList[i].isComplete) {
         return tmi.baseTaskList[i].title;
       }
     }
@@ -124,7 +123,7 @@ class TaskManager {
 
   /// Reset all tasks to undone and index to 0
   void resetAll() {
-    for (final t in baseTaskList) t.isDone = false;
+    for (final t in baseTaskList) t.isComplete = false;
     currentBaseTaskIndex = 0;
   }
 }

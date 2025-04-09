@@ -1,77 +1,125 @@
+// Enum representing the type of task.
+enum TaskType {
+  undertaking,
+  initiative,
+  shortBreak,
+  longBreak,
+}
+
 // Common base class containing shared properties and logic.
 abstract class BaseTask {
-  AppTime dynamicTime;
-  String title;
-  AppTime completionTime;
+  final TaskType type;
+  final AppTime dynamicTime;
+  final String title;
+  final AppTime completionTime;
 
-  bool _isDone = false; // Private backing field for isDone.
+  bool _isComplete = false; // Private backing field for isDone.
 
   BaseTask({
-    required this.dynamicTime,
+    required this.type,
+    AppTime? dynamicTime,
     required this.title,
     required this.completionTime,
-    bool isDone = false,
-  }) {
-    _isDone = isDone;
+    bool isComplete = false,
+  }) : dynamicTime = dynamicTime ?? AppTime(0, 0) {
+    _isComplete = isComplete;
   }
 
   // Getter for isDone.
-  bool get isDone => _isDone;
+  bool get isComplete => _isComplete;
 
   // Setter for isDone.
-  set isDone(bool value) {
+  set isComplete(bool value) {
     // You can add custom logic here if needed.
-    _isDone = value;
+    _isComplete = value;
   }
 }
 
 // Undertaking extends BaseTask and adds a list of initiatives.
 class Undertaking extends BaseTask {
-  List<Initiative> initiatives;
+  List<BaseTask> basetask;
 
   Undertaking({
-    required super.dynamicTime,
-    required super.title,
-    required super.completionTime,
-    required this.initiatives,
-    super.isDone,
-  });
+    AppTime? dynamicTime,
+    required String title,
+    required AppTime completionTime,
+    required this.basetask,
+    bool isComplete = false,
+  }) : super(
+    type: TaskType.undertaking,
+    dynamicTime: dynamicTime,
+    title: title,
+    completionTime: completionTime,
+    isComplete: isComplete,
+  );
 
   /// Returns true if there is at least one initiative.
-  bool hasInitiative() => initiatives.isNotEmpty;
+  bool hasInitiative() => basetask.isNotEmpty;
 }
 
 // Initiative also extends BaseTask.
 class Initiative extends BaseTask {
   Initiative({
-    required super.dynamicTime,
-    required super.title,
-    required super.completionTime,
-    super.isDone,
-  });
+    AppTime? dynamicTime,
+    required String title,
+    required AppTime completionTime,
+    bool isComplete = false,
+  }) : super(
+    type: TaskType.initiative,
+    dynamicTime: dynamicTime,
+    title: title,
+    completionTime: completionTime,
+    isComplete: isComplete,
+  );
 }
 
+// Short break task.
+class ShortBreak extends BaseTask {
+  ShortBreak({
+    AppTime? dynamicTime,
+    bool isComplete = false,
+  }) : super(
+    type: TaskType.shortBreak,
+    dynamicTime: dynamicTime,
+    title: 'Short break',
+    completionTime: AppTime(0, 15),
+    isComplete: isComplete,
+  );
+}
 
+// Long break task.
+class LongBreak extends BaseTask {
+  LongBreak({
+    AppTime? dynamicTime,
+    bool isComplete = false,
+  }) : super(
+    type: TaskType.longBreak,
+    dynamicTime: dynamicTime,
+    title: 'Long break',
+    completionTime: AppTime(0, 30),
+    isComplete: isComplete,
+  );
+}
+
+// Represents a simple time structure with hour and minute.
 class AppTime {
   final int hour;
   final int minute;
 
   const AppTime(this.hour, this.minute);
 
-  
   // Helper method for formatting time as HH:MM
   String remainingTime() {
-    if(hour==0){
-      return "${minute.toString()}m";
+    if (hour == 0) {
+      return "${minute}m";
     }
-    if (minute==0)
-    {
-      return "${hour.toString()}h";
+    if (minute == 0) {
+      return "${hour}h";
     }
-    return "${hour.toString()}h ${minute.toString()}m";
+    return "${hour}h ${minute}m";
   }
 
   String getTime() {
-    return "${hour.toString()}:${minute.toString()}";
+    return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}";
   }
 }

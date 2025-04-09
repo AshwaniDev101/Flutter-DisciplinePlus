@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
 
@@ -17,103 +16,85 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> with RouteAware {
   // Data source for the schedule
-  final List<Undertaking> _items_list = [
+  final List<BaseTask> _items_list = [
     Undertaking(
-      dynamicTime: const AppTime(9, 0), // 09:00
       title: 'DSA',
       completionTime: const AppTime(3, 0), // Last initiative ends at 10:30
-      isDone: false,
-      initiatives: [
+      isComplete: false,
+      basetask: [
         Initiative(
-          dynamicTime: AppTime(9, 0),
-          title: 'Self-Attempt',
-          completionTime: AppTime(0, 1),
-          isDone: false
-        ),
+            title: 'Self-Attempt',
+            completionTime: AppTime(0, 1),
+            isComplete: false),
+        ShortBreak(),
         Initiative(
-          dynamicTime: AppTime(9, 30),
-          title: 'Implementation',
-          completionTime: AppTime(0, 2),
-            isDone: false
-        ),
+            title: 'Implementation',
+            completionTime: AppTime(0, 2),
+            isComplete: false),
+        ShortBreak(),
         Initiative(
-          dynamicTime: AppTime(10, 0),
           title: 'Real-Solution',
           completionTime: AppTime(0, 1),
         ),
+        ShortBreak(),
+
         Initiative(
-          dynamicTime: AppTime(10, 30),
-          title: 'Deployment',
-          completionTime: AppTime(0, 3),
-            isDone: false
-        ),
+            title: 'Deployment',
+            completionTime: AppTime(0, 3),
+            isComplete: false),
       ],
     ),
+    LongBreak(),
     Undertaking(
-      dynamicTime: const AppTime(11, 30), // 11:30
       title: 'JavaScript',
       completionTime: const AppTime(2, 0), // Last initiative ends at 12:00
-      initiatives: [
+      basetask: [
         Initiative(
-          dynamicTime: AppTime(11, 30),
           title: 'Video-1',
           completionTime: AppTime(0, 1),
         ),
         Initiative(
-          dynamicTime: AppTime(12, 0),
           title: 'Video-2',
           completionTime: AppTime(0, 30),
         ),
         Initiative(
-          dynamicTime: AppTime(11, 30),
           title: 'Video-1',
           completionTime: AppTime(0, 30),
         ),
         Initiative(
-          dynamicTime: AppTime(12, 0),
           title: 'Video-2',
           completionTime: AppTime(0, 30),
         ),
       ],
     ),
-    Undertaking(
-        dynamicTime: const AppTime(12, 10),
-        // 12:30
+    Initiative(
         title: 'GYM',
         completionTime: AppTime(0, 30),
-        initiatives: const [],
-        isDone: false),
-    Undertaking(
-        dynamicTime: const AppTime(1, 0),
-        // 01:00
+
+        isComplete: false),
+    Initiative(
         title: 'Meditation',
         completionTime: AppTime(0, 15),
-        initiatives: const [],
-        isDone: false),
-    Undertaking(
-      dynamicTime: const AppTime(1, 30), // 01:30
+
+        isComplete: false),
+    Initiative(
       title: 'English',
       completionTime: AppTime(0, 20),
-      initiatives: const [],
+
     ),
-    Undertaking(
-      dynamicTime: const AppTime(2, 0), // 02:00
+    Initiative(
       title: 'Drawing',
       completionTime: AppTime(0, 10),
-      initiatives: const [],
+
     ),
-    Undertaking(
-        dynamicTime: const AppTime(3, 0),
-        // 03:00
+    Initiative(
         title: 'Assignment',
         completionTime: AppTime(0, 5),
-        initiatives: const [],
-        isDone: false),
-    Undertaking(
-      dynamicTime: const AppTime(4, 0), // 04:00
+        isComplete: false),
+    Initiative(
       title: 'Personal Project',
       completionTime: AppTime(0, 30),
-      initiatives: const [],
+
     ),
   ];
 
@@ -126,17 +107,12 @@ class _ListPageState extends State<ListPage> with RouteAware {
   void initState() {
     super.initState();
 
-
-
-
     _updateTime(); // Initial time
     _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _updateTime());
-
 
     // 1) Initialize the manager once
     TaskManager.instance.init(_items_list);
   }
-
 
   void _updateTime() {
     final now = DateTime.now();
@@ -153,7 +129,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
       currentWeekday = weekday;
     });
   }
-
 
   String _getWeekdayName(int weekdayNumber) {
     const weekdays = [
@@ -178,7 +153,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
   void didPopNext() {
     // Called when returning from TimerPage
     setState(() {}); // Rebuilds ListPage with updated tasks
-    
+
     print("return back==============================================");
   }
 
@@ -262,14 +237,11 @@ class _ListPageState extends State<ListPage> with RouteAware {
                 padding: const EdgeInsets.all(8),
                 onReorder: (int oldIndex, int newIndex) {
                   setState(() {
-
                     if (newIndex > oldIndex) newIndex -= 1;
                     final item = _items_list.removeAt(oldIndex);
                     _items_list.insert(newIndex, item);
 
                     // taskManager.updateBaseTaskList(); // can't update base task list
-
-
                   });
                 },
                 children: [
@@ -294,9 +266,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
                             color: Colors.white, size: 28),
                       ),
                       confirmDismiss: (direction) async {
-
-
-
                         // 1) tell TaskManager where to start
                         TaskManager.instance.startFrom(index);
 
@@ -309,12 +278,12 @@ class _ListPageState extends State<ListPage> with RouteAware {
                         return false;
                       },
                       // adding bot main list index plus initiative list
-                      child: _buildUndertakingItem(_items_list[index], index + _items_list[index].initiatives.length),
+                      child: _buildUndertakingItem(_items_list[index],
+                          index + _items_list[index].basetask.length),
                     ),
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -325,48 +294,43 @@ class _ListPageState extends State<ListPage> with RouteAware {
   Widget _buildUndertakingItem(Undertaking undertaking, int index) {
     // Build a RichText widget to display the dynamicTime, title, and completionTime with different styles.
 
-
-    // If there are no initiatives, show a simple ListTile.
-    if (undertaking.initiatives.isEmpty) {
+    // If there are no basetask, show a simple ListTile.
+    if (undertaking.basetask.isEmpty) {
       return ListTile(
-
         key: ValueKey(undertaking.title),
-
-        leading: buildUndertakingLeading(undertaking,index),
+        leading: buildUndertakingLeading(undertaking, index),
         title: buildRichTitle(undertaking),
         onTap: () {
           // handle tap
         },
       );
     } else {
-      // Use an ExpansionTile for undertakings with initiatives.
+      // Use an ExpansionTile for undertakings with basetask.
       return Theme(
-
         data: Theme.of(context).copyWith(
-          dividerColor: Colors.indigo[300], // 👈 Set your custom divider color here
+          dividerColor:
+              Colors.indigo[300], // 👈 Set your custom divider color here
         ),
         child: ExpansionTile(
           // backgroundColor: Colors.indigo[100],
           key: ValueKey(undertaking.title),
-          leading:  buildUndertakingLeading(undertaking,index),
+          leading: buildUndertakingLeading(undertaking, index),
 
-          title: buildRichTitle(undertaking,fontWeight: FontWeight.bold),
-          children: undertaking.initiatives.asMap().entries.map((entry) {
+          title: buildRichTitle(undertaking, fontWeight: FontWeight.bold),
+          children: undertaking.basetask.asMap().entries.map((entry) {
             int initiativeIndex = entry.key;
-            Initiative initiative = entry.value;
+            BaseTask initiative = entry.value;
 
             // Build a RichText for the initiative with different styles.
             Widget buildInitiativeTitle() {
               return RichText(
                 text: TextSpan(
                   children: [
-
                     TextSpan(
                       text: "    ${initiative.title} ",
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.indigo[400],
-
                       ),
                     ),
                     TextSpan(
@@ -404,12 +368,10 @@ class _ListPageState extends State<ListPage> with RouteAware {
                 return false;
               },
               child: ListTile(
-
-                leading: buildInitiativeLeading(initiative), //=====================================
+                leading: buildInitiativeLeading(initiative),
+                //=====================================
                 title: buildInitiativeTitle(),
-                onTap: () {
-
-                },
+                onTap: () {},
               ),
             );
           }).toList(),
@@ -418,7 +380,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
     }
   }
 
-  ListTile getListTile(Undertaking undertaking,index){
+  ListTile getListTile(Undertaking undertaking, index) {
     return ListTile(
       key: ValueKey(undertaking.title),
       leading: ReorderableDragStartListener(
@@ -441,7 +403,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
               ),
 
               // White background circle to hide line behind transparent icons
-              if (!undertaking.isDone)
+              if (!undertaking.isComplete)
                 Container(
                   width: 20,
                   height: 20,
@@ -450,8 +412,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
                     color: Colors.white, // or background color of ListTile
                   ),
                 ),
-
-
             ],
           ),
         ),
@@ -463,8 +423,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-
-  Widget buildRichTitle(Undertaking undertaking,{FontWeight? fontWeight}) {
+  Widget buildRichTitle(Undertaking undertaking, {FontWeight? fontWeight}) {
     return RichText(
       text: TextSpan(
         children: [
@@ -473,8 +432,8 @@ class _ListPageState extends State<ListPage> with RouteAware {
             style: TextStyle(
               fontSize: 18,
               color: Colors.indigo[700],
-              fontWeight: fontWeight!=null?FontWeight.bold:FontWeight.normal,
-
+              fontWeight:
+                  fontWeight != null ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           TextSpan(
@@ -488,8 +447,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
       ),
     );
   }
-
-
 
   Widget buildVerticalLine({
     double width = 2,
@@ -509,8 +466,8 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-
-  ReorderableDragStartListener buildUndertakingLeading(Undertaking undertaking, int index) {
+  ReorderableDragStartListener buildUndertakingLeading(
+      Undertaking undertaking, int index) {
     return ReorderableDragStartListener(
       index: index,
       child: SizedBox(
@@ -528,7 +485,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
               bottomOffset: -8,
             ),
             // White background circle to mask the line (only if not done).
-            if (!undertaking.isDone)
+            if (!undertaking.isComplete)
               Container(
                 width: 20,
                 height: 20,
@@ -539,9 +496,8 @@ class _ListPageState extends State<ListPage> with RouteAware {
               ),
             // Actual icon for the undertaking.
             Icon(
-              undertaking.isDone ? Icons.circle : Icons.circle_outlined,
+              undertaking.isComplete ? Icons.circle : Icons.circle_outlined,
               color: Colors.indigo[300],
-
             ),
           ],
         ),
@@ -549,8 +505,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-
-  Widget buildInitiativeLeading(Initiative initiative) {
+  Widget buildInitiativeLeading(BaseTask initiative) {
     return SizedBox(
       width: 24,
       height: 48, // Fixed height for consistency.
@@ -566,7 +521,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
             bottomOffset: -8,
           ),
           // White background circle to mask the line if the initiative is not done.
-          if (!initiative.isDone)
+          if (!initiative.isComplete)
             Container(
               width: 15,
               height: 15,
@@ -577,7 +532,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
             ),
           // Actual icon for the initiative (checks its own state).
           Icon(
-            initiative.isDone ? Icons.circle : Icons.circle_outlined,
+            initiative.isComplete ? Icons.circle : Icons.circle_outlined,
             color: Colors.indigo[300],
             size: 18,
           ),
@@ -586,5 +541,3 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 }
-
-
