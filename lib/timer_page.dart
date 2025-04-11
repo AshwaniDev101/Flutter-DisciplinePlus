@@ -1,3 +1,6 @@
+
+
+// lib/pages/timer_page.dart
 // lib/pages/timer_page.dart
 
 import 'dart:async';
@@ -9,7 +12,9 @@ import 'package:discipline_plus/constants.dart';
 import 'package:discipline_plus/models/data_types.dart';
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({super.key});
+
+  final BaseInitiative baseInitiative;
+  const TimerPage({required this.baseInitiative, super.key});
 
   @override
   State<TimerPage> createState() => _TimerPageState();
@@ -22,28 +27,27 @@ class _TimerPageState extends State<TimerPage> {
   final double pieGraphGap = 60.0;
   final double tickLength = 10.0;
 
-  // --- Debug & feature flags ---
+  // --- Feature flags ---
   final bool showNumbers = true;
   final bool autoNextTask = true;
-  final Duration nextTaskDelay = Duration(seconds: 4);
+  final Duration nextTaskDelay = const Duration(seconds: 1);
   final int? clockSpeed = 8; // null = real‐time; >1 = multiplier
 
-  // --- tweak placeholders ---
+  // --- Style placeholders ---
   final Color tickColor = Colors.white;
   final double numberFontSize = 12.0;
   final Color numberColor = Colors.white;
   final double numberDistanceOffset = 30;
 
   // --- Timer state ---
-  late final BaseTask task;
-  late final int totalTimeSeconds;
+  // late final Initiative task;
+  late int totalTimeSeconds;
   int elapsedSeconds = 0;
   Timer? _timer;
   bool isPaused = true;
   bool isChecked = false;
 
-  // --- Cached next‐task title ---
-  late String nextTaskTitle;
+
 
   // --- Derived getters ---
   int get remainingSeconds => max(0, totalTimeSeconds - elapsedSeconds);
@@ -54,34 +58,96 @@ class _TimerPageState extends State<TimerPage> {
   }
   double get progress => remainingSeconds / totalTimeSeconds;
 
+
+  // --- Cached next‐task title ---
+  Initiative? currentInitiative;
+
+  bool isBreakGiven = false;
+
+  Initiative? nextInitiative;
+
+
+
+
+
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
-    // grab current
-    task = TaskManager.instance.currentTask!;
-    totalTimeSeconds =
-        (task.completionTime.hour * 60 + task.completionTime.minute) * 60;
 
-    // compute next‐task title without advancing index
-    nextTaskTitle = TaskManager.instance.peekNextTaskTitle();
+    if (widget.baseInitiative is InitiativeGroup) {
+      var group = (widget.baseInitiative as InitiativeGroup);
 
-    if (task.isComplete) {
-      isChecked = true;
-      isPaused = true;
-    } else {
-      Future.delayed(const Duration(milliseconds: 500), _startTimer);
+      if(group.hasNoInitiatives())
+        {
+          showErrorDialog(context, "Empty Group");
+          return;
+        }
+
+      currentInitiative = group.initiativeList[0];
+
+      // Find the next incomplete task in sub list
+      // for (Initiative initiative in group.initiativeList) {
+      //   if (initiative.isNotComplete) {
+      //     currentInitiative = initiative;
+      //     break;
+      //   }
+      // }
+
+    }else{
+      var init = (widget.baseInitiative as Initiative);
+      currentInitiative = init;
+      // nextInitiative = Initiative(title: 'IDK', completionTime: AppTime(0, 0));
     }
+
+
+    // currentBreak =  currentInitiative.studyBreak!;
+    // hasBreak=true;
+    if(currentInitiative==null) {
+      showErrorDialog(context, "No Current Initiatives");
+      return;
+    }
+
+
+    nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.title);
+
+    // Compute total seconds for this task
+    totalTimeSeconds = (currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60;
+    Future.delayed(const Duration(milliseconds: 2000), _startTimer);
+
+
+
+
+    // nextInitiative = TaskManager.instance.nextInitiative(currentInitiative.title);
+    // if(nextInitiative==null)
+    //   {
+    //     showErrorDialog(context, "There are No Initiative");
+    //
+    //   }
+
   }
 
 
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+
   void _startTimer() {
+
+
+    print("------------------------------- current=>${currentInitiative!.title}: next=>${nextInitiative?.title.toString()} ");
+
     if (_timer != null) return;
     setState(() => isPaused = false);
 
     final intervalMs = clockSpeed != null
         ? (1000 / clockSpeed!).floor()
         : 1000;
+
     _timer = Timer.periodic(Duration(milliseconds: intervalMs), (t) {
       if (!mounted) return;
       setState(() {
@@ -89,7 +155,9 @@ class _TimerPageState extends State<TimerPage> {
           elapsedSeconds++;
         } else {
           t.cancel();
+
           _onComplete();
+
         }
       });
     });
@@ -112,54 +180,58 @@ class _TimerPageState extends State<TimerPage> {
     _startTimer();
   }
 
+  /// Called when the work‐timer finishes.
+
   void _onComplete() {
-    setState(() => isPaused = true);
-    TaskManager.instance.markCurrentDone();
-    onTaskCompleteTrigger();
 
-    if (autoNextTask) {
-      Future.delayed(nextTaskDelay, () {
 
-        final next = TaskManager.instance.nextTask();
-        if (next != null) {
 
-          // This rebuild the page, resting everything better then writing a reset function
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const TimerPage()),
-          );
-        } else {
-          Navigator.popUntil(context, ModalRoute.withName('/ListPage'));
-        }
 
+    if(!isBreakGiven)
+      {
+
+        StudyBreak studyBreak = currentInitiative!.studyBreak;
+
+        currentInitiative= Initiative(title: studyBreak.title, completionTime: studyBreak.completionTime);
+        isBreakGiven = true;
+
+      }
+    else
+      {
+        currentInitiative = nextInitiative;
+        nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.title);
+        isBreakGiven = false;
+      }
+
+
+    totalTimeSeconds = (currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60;
+
+    Future.delayed(const Duration(milliseconds: 2000),(){
+      setState(() {
+
+        _restartTimer();
       });
-    }
+    });
+
+
+
   }
 
-  // dev hook
-  void onTaskCompleteTrigger() {
-    debugPrint('Task "${task.title}" completed at ${DateTime.now()}');
-  }
 
   void _onManualComplete(bool? v) {
     setState(() {
       isChecked = v ?? false;
-      if (isChecked && !task.isComplete) _onComplete();
+      // if (isChecked && !currentInitiative.isComplete) _onComplete();
     });
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Constants.background_color,
       appBar: AppBar(
-        title: Text(task.title, style: const TextStyle(color: Colors.white)),
+        title: Text(!isBreakGiven? currentInitiative!.title.toString(): currentInitiative!.studyBreak.title, style: const TextStyle(color: Colors.white)),
         backgroundColor: Constants.background_color,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -180,6 +252,8 @@ class _TimerPageState extends State<TimerPage> {
                         child: CircleAvatar(
                           radius: circleRadius - ringThickness,
                           backgroundColor: Constants.background_color,
+
+                          // Animated painter
                           child: CustomPaint(
                             size: Size(
                               circleRadius * 2 - pieGraphGap,
@@ -196,8 +270,8 @@ class _TimerPageState extends State<TimerPage> {
                               circleRadius - ringThickness + numberDistanceOffset,
                               progress: progress,
                               totalNumberOfTicks:
-                              task.completionTime.hour * 60 +
-                                  task.completionTime.minute,
+                              currentInitiative!.completionTime.hour * 60 +
+                                  currentInitiative!.completionTime.minute,
                               showNumbers: showNumbers,
                               tickColor: tickColor,
                               numberColor: numberColor,
@@ -214,6 +288,8 @@ class _TimerPageState extends State<TimerPage> {
               ),
             ),
 
+
+            // Time 15:20 min
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
@@ -223,7 +299,11 @@ class _TimerPageState extends State<TimerPage> {
             ),
 
             if (isPaused) ...[
+
+              // Restart Button
               ElevatedButton(onPressed: _restartTimer, child: const Text('Restart')),
+
+              // 'Complete?' Checkbox
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -237,11 +317,10 @@ class _TimerPageState extends State<TimerPage> {
                 ],
               ),
             ],
-
+              // "Next task title"
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Next: $nextTaskTitle',
+              child: Text(isBreakGiven? nextInitiative!=null? nextInitiative!.title:"There is no Initiative left": currentInitiative!.studyBreak.title,
                 style: const TextStyle(color: Colors.white70, fontSize: 16),
               ),
             ),
@@ -252,4 +331,31 @@ class _TimerPageState extends State<TimerPage> {
       ),
     );
   }
+
+
+
+
+  void showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 }
+
+

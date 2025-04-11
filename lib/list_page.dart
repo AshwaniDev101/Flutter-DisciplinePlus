@@ -1,3 +1,6 @@
+
+// lib/list_page.dart
+
 import 'dart:async';
 
 import 'package:discipline_plus/models/data_types.dart';
@@ -15,165 +18,93 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> with RouteAware {
-  // Data source for the schedule
-  final List<BaseTask> _items_list = [
-    Undertaking(
-      title: 'DSA',
-      completionTime: const AppTime(3, 0), // Last initiative ends at 10:30
-      isComplete: false,
-      basetask: [
-        Initiative(
-            title: 'Self-Attempt',
-            completionTime: AppTime(0, 1),
-            isComplete: false),
-        ShortBreak(),
-        Initiative(
-            title: 'Implementation',
-            completionTime: AppTime(0, 2),
-            isComplete: false),
-        ShortBreak(),
-        Initiative(
-          title: 'Real-Solution',
-          completionTime: AppTime(0, 1),
-        ),
-        ShortBreak(),
 
-        Initiative(
-            title: 'Deployment',
-            completionTime: AppTime(0, 3),
-            isComplete: false),
-      ],
-    ),
-    LongBreak(),
-    Undertaking(
-      title: 'JavaScript',
-      completionTime: const AppTime(2, 0), // Last initiative ends at 12:00
-      basetask: [
-        Initiative(
-          title: 'Video-1',
-          completionTime: AppTime(0, 1),
-        ),
-        Initiative(
-          title: 'Video-2',
-          completionTime: AppTime(0, 30),
-        ),
-        Initiative(
-          title: 'Video-1',
-          completionTime: AppTime(0, 30),
-        ),
-        Initiative(
-          title: 'Video-2',
-          completionTime: AppTime(0, 30),
-        ),
-      ],
-    ),
-    Initiative(
-        title: 'GYM',
-        completionTime: AppTime(0, 30),
-
-        isComplete: false),
-    Initiative(
-        title: 'Meditation',
-        completionTime: AppTime(0, 15),
-
-        isComplete: false),
-    Initiative(
-      title: 'English',
-      completionTime: AppTime(0, 20),
-
-    ),
-    Initiative(
-      title: 'Drawing',
-      completionTime: AppTime(0, 10),
-
-    ),
-    Initiative(
-        title: 'Assignment',
-        completionTime: AppTime(0, 5),
-        isComplete: false),
-    Initiative(
-      title: 'Personal Project',
-      completionTime: AppTime(0, 30),
-
-    ),
-  ];
 
   late Timer _timer;
   late String currentTime;
   late String currentWeekday;
-  late TaskManager taskManager;
+
+  final ScrollController _scrollController = ScrollController();
+
+  final List<BaseInitiative> _items_list = [
+    InitiativeGroup(
+      title: 'DSA',
+      completionTime: const AppTime(3, 0),
+      initiativeList: [
+        Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 1)),
+        Initiative(title: 'Implementation', completionTime: AppTime(0, 2)),
+        Initiative(title: 'Real-Solution', completionTime: AppTime(0, 1)),
+        Initiative(
+          title: 'Deployment',
+          completionTime: AppTime(0, 3),
+          studyBreak: LongBreak(),
+        ),
+      ],
+    ),
+    InitiativeGroup(
+      title: 'JavaScript',
+      completionTime: const AppTime(2, 0),
+      initiativeList: [
+        Initiative(title: 'Video-1', completionTime: AppTime(0, 1)),
+        Initiative(title: 'Video-2', completionTime: AppTime(0, 30)),
+        Initiative(title: 'Video-3', completionTime: AppTime(0, 30)),
+        Initiative(
+          title: 'Video-4',
+          completionTime: AppTime(0, 30),
+          studyBreak: LongBreak(),
+        ),
+      ],
+    ),
+    Initiative(title: 'GYM', completionTime: AppTime(0, 1)),
+    Initiative(title: 'Meditation', completionTime: AppTime(0, 1)),
+    Initiative(title: 'English', completionTime: AppTime(0, 1)),
+    Initiative(title: 'Drawing', completionTime: AppTime(0, 1)),
+    Initiative(title: 'Assignment', completionTime: AppTime(0, 1)),
+    Initiative(title: 'Personal Project', completionTime: AppTime(0, 1)),
+  ];
+
 
   @override
   void initState() {
     super.initState();
-
-    _updateTime(); // Initial time
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _updateTime());
-
-    // 1) Initialize the manager once
-    TaskManager.instance.init(_items_list);
+    _updateWeekTime();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateWeekTime());
+    // Initialize TaskManager
+    TaskManager.instance.updateList(_items_list);
   }
 
-  void _updateTime() {
-    final now = DateTime.now();
-    final hour24 = now.hour;
-    final minute = now.minute.toString().padLeft(2, '0');
-    final weekday = _getWeekdayName(now.weekday);
-
-    // Convert to 12-hour format
-    final hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
-    final period = hour24 >= 12 ? 'PM' : 'AM';
-
-    setState(() {
-      currentTime = '$hour12:$minute $period';
-      currentWeekday = weekday;
-    });
-  }
-
-  String _getWeekdayName(int weekdayNumber) {
-    const weekdays = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-    return weekdays[weekdayNumber - 1];
+  @override // call when return to the this route from some other route
+  void didPopNext() {
+    setState(() {});
   }
 
   @override
   void dispose() {
     _timer.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  @override
-  void didPopNext() {
-    // Called when returning from TimerPage
-    setState(() {}); // Rebuilds ListPage with updated tasks
-
-    print("return back==============================================");
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+
       body: SlidingUpPanel(
+
+        // HeatMap
         panel: HeatMapCalendar(
           defaultColor: Colors.white,
           flexible: true,
           colorMode: ColorMode.color,
-          // textColor: Theme.of(context).primaryColor,
           textColor: Colors.black45,
-          // fontSize: 12,
           datasets: {
-            DateTime(2025, 4, 6): 0,
-            DateTime(2025, 4, 7): 1,
-            DateTime(2025, 4, 8): 2,
-            DateTime(2025, 4, 9): 3,
-            DateTime(2025, 4, 13): 4,
+            DateTime(2025,4,6):0,
+            DateTime(2025,4,7):1,
+            DateTime(2025,4,8):2,
+            DateTime(2025,4,9):3,
+            DateTime(2025,4,13):4,
           },
           colorsets: {
             0: Colors.red[400]!,
@@ -187,100 +118,80 @@ class _ListPageState extends State<ListPage> with RouteAware {
             // Do something
           },
         ),
+
+
+
         body: Column(
           children: [
-            // Header with weekday and current time
 
+            // Wednesday   09:15
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               decoration: BoxDecoration(
                 color: Colors.indigo[100],
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
-              child: Column(
+
+
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Monday",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.indigo[900],
-                        ),
-                      ),
-                      Text(
-                        currentTime,
-                        style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo[900],
-                        ),
-                      ),
-                    ],
-                  ),
+                  Text(currentWeekday, style: TextStyle(fontSize:22, fontWeight: FontWeight.w600, color:Colors.indigo[900])),
+                  Text(currentTime,   style: TextStyle(fontSize:34, fontWeight: FontWeight.bold, color:Colors.indigo[900])),
                 ],
               ),
-            ),
-            // const Divider(height: 1),
 
+
+            ),
+
+
+            // Listview
             Expanded(
               child: ReorderableListView(
+                scrollController: _scrollController,
                 padding: const EdgeInsets.all(8),
-                onReorder: (int oldIndex, int newIndex) {
+                onReorder: (oldIndex, newIndex) {
                   setState(() {
-                    if (newIndex > oldIndex) newIndex -= 1;
+                    if (newIndex > oldIndex) newIndex--;
                     final item = _items_list.removeAt(oldIndex);
                     _items_list.insert(newIndex, item);
-
-                    // taskManager.updateBaseTaskList(); // can't update base task list
+                    // Keep TaskManager in sync
+                    TaskManager.instance.updateList(_items_list);
                   });
                 },
                 children: [
-                  for (int index = 0; index < _items_list.length; index++)
+
+
+                  // Every list Item
+                  for (int i = 0; i < _items_list.length; i++)
                     Dismissible(
-                      key: ValueKey(_items_list[index].title),
+                      key: ValueKey(_items_list[i].title),
                       direction: DismissDirection.horizontal,
-                      // Left swipe background (archive)
                       background: Container(
                         color: Colors.green,
                         alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(left: 20),
-                        child: const Icon(Icons.archive,
-                            color: Colors.white, size: 28),
+                        padding: const EdgeInsets.only(left:20),
+                        child: const Icon(Icons.archive, color:Colors.white),
                       ),
-                      // Right swipe background (timer)
                       secondaryBackground: Container(
                         color: Colors.red,
                         alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20),
-                        child: const Icon(Icons.timer,
-                            color: Colors.white, size: 28),
+                        padding: const EdgeInsets.only(right:20),
+                        child: const Icon(Icons.timer, color:Colors.white),
                       ),
+                      child: _buildBaseInitiativeItem(_items_list[i], i),
                       confirmDismiss: (direction) async {
-                        // 1) tell TaskManager where to start
-                        TaskManager.instance.startFrom(index);
-
-                        // 2) navigate to TimerPage
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => TimerPage()),
-                        );
-
+                        // Navigate to TimerPage but don't remove
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( baseInitiative: _items_list[i])));
                         return false;
                       },
-                      // adding bot main list index plus initiative list
-                      child: _buildUndertakingItem(_items_list[index],
-                          index + _items_list[index].basetask.length),
                     ),
+
+
+
+
                 ],
               ),
             ),
@@ -290,254 +201,172 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-  /// Builds a widget for an individual undertaking.
-  Widget _buildUndertakingItem(Undertaking undertaking, int index) {
-    // Build a RichText widget to display the dynamicTime, title, and completionTime with different styles.
+  Widget _buildBaseInitiativeItem(BaseInitiative item, int topIndex) {
 
-    // If there are no basetask, show a simple ListTile.
-    if (undertaking.basetask.isEmpty) {
-      return ListTile(
-        key: ValueKey(undertaking.title),
-        leading: buildUndertakingLeading(undertaking, index),
-        title: buildRichTitle(undertaking),
-        onTap: () {
-          // handle tap
-        },
-      );
-    } else {
-      // Use an ExpansionTile for undertakings with basetask.
+    // InitiativeGroup
+    if (item is InitiativeGroup) {
       return Theme(
-        data: Theme.of(context).copyWith(
-          dividerColor:
-              Colors.indigo[300], // 👈 Set your custom divider color here
-        ),
+        data: Theme.of(context).copyWith(dividerColor: Colors.indigo[300]),
         child: ExpansionTile(
-          // backgroundColor: Colors.indigo[100],
-          key: ValueKey(undertaking.title),
-          leading: buildUndertakingLeading(undertaking, index),
+          key: ValueKey(item.title),
+          leading: buildLeading(item, topIndex),
+          title: buildRichTitle(item, fontWeight: FontWeight.bold),
+          children: item.initiativeList.asMap().entries.map((e) {
+            final childIndex = e.key;
+            final ini = e.value;
 
-          title: buildRichTitle(undertaking, fontWeight: FontWeight.bold),
-          children: undertaking.basetask.asMap().entries.map((entry) {
-            int initiativeIndex = entry.key;
-            BaseTask initiative = entry.value;
-
-            // Build a RichText for the initiative with different styles.
-            Widget buildInitiativeTitle() {
-              return RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "    ${initiative.title} ",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.indigo[400],
-                      ),
-                    ),
-                    TextSpan(
-                      text: " ${initiative.completionTime.remainingTime()}",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.indigo[100],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            // Wrap each initiative ListTile in a Dismissible widget.
+            // Initiative Group Children
             return Dismissible(
-              key: ValueKey(
-                  "${undertaking.title}-${initiative.title}-$initiativeIndex"),
+              key: ValueKey('${item.title}-$childIndex'),
               direction: DismissDirection.horizontal,
               background: Container(
                 color: Colors.blue,
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 20),
-                child: const Icon(Icons.info, color: Colors.white, size: 26),
+                child: const Icon(Icons.info, color: Colors.white),
               ),
               secondaryBackground: Container(
                 color: Colors.orange,
                 alignment: Alignment.centerRight,
                 padding: const EdgeInsets.only(right: 20),
-                child:
-                    const Icon(Icons.play_arrow, color: Colors.white, size: 26),
+                child: const Icon(Icons.play_arrow, color: Colors.white),
               ),
               confirmDismiss: (direction) async {
-                // Developer: Handle any dismiss action for the initiative.
-                return false;
+                // Handle swipe actions here if you need
+                return false; // don't actually dismiss
               },
               child: ListTile(
-                leading: buildInitiativeLeading(initiative),
-                //=====================================
-                title: buildInitiativeTitle(),
-                onTap: () {},
+                leading: buildChildLeading(ini),
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '   ${ini.title} ',
+                        style: const TextStyle(fontSize: 16, color: Colors.indigo),
+                      ),
+                      TextSpan(
+                        text: ini.completionTime.remainingTime(),
+                        style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  // existing onTap logic...
+                },
               ),
             );
+
+
           }).toList(),
         ),
+      );
+
+
+      // Normal Initiative
+    } else {
+      item as Initiative;
+      return ListTile(
+        leading: buildLeading(item, topIndex),
+        title: buildRichTitle(item),
+        onTap: () {
+          // existing onTap logic...
+        },
       );
     }
   }
 
-  ListTile getListTile(Undertaking undertaking, index) {
-    return ListTile(
-      key: ValueKey(undertaking.title),
-      leading: ReorderableDragStartListener(
-        index: index,
-        child: SizedBox(
-          width: 24,
-          height: double.infinity,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Vertical Line
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    width: 2,
-                    color: Colors.indigo[300],
-                  ),
-                ),
-              ),
 
-              // White background circle to hide line behind transparent icons
-              if (!undertaking.isComplete)
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white, // or background color of ListTile
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-      title: buildRichTitle(undertaking),
-      onTap: () {
-        // handle tap
-      },
-    );
-  }
 
-  Widget buildRichTitle(Undertaking undertaking, {FontWeight? fontWeight}) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: "${undertaking.title} ",
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.indigo[700],
-              fontWeight:
-                  fontWeight != null ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-          TextSpan(
-            text: undertaking.completionTime.remainingTime(),
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.indigo[100],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildVerticalLine({
-    double width = 2,
-    double topOffset = -4,
-    double bottomOffset = -6,
-    double containerWidth = 24,
-    Color color = Colors.indigo,
-  }) {
-    return Positioned(
-      top: topOffset,
-      bottom: bottomOffset,
-      left: (containerWidth - width) / 2,
-      child: Container(
-        width: width,
-        color: color,
-      ),
-    );
-  }
-
-  ReorderableDragStartListener buildUndertakingLeading(
-      Undertaking undertaking, int index) {
+  //================  build and updating Leading Icon ===========================
+  ReorderableDragStartListener buildLeading(BaseInitiative bi, int index) {
     return ReorderableDragStartListener(
       index: index,
-      child: SizedBox(
-        width: 24,
-        height: 48, // Fixed height for consistency.
-        child: Stack(
-          clipBehavior: Clip.none, // Allow the vertical line to extend outside.
-          alignment: Alignment.center,
-          children: [
-            // Common vertical line.
-            buildVerticalLine(
-              containerWidth: 24,
-              color: Colors.indigo[300]!,
-              topOffset: -8,
-              bottomOffset: -8,
-            ),
-            // White background circle to mask the line (only if not done).
-            if (!undertaking.isComplete)
-              Container(
-                width: 20,
-                height: 20,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                ),
-              ),
-            // Actual icon for the undertaking.
-            Icon(
-              undertaking.isComplete ? Icons.circle : Icons.circle_outlined,
-              color: Colors.indigo[300],
-            ),
-          ],
-        ),
+      child: buildLeadingIcon(
+        isComplete: bi.isComplete,
+        whiteCircleSize: 20,
+        iconSize: 24,
       ),
     );
   }
 
-  Widget buildInitiativeLeading(BaseTask initiative) {
+  Widget buildChildLeading(Initiative ini) {
+    return buildLeadingIcon(
+      isComplete: ini.isComplete,
+      whiteCircleSize: 14,// small then the icon size to make sure it remain behind the circle
+      iconSize: 18,
+    );
+  }
+
+  Widget buildLeadingIcon({required bool isComplete, required double whiteCircleSize, required double iconSize,}) {
     return SizedBox(
       width: 24,
-      height: 48, // Fixed height for consistency.
+      height: 48,
       child: Stack(
-        clipBehavior: Clip.none,
         alignment: Alignment.center,
+        clipBehavior: Clip.none,
         children: [
-          // Draw the common vertical line.
-          buildVerticalLine(
-            containerWidth: 24,
-            color: Colors.indigo[300]!,
-            topOffset: -8,
-            bottomOffset: -8,
+          Positioned(
+            top: -8,
+            bottom: -8,
+            left: 11,
+            child: Container(width: 2, color: Colors.indigo[300]),
           ),
-          // White background circle to mask the line if the initiative is not done.
-          if (!initiative.isComplete)
+          if (!isComplete)
             Container(
-              width: 15,
-              height: 15,
+              width: whiteCircleSize,
+              height: whiteCircleSize,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
             ),
-          // Actual icon for the initiative (checks its own state).
           Icon(
-            initiative.isComplete ? Icons.circle : Icons.circle_outlined,
+            isComplete ? Icons.circle : Icons.circle_outlined,
+            size: iconSize,
             color: Colors.indigo[300],
-            size: 18,
           ),
         ],
       ),
     );
   }
+
+
+//================  build and updating Title ===========================
+  Widget buildRichTitle(BaseInitiative u, {FontWeight? fontWeight}) {
+    return RichText(
+      text: TextSpan(children: [
+        TextSpan(text: '${u.title} ', style: TextStyle(fontSize:18, color:Colors.indigo[700], fontWeight:fontWeight)),
+        TextSpan(text: u.completionTime.remainingTime(), style: const TextStyle(fontSize:16, color:Colors.grey)),
+      ]),
+    );
+  }
+
+
+
+  void _updateWeekTime() {
+    final now = DateTime.now();
+    final hour12 = now.hour % 12 == 0 ? 12 : now.hour % 12;
+    final minute = now.minute.toString().padLeft(2, '0');
+    final period = now.hour >= 12 ? 'PM' : 'AM';
+    setState(() {
+      currentTime = '$hour12:$minute $period';
+      currentWeekday = _weekdayName(now.weekday);
+    });
+  }
+
+  String _weekdayName(int weekdayNumber) {
+    const weekdays = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    return weekdays[weekdayNumber - 1];
+  }
+
+
 }
