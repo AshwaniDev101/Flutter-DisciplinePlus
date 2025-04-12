@@ -18,6 +18,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_heatmap_calendar: ^1.0.5
   sliding_up_panel: ^2.0.0+1
+  just_audio: ^0.9.46
 
 
 dev_dependencies:
@@ -33,6 +34,8 @@ flutter:
   uses-material-design: true
 
 
-#  assets:
+  assets:
+    - assets/audio/successed_ting.mp3
 #    - assets/images/lc.jpg
+
 

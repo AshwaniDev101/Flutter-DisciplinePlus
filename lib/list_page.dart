@@ -29,7 +29,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
   final List<BaseInitiative> _items_list = [
     InitiativeGroup(
       title: 'DSA',
-      completionTime: const AppTime(3, 0),
       initiativeList: [
         Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 1)),
         Initiative(title: 'Implementation', completionTime: AppTime(0, 2)),
@@ -43,7 +42,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
     ),
     InitiativeGroup(
       title: 'JavaScript',
-      completionTime: const AppTime(2, 0),
       initiativeList: [
         Initiative(title: 'Video-1', completionTime: AppTime(0, 1)),
         Initiative(title: 'Video-2', completionTime: AppTime(0, 30)),
@@ -56,11 +54,11 @@ class _ListPageState extends State<ListPage> with RouteAware {
       ],
     ),
     Initiative(title: 'GYM', completionTime: AppTime(0, 1)),
-    Initiative(title: 'Meditation', completionTime: AppTime(0, 1)),
-    Initiative(title: 'English', completionTime: AppTime(0, 1)),
-    Initiative(title: 'Drawing', completionTime: AppTime(0, 1)),
+    Initiative(title: 'Meditation', completionTime: AppTime(0, 2)),
+    Initiative(title: 'English', completionTime: AppTime(0, 3)),
+    Initiative(title: 'Drawing', completionTime: AppTime(0, 2)),
     Initiative(title: 'Assignment', completionTime: AppTime(0, 1)),
-    Initiative(title: 'Personal Project', completionTime: AppTime(0, 1)),
+    Initiative(title: 'Personal Project', completionTime: AppTime(0, 2)),
   ];
 
 
@@ -127,7 +125,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
             // Wednesday   09:15
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
               decoration: BoxDecoration(
                 color: Colors.indigo[100],
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),

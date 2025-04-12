@@ -44,23 +44,27 @@ abstract class BaseInitiative {
   }
 }
 
-// Undertaking = like a folder or group of tasks
 class InitiativeGroup extends BaseInitiative {
   final List<Initiative> initiativeList;
 
   InitiativeGroup({
     AppTime? dynamicTime,
     required String title,
-    required AppTime completionTime,
     required this.initiativeList,
     bool isComplete = false,
   }) : super(
-
     dynamicTime: dynamicTime,
     title: title,
-    completionTime: completionTime,
+    completionTime: _calculateCompletionTime(initiativeList),
     isComplete: isComplete,
   );
+
+  static AppTime _calculateCompletionTime(List<Initiative> initiatives) {
+    int totalMinutes = initiatives.fold(0, (sum, e) {
+      return sum + e.completionTime.hour * 60 + e.completionTime.minute;
+    });
+    return AppTime(totalMinutes ~/ 60, totalMinutes % 60);
+  }
 
   bool hasInitiatives() => initiativeList.isNotEmpty;
   bool hasNoInitiatives() => initiativeList.isEmpty;

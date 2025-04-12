@@ -5,14 +5,15 @@
 
 import 'dart:async';
 import 'dart:math';
+
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/constants.dart';
 import 'package:discipline_plus/models/data_types.dart';
+import 'package:just_audio/just_audio.dart';
 
 class TimerPage extends StatefulWidget {
-
   final BaseInitiative baseInitiative;
   const TimerPage({required this.baseInitiative, super.key});
 
@@ -30,8 +31,8 @@ class _TimerPageState extends State<TimerPage> {
   // --- Feature flags ---
   final bool showNumbers = true;
   final bool autoNextTask = true;
-  final Duration nextTaskDelay = const Duration(seconds: 1);
-  final int? clockSpeed = 8; // null = real‐time; >1 = multiplier
+  // final Duration nextTaskDelay = const Duration(seconds: 1);
+  final int? clockSpeed = 20  ; // null = real‐time; >1 = multiplier
 
   // --- Style placeholders ---
   final Color tickColor = Colors.white;
@@ -40,12 +41,19 @@ class _TimerPageState extends State<TimerPage> {
   final double numberDistanceOffset = 30;
 
   // --- Timer state ---
-  // late final Initiative task;
   late int totalTimeSeconds;
   int elapsedSeconds = 0;
   Timer? _timer;
+  Timer? _delayedRestart;
   bool isPaused = true;
   bool isChecked = false;
+
+  Initiative? currentInitiative;
+  Initiative? nextInitiative;
+  bool isBreakGiven = false;
+
+
+
 
 
 
@@ -60,43 +68,21 @@ class _TimerPageState extends State<TimerPage> {
 
 
   // --- Cached next‐task title ---
-  Initiative? currentInitiative;
-
-  bool isBreakGiven = false;
-
-  Initiative? nextInitiative;
-
-
-
-
 
   @override
-  void initState()
-  {
+  void initState() {
     super.initState();
-
+    // load current and next initiatives
     if (widget.baseInitiative is InitiativeGroup) {
       var group = (widget.baseInitiative as InitiativeGroup);
-
-      if(group.hasNoInitiatives())
-        {
+      if(group.hasNoInitiatives()) {
           showErrorDialog(context, "Empty Group");
           return;
         }
 
       currentInitiative = group.initiativeList[0];
-
-      // Find the next incomplete task in sub list
-      // for (Initiative initiative in group.initiativeList) {
-      //   if (initiative.isNotComplete) {
-      //     currentInitiative = initiative;
-      //     break;
-      //   }
-      // }
-
     }else{
-      var init = (widget.baseInitiative as Initiative);
-      currentInitiative = init;
+      currentInitiative = (widget.baseInitiative as Initiative);
       // nextInitiative = Initiative(title: 'IDK', completionTime: AppTime(0, 0));
     }
 
@@ -113,17 +99,14 @@ class _TimerPageState extends State<TimerPage> {
 
     // Compute total seconds for this task
     totalTimeSeconds = (currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60;
-    Future.delayed(const Duration(milliseconds: 2000), _startTimer);
+    // Future.delayed(const Duration(milliseconds: 2000), _startTimer);
+    // initial delayed start
+    _delayedRestart = Timer(const Duration(milliseconds: 2000), () {
+      if (mounted) _startTimer();
+    });
 
 
 
-
-    // nextInitiative = TaskManager.instance.nextInitiative(currentInitiative.title);
-    // if(nextInitiative==null)
-    //   {
-    //     showErrorDialog(context, "There are No Initiative");
-    //
-    //   }
 
   }
 
@@ -132,20 +115,26 @@ class _TimerPageState extends State<TimerPage> {
   @override
   void dispose() {
     _timer?.cancel();
+    _delayedRestart?.cancel();
+    // player.dispose();
     super.dispose();
   }
 
 
-  void _startTimer() {
+  Future<void> _startTimer() async {
 
 
+    playSound();
     print("------------------------------- current=>${currentInitiative!.title}: next=>${nextInitiative?.title.toString()} ");
 
-    if (_timer != null) return;
+    _timer?.cancel();  // <- Cancel old one anyway
+    _timer = null;
+
+    // if (_timer != null) return;
     setState(() => isPaused = false);
 
     final intervalMs = clockSpeed != null
-        ? (1000 / clockSpeed!).floor()
+        ? (1000 / clockSpeed!).floor().clamp(1, 1000)
         : 1000;
 
     _timer = Timer.periodic(Duration(milliseconds: intervalMs), (t) {
@@ -157,7 +146,6 @@ class _TimerPageState extends State<TimerPage> {
           t.cancel();
 
           _onComplete();
-
         }
       });
     });
@@ -166,12 +154,14 @@ class _TimerPageState extends State<TimerPage> {
   void _pauseTimer() {
     _timer?.cancel();
     _timer = null;
+    _delayedRestart?.cancel();
     setState(() => isPaused = true);
   }
 
   void _restartTimer() {
     _timer?.cancel();
     _timer = null;
+    _delayedRestart?.cancel();
     setState(() {
       elapsedSeconds = 0;
       isPaused = true;
@@ -184,14 +174,8 @@ class _TimerPageState extends State<TimerPage> {
 
   void _onComplete() {
 
-
-
-
-    if(!isBreakGiven)
-      {
-
+    if(!isBreakGiven) {
         StudyBreak studyBreak = currentInitiative!.studyBreak;
-
         currentInitiative= Initiative(title: studyBreak.title, completionTime: studyBreak.completionTime);
         isBreakGiven = true;
 
@@ -205,13 +189,19 @@ class _TimerPageState extends State<TimerPage> {
 
 
     totalTimeSeconds = (currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60;
+    elapsedSeconds = 0;
 
-    Future.delayed(const Duration(milliseconds: 2000),(){
-      setState(() {
 
-        _restartTimer();
+
+
+    if (!isPaused) {
+      _delayedRestart = Timer(const Duration(milliseconds: 2000), () {
+        if (mounted) _startTimer();
       });
-    });
+    }
+
+
+    // _delayedRestart = Timer(const Duration(milliseconds: 2000), _startTimer);
 
 
 
@@ -221,7 +211,10 @@ class _TimerPageState extends State<TimerPage> {
   void _onManualComplete(bool? v) {
     setState(() {
       isChecked = v ?? false;
-      // if (isChecked && !currentInitiative.isComplete) _onComplete();
+
+      currentInitiative!.isComplete = true;
+      // if (isChecked && !currentInitiative!.isComplete);
+      // if (isChecked && !currentInitiative!.isComplete) _onComplete();
     });
   }
 
@@ -231,7 +224,7 @@ class _TimerPageState extends State<TimerPage> {
     return Scaffold(
       backgroundColor: Constants.background_color,
       appBar: AppBar(
-        title: Text(!isBreakGiven? currentInitiative!.title.toString(): currentInitiative!.studyBreak.title, style: const TextStyle(color: Colors.white)),
+        title: Text(!isBreakGiven? currentInitiative!.title: currentInitiative!.studyBreak.title, style: const TextStyle(color: Colors.white)),
         backgroundColor: Constants.background_color,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -353,6 +346,13 @@ class _TimerPageState extends State<TimerPage> {
         );
       },
     );
+  }
+
+  Future<void> playSound() async {
+    final player = AudioPlayer();
+    await player.setAsset('assets/audio/successed_ting.mp3');
+    await player.play();
+    await player.dispose(); // Clean up
   }
 
 
