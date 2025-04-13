@@ -27,6 +27,8 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
   final double pieGraphGap = 60.0;
   final double tickLength = 10.0;
 
+
+  final bool stayWake = true;
   final bool showNumbers = true;
   final bool autoNextTask = true;
   final int? clockSpeed = null;  // null = real‐time; >1 = multiplier
@@ -60,7 +62,7 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    WakelockPlus.toggle(enable: true);
+    WakelockPlus.toggle(enable: stayWake);
 
     if (widget.baseInitiative is InitiativeGroup) {
       var group = (widget.baseInitiative as InitiativeGroup);
