@@ -21,18 +21,21 @@ class AppTime {
 
 // Common base class containing shared properties and logic.
 abstract class BaseInitiative {
+  final String id;
   final AppTime dynamicTime;
   final String title;
   final AppTime completionTime;
 
+
   bool _isComplete = false;
 
   BaseInitiative({
+    String? id,
     AppTime? dynamicTime,
     required this.title,
     required this.completionTime,
     bool isComplete = false,
-  }) : dynamicTime = dynamicTime ?? const AppTime(0, 0) {
+  }) :id= id??DateTime.now().microsecondsSinceEpoch.toString(), dynamicTime = dynamicTime ?? const AppTime(0, 0) {
     _isComplete = isComplete;
   }
 
@@ -48,15 +51,12 @@ class InitiativeGroup extends BaseInitiative {
   final List<Initiative> initiativeList;
 
   InitiativeGroup({
-    AppTime? dynamicTime,
-    required String title,
+    super.dynamicTime,
+    required super.title,
     required this.initiativeList,
-    bool isComplete = false,
+    super.isComplete,
   }) : super(
-    dynamicTime: dynamicTime,
-    title: title,
     completionTime: _calculateCompletionTime(initiativeList),
-    isComplete: isComplete,
   );
 
   static AppTime _calculateCompletionTime(List<Initiative> initiatives) {
@@ -75,17 +75,12 @@ class Initiative extends BaseInitiative {
   final StudyBreak studyBreak;
 
   Initiative({
-    AppTime? dynamicTime,
-    required String title,
-    required AppTime completionTime,
+    super.dynamicTime,
+    required super.title,
+    required super.completionTime,
     this.studyBreak = const ShortBreak(),
-    bool isComplete = false,
-  }) : super(
-    dynamicTime: dynamicTime,
-    title: title,
-    completionTime: completionTime,
-    isComplete: isComplete,
-  );
+    super.isComplete,
+  });
 
   String get type=> studyBreak.title;
 

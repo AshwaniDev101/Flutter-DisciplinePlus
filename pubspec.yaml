@@ -19,6 +19,7 @@ dependencies:
   flutter_heatmap_calendar: ^1.0.5
   sliding_up_panel: ^2.0.0+1
   just_audio: ^0.9.46
+  wakelock_plus: ^1.2.11
 
 
 dev_dependencies:
@@ -35,7 +36,7 @@ flutter:
 
 
   assets:
-    - assets/audio/successed_ting.mp3
+    - assets/audio/
 #    - assets/images/lc.jpg
 
 

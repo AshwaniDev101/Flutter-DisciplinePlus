@@ -1,5 +1,7 @@
 // lib/task_manager.dart
 
+import 'package:flutter/cupertino.dart';
+
 import 'models/data_types.dart';
 
 class TaskManager {
@@ -29,7 +31,7 @@ class TaskManager {
 
       for (final init in initiatives) {
         _flatInitiatives.add(init);
-        _flatInitiativesMap[init.title] = index++;
+        _flatInitiativesMap[init.id] = index++;
       }
     }
 
@@ -38,29 +40,29 @@ class TaskManager {
 
 
   void printList() {
-    print("------------------- TaskManager title index Map-----------------------------");
+    debugPrint("------------------- TaskManager title index Map-----------------------------");
     _flatInitiativesMap.forEach((key, value) {
-      print("${key.toString()}:${value.toString()}");
+      debugPrint("${key.toString()}:${value.toString()}");
     });
-    print("=================== TaskManager Initiatives List ============================");
+    debugPrint("=================== TaskManager Initiatives List ============================");
     for(var i=0;i<_flatInitiatives.length;i++)
       {
-        print("$i = ${_flatInitiatives[i].title.toString()}");
+        debugPrint("$i. ID ${_flatInitiatives[i].id}, ${_flatInitiatives[i].title.toString()}");
       }
   }
 
-  Initiative? nextInitiative(String title)
+  Initiative? nextInitiative(String id)
   {
 
-    if (!_flatInitiativesMap.containsKey(title)) {
-      print('Error: Title "$title" not found in the map.');
+    if (!_flatInitiativesMap.containsKey(id)) {
+      print('Error: Title "$id" not found in the map.');
       return null;
     }
 
-    int? index = _flatInitiativesMap[title];
+    int? index = _flatInitiativesMap[id];
 
     if (index == null) {
-      print('Error: Index is null for title "$title".');
+      print('Error: Index is null for title "$id".');
       return null;
     }
     index+=1;
