@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'constants.dart';
+
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
 
@@ -167,13 +169,13 @@ class _ListPageState extends State<ListPage> with RouteAware {
                       key: ValueKey(_items_list[i].id),
                       direction: DismissDirection.horizontal,
                       background: Container(
-                        color: Colors.green,
+                        color: Constants.background_color,
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.only(left:20),
-                        child: const Icon(Icons.archive, color:Colors.white),
+                        child: const Icon(Icons.timer, color:Colors.white),
                       ),
                       secondaryBackground: Container(
-                        color: Colors.red,
+                        color: Constants.background_color,
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.only(right:20),
                         child: const Icon(Icons.timer, color:Colors.white),
@@ -217,19 +219,20 @@ class _ListPageState extends State<ListPage> with RouteAware {
               key: ValueKey(ini.id),
               direction: DismissDirection.horizontal,
               background: Container(
-                color: Colors.blue,
+                color: Constants.background_color,
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 20),
-                child: const Icon(Icons.info, color: Colors.white),
+                child: const Icon(Icons.timer, color: Colors.white),
               ),
               secondaryBackground: Container(
-                color: Colors.orange,
+                color: Constants.background_color,
                 alignment: Alignment.centerRight,
                 padding: const EdgeInsets.only(right: 20),
-                child: const Icon(Icons.play_arrow, color: Colors.white),
+                child: const Icon(Icons.timer, color: Colors.white),
               ),
               confirmDismiss: (direction) async {
-                // Handle swipe actions here if you need
+                Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( baseInitiative: ini)));
+
                 return false; // don't actually dismiss
               },
               child: ListTile(

@@ -52,6 +52,9 @@ class _TimerPageState extends State<TimerPage> {
     final s = (remainingSeconds % 60).toString().padLeft(2, '0');
     return '$m:$s';
   }
+
+  int get totalTicks => (totalTimeSeconds / 60).ceil();
+
   double get progress => totalTimeSeconds > 0 ? remainingSeconds / totalTimeSeconds : 0;
 
   @override
@@ -139,37 +142,80 @@ class _TimerPageState extends State<TimerPage> {
     _startTimer();
   }
 
-  /// Called when the timer finishes its cycle.
-  void _onComplete() {
-    _playStopSound();
+
+  void moveToNextInitiative() {
+    // 1) mark done
     currentInitiative!.isComplete = true;
+
+    // 2) if break not given, go to break
     if (!isBreakGiven) {
-      // Switch to study break if it exists
-      StudyBreak studyBreak = currentInitiative!.studyBreak;
+      final studyBreak = currentInitiative!.studyBreak;
       currentInitiative = Initiative(
         title: studyBreak.title,
         completionTime: studyBreak.completionTime,
       );
       isBreakGiven = true;
     } else {
-      // Proceed to the next initiative
+      // 3) else go to next real initiative
       currentInitiative = nextInitiative;
       nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.id);
       isBreakGiven = false;
     }
 
-    // Reset timer based on new initiative
-    totalTimeSeconds =
-    ((currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60);
-    elapsedSeconds = 0;
+    // 4) reset timer state
+    setState(() {
+      totalTimeSeconds =
+          (currentInitiative!.completionTime.hour * 60
+              + currentInitiative!.completionTime.minute) * 60;
+      elapsedSeconds = 0;
+      isChecked = false;
+    });
 
-    // Restart timer if not paused (with a short delay)
+    // 5) optionally auto‑start if you want:
+    // if (!isPaused) _startTimer();
+  }
+
+  void _onComplete() {
+    _playStopSound();
+    moveToNextInitiative();
+
     if (!isPaused) {
       _delayedRestart = Timer(const Duration(milliseconds: 2000), () {
         if (mounted) _startTimer();
       });
     }
   }
+
+  // void _onComplete() {
+  //   _playStopSound();
+  //   currentInitiative!.isComplete = true;
+  //   if (!isBreakGiven) {
+  //     // Switch to study break if it exists
+  //     StudyBreak studyBreak = currentInitiative!.studyBreak;
+  //     currentInitiative = Initiative(
+  //       title: studyBreak.title,
+  //       completionTime: studyBreak.completionTime,
+  //     );
+  //     isBreakGiven = true;
+  //   } else {
+  //     // Proceed to the next initiative
+  //     currentInitiative = nextInitiative;
+  //     nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.id);
+  //     isBreakGiven = false;
+  //   }
+  //
+  //   // Reset timer based on new initiative
+  //   totalTimeSeconds =
+  //   ((currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60);
+  //   elapsedSeconds = 0;
+  //
+  //   // Restart timer if not paused (with a short delay)
+  //   if (!isPaused) {
+  //     _delayedRestart = Timer(const Duration(milliseconds: 2000), () {
+  //       if (mounted) _startTimer();
+  //     });
+  //   }
+  // }
 
   void _onManualComplete(bool? value) {
     setState(() {
@@ -197,6 +243,17 @@ class _TimerPageState extends State<TimerPage> {
   void _playStopSound() {
     AudioManager().play(SoundEffect.success);
   }
+
+
+  void increaseTime(AppTime appTime) {
+    final addedSeconds = (appTime.hour * 60 + appTime.minute) * 60;
+    setState(() {
+      // bump up total time
+      totalTimeSeconds += addedSeconds;
+
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -242,8 +299,8 @@ class _TimerPageState extends State<TimerPage> {
                               tickDistanceFromCenter: circleRadius - ringThickness - 15,
                               numberDistanceFromCenter: circleRadius - ringThickness + numberDistanceOffset,
                               progress: progress,
-                              totalNumberOfTicks: currentInitiative!.completionTime.hour * 60 +
-                                  currentInitiative!.completionTime.minute,
+                              // totalNumberOfTicks: currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute,
+                              totalNumberOfTicks: totalTicks,
                               showNumbers: showNumbers,
                               tickColor: tickColor,
                               numberColor: numberColor,
@@ -269,11 +326,11 @@ class _TimerPageState extends State<TimerPage> {
             ),
             if (isPaused) ...[
               ElevatedButton(
-                onPressed: _restartTimer,
+                onPressed: ()=>increaseTime(AppTime(0, 5)),
                 child: const Text('+5'),
               ),
               ElevatedButton(
-                onPressed: _restartTimer,
+                onPressed: moveToNextInitiative,
                 child: const Text('next'),
               ),
               ElevatedButton(
