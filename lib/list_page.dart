@@ -183,7 +183,9 @@ class _ListPageState extends State<ListPage> with RouteAware {
                       child: _buildBaseInitiativeItem(_items_list[i], i),
                       confirmDismiss: (direction) async {
                         // Navigate to TimerPage but don't remove
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( baseInitiative: _items_list[i])));
+                        // Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( baseInitiative: _items_list[i])));
+
+                        navigateToTimerPage(dismissDirection:direction,baseInitiative: _items_list[i]);
                         return false;
                       },
                     ),
@@ -231,7 +233,8 @@ class _ListPageState extends State<ListPage> with RouteAware {
                 child: const Icon(Icons.timer, color: Colors.white),
               ),
               confirmDismiss: (direction) async {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( baseInitiative: ini)));
+                // Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( baseInitiative: ini)));
+                navigateToTimerPage(dismissDirection:direction,baseInitiative: ini);
 
                 return false; // don't actually dismiss
               },
@@ -367,6 +370,41 @@ class _ListPageState extends State<ListPage> with RouteAware {
     ];
     return weekdays[weekdayNumber - 1];
   }
+
+
+  void navigateToTimerPage({
+    required DismissDirection dismissDirection,
+    required BaseInitiative baseInitiative,
+  }) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            TimerPage(baseInitiative: baseInitiative),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          // Determine the start and end offset based on the dismiss direction
+          Offset beginOffset;
+          if (dismissDirection == DismissDirection.startToEnd) {
+            beginOffset = const Offset(-1.0, 0.0);  // Slide from left to right
+          } else if (dismissDirection == DismissDirection.endToStart) {
+            beginOffset = const Offset(1.0, 0.0);  // Slide from right to left
+          } else {
+            beginOffset = const Offset(0.0, 1.0);  // Slide from top to bottom (fallback case)
+          }
+
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: beginOffset,
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
 
 
 }
