@@ -30,9 +30,9 @@ class _ListPageState extends State<ListPage> with RouteAware {
     InitiativeGroup(
       title: 'DSA',
       initiativeList: [
-        Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Implementation', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Efficient-Solution', completionTime: AppTime(0, 15)),
+        Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 2)),
+        Initiative(title: 'Implementation', completionTime: AppTime(0, 2)),
+        Initiative(title: 'Efficient-Solution', completionTime: AppTime(0, 2)),
         Initiative(
           title: 'Deployment',
           completionTime: AppTime(0, 15),
@@ -40,22 +40,22 @@ class _ListPageState extends State<ListPage> with RouteAware {
         ),
       ],
     ),
-    Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
+    // Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
     InitiativeGroup(
       title: 'JavaScript',
       initiativeList: [
-        Initiative(title: 'Video-1', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Apply-1', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Video-2', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Apply-2', completionTime: AppTime(0, 15), studyBreak: LongBreak(),),
+        Initiative(title: 'Video-1', completionTime: AppTime(0, 1)),
+        Initiative(title: 'Apply-1', completionTime: AppTime(0, 1)),
+        Initiative(title: 'Video-2', completionTime: AppTime(0, 1)),
+        Initiative(title: 'Apply-2', completionTime: AppTime(0, 1), studyBreak: LongBreak(),),
       ],
     ),
 
-    Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
+    Initiative(title: 'Meditation', completionTime: AppTime(0, 2)),
 
-    Initiative(title: 'English', completionTime: AppTime(0, 15)),
-    Initiative(title: 'Drawing', completionTime: AppTime(0, 15)),
-    Initiative(title: 'Assignment', completionTime: AppTime(0, 15)),
+    Initiative(title: 'English', completionTime: AppTime(0, 5)),
+    Initiative(title: 'Drawing', completionTime: AppTime(0, 1)),
+    Initiative(title: 'Assignment', completionTime: AppTime(0, 2)),
     Initiative(title: 'Maker Project', completionTime: AppTime(0, 15)),
     Initiative(title: 'GYM', completionTime: AppTime(0, 15)),
   ];
@@ -214,7 +214,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
             // Initiative Group Children
             return Dismissible(
-              key: ValueKey(item.id),
+              key: ValueKey(ini.id),
               direction: DismissDirection.horizontal,
               background: Container(
                 color: Colors.blue,
@@ -309,7 +309,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
             left: 11,
             child: Container(width: 2, color: Colors.indigo[300]),
           ),
-          if (!isComplete)
+          // if (!isComplete)
             Container(
               width: whiteCircleSize,
               height: whiteCircleSize,
@@ -319,7 +319,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
               ),
             ),
           Icon(
-            isComplete ? Icons.circle : Icons.circle_outlined,
+            isComplete ? Icons.circle_rounded: Icons.circle_outlined,
             size: iconSize,
             color: Colors.indigo[300],
           ),

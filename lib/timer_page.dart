@@ -1,88 +1,85 @@
-// lib/pages/timer_page.dart
 
 import 'dart:async';
 import 'dart:math';
-
 import 'package:discipline_plus/resource_managers/audio_manager.dart';
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/constants.dart';
 import 'package:discipline_plus/models/data_types.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
-
 
 class TimerPage extends StatefulWidget {
   final BaseInitiative baseInitiative;
-  const TimerPage({required this.baseInitiative, super.key});
+  const TimerPage({required this.baseInitiative, Key? key}) : super(key: key);
 
   @override
   State<TimerPage> createState() => _TimerPageState();
 }
 
-class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
+class _TimerPageState extends State<TimerPage> {
+  // UI Constants
   final double circleRadius = 150.0;
   final double ringThickness = 10.0;
   final double pieGraphGap = 60.0;
   final double tickLength = 10.0;
 
-
-  final bool stayWake = true;
+  // Feature flags and style settings
   final bool showNumbers = true;
   final bool autoNextTask = true;
-  final int? clockSpeed = null;  // null = real‐time; >1 = multiplier
-
+  final int? clockSpeed = 80; // null = real‐time; >1 = multiplier
   final Color tickColor = Colors.white;
   final double numberFontSize = 12.0;
   final Color numberColor = Colors.white;
   final double numberDistanceOffset = 30;
 
+  // Timer state
   late int totalTimeSeconds;
   int elapsedSeconds = 0;
-  Ticker? _ticker;
+  Timer? _timer;
   Timer? _delayedRestart;
   bool isPaused = true;
   bool isChecked = false;
 
+  // Initiatives
   Initiative? currentInitiative;
   Initiative? nextInitiative;
   bool isBreakGiven = false;
 
+  // --- Derived getters ---
   int get remainingSeconds => max(0, totalTimeSeconds - elapsedSeconds);
   String get formattedTime {
     final m = (remainingSeconds ~/ 60).toString().padLeft(2, '0');
     final s = (remainingSeconds % 60).toString().padLeft(2, '0');
     return '$m:$s';
   }
-  double get progress => remainingSeconds / totalTimeSeconds;
-
+  double get progress => totalTimeSeconds > 0 ? remainingSeconds / totalTimeSeconds : 0;
 
   @override
   void initState() {
     super.initState();
-
-    WakelockPlus.toggle(enable: stayWake);
-
+    // Initialize current initiative from baseInitiative
     if (widget.baseInitiative is InitiativeGroup) {
-      var group = (widget.baseInitiative as InitiativeGroup);
-      if(group.hasNoInitiatives()) {
-        showErrorDialog(context, "Empty Group");
+      var group = widget.baseInitiative as InitiativeGroup;
+      if (group.hasNoInitiatives()) {
+        _showErrorDialog("Empty Group");
         return;
       }
-      currentInitiative = group.initiativeList[0];
+      currentInitiative = group.initiativeList.first;
     } else {
-      currentInitiative = (widget.baseInitiative as Initiative);
+      currentInitiative = widget.baseInitiative as Initiative;
     }
 
-    if(currentInitiative == null) {
-      showErrorDialog(context, "No Current Initiatives");
+    if (currentInitiative == null) {
+      _showErrorDialog("No Current Initiatives");
       return;
     }
-
     nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.id);
-    totalTimeSeconds = (currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60;
 
+    // Calculate total time in seconds
+    totalTimeSeconds =
+    ((currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60);
+
+    // Delay initial timer start
     _delayedRestart = Timer(const Duration(milliseconds: 2000), () {
       if (mounted) _startTimer();
     });
@@ -90,51 +87,50 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _ticker?.dispose();
-    _delayedRestart?.cancel();
+    _cancelTimers();
     super.dispose();
   }
 
-  Future<void> _startTimer() async {
-    print("------------------------------- current=>${currentInitiative!.title}: next=>${nextInitiative?.title.toString()} ");
+  // Helper method to cancel active timers
+  void _cancelTimers() {
+    _timer?.cancel();
+    _delayedRestart?.cancel();
+  }
 
-    _ticker?.dispose();
-    _ticker = null;
-    // _startTime = DateTime.now();
-    elapsedSeconds = 0;
+  Future<void> _startTimer() async {
+    // Print current initiative details for debugging
+    debugPrint("------------------------------- current=>${currentInitiative!.title}: next=>${nextInitiative?.title.toString()} ");
+
+    // Ensure previous timers are cancelled
+    _cancelTimers();
 
     setState(() => isPaused = false);
 
-    _ticker = createTicker((elapsed) {
+    // Calculate timer interval in milliseconds. (Using floor for safety.)
+    final intervalMs = clockSpeed != null
+        ? (1000 / clockSpeed!).floor().clamp(1, 1000)
+        : 1000;
+
+    _timer = Timer.periodic(Duration(milliseconds: intervalMs), (timer) {
       if (!mounted) return;
-
-      final virtualSeconds = (elapsed.inMilliseconds / 1000.0) * (clockSpeed ?? 1);
-      final int flooredSeconds = virtualSeconds.floor();
-
-      if (flooredSeconds != elapsedSeconds) {
-        setState(() {
-          elapsedSeconds = flooredSeconds;
-        });
-      }
-
-      if (elapsedSeconds >= totalTimeSeconds) {
-        _ticker?.stop();
-        _onComplete();
-      }
+      setState(() {
+        if (elapsedSeconds < totalTimeSeconds) {
+          elapsedSeconds++;
+        } else {
+          timer.cancel();
+          _onComplete();
+        }
+      });
     });
-
-    _ticker?.start();
   }
 
   void _pauseTimer() {
-    _ticker?.stop();
-    _delayedRestart?.cancel();
+    _cancelTimers();
     setState(() => isPaused = true);
   }
 
   void _restartTimer() {
-    _ticker?.dispose();
-    _delayedRestart?.cancel();
+    _cancelTimers();
     setState(() {
       elapsedSeconds = 0;
       isPaused = true;
@@ -143,22 +139,31 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
     _startTimer();
   }
 
+  /// Called when the timer finishes its cycle.
   void _onComplete() {
-    playStopSound();
-
+    _playStopSound();
+    currentInitiative!.isComplete = true;
     if (!isBreakGiven) {
+      // Switch to study break if it exists
       StudyBreak studyBreak = currentInitiative!.studyBreak;
-      currentInitiative = Initiative(title: studyBreak.title, completionTime: studyBreak.completionTime);
+      currentInitiative = Initiative(
+        title: studyBreak.title,
+        completionTime: studyBreak.completionTime,
+      );
       isBreakGiven = true;
     } else {
+      // Proceed to the next initiative
       currentInitiative = nextInitiative;
       nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.id);
       isBreakGiven = false;
     }
 
-    totalTimeSeconds = (currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60;
+    // Reset timer based on new initiative
+    totalTimeSeconds =
+    ((currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60);
     elapsedSeconds = 0;
 
+    // Restart timer if not paused (with a short delay)
     if (!isPaused) {
       _delayedRestart = Timer(const Duration(milliseconds: 2000), () {
         if (mounted) _startTimer();
@@ -166,11 +171,31 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
     }
   }
 
-  void _onManualComplete(bool? v) {
+  void _onManualComplete(bool? value) {
     setState(() {
-      isChecked = v ?? false;
+      isChecked = value ?? false;
       currentInitiative!.isComplete = true;
     });
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _playStopSound() {
+    AudioManager().play(SoundEffect.success);
   }
 
   @override
@@ -178,7 +203,7 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: Constants.background_color,
       appBar: AppBar(
-        title: Text(''),
+        title: const Text(''),
         backgroundColor: Constants.background_color,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -186,7 +211,11 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
       body: SafeArea(
         child: Column(
           children: [
-            Text(!isBreakGiven ? currentInitiative!.title : currentInitiative!.studyBreak.title, style: const TextStyle(color: Colors.white, fontSize: 32)),
+            // Display current or break title based on state
+            Text(
+              !isBreakGiven ? currentInitiative!.title : currentInitiative!.studyBreak.title,
+              style: const TextStyle(color: Colors.white, fontSize: 32),
+            ),
             Expanded(
               child: Center(
                 child: GestureDetector(
@@ -201,14 +230,20 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
                           radius: circleRadius - ringThickness,
                           backgroundColor: Constants.background_color,
                           child: CustomPaint(
-                            size: Size(circleRadius * 2 - pieGraphGap, circleRadius * 2 - pieGraphGap),
+                            size: Size(
+                              circleRadius * 2 - pieGraphGap,
+                              circleRadius * 2 - pieGraphGap,
+                            ),
                             painter: PieChartPainter(
-                              color: isPaused ? const Color.fromRGBO(255, 255, 255, 0.5) : Colors.white,
+                              color: isPaused
+                                  ? const Color.fromRGBO(255, 255, 255, 0.5)
+                                  : Colors.white,
                               tickLength: tickLength,
                               tickDistanceFromCenter: circleRadius - ringThickness - 15,
                               numberDistanceFromCenter: circleRadius - ringThickness + numberDistanceOffset,
                               progress: progress,
-                              totalNumberOfTicks: currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute,
+                              totalNumberOfTicks: currentInitiative!.completionTime.hour * 60 +
+                                  currentInitiative!.completionTime.minute,
                               showNumbers: showNumbers,
                               tickColor: tickColor,
                               numberColor: numberColor,
@@ -224,6 +259,7 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
                 ),
               ),
             ),
+            // Timer display
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
@@ -232,7 +268,18 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
               ),
             ),
             if (isPaused) ...[
-              ElevatedButton(onPressed: _restartTimer, child: const Text('Restart')),
+              ElevatedButton(
+                onPressed: _restartTimer,
+                child: const Text('+5'),
+              ),
+              ElevatedButton(
+                onPressed: _restartTimer,
+                child: const Text('next'),
+              ),
+              ElevatedButton(
+                onPressed: _restartTimer,
+                child: const Text('Restart'),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -249,7 +296,7 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                "next: ${isBreakGiven ? (nextInitiative != null ? nextInitiative!.title : "There is no Initiative left") : currentInitiative!.studyBreak.title}",
+                "next: ${isBreakGiven ? (nextInitiative != null ? nextInitiative!.title : "There is no Initiative left") : currentInitiative!.studyBreak.title} ",
                 style: const TextStyle(color: Colors.white70, fontSize: 16),
               ),
             ),
@@ -259,32 +306,10 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
       ),
     );
   }
-
-  void showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void playStopSound() {
-    AudioManager().play(SoundEffect.success);
-  }
 }
 
 
-
+//
 // import 'dart:async';
 // import 'dart:math';
 //
@@ -315,7 +340,7 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
 //   final bool showNumbers = true;
 //   final bool autoNextTask = true;
 //   // final Duration nextTaskDelay = const Duration(seconds: 1);
-//   final int? clockSpeed = 20  ; // null = real‐time; >1 = multiplier
+//   final int? clockSpeed = 30  ; // null = real‐time; >1 = multiplier
 //
 //   // --- Style placeholders ---
 //   final Color tickColor = Colors.white;
@@ -378,7 +403,7 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
 //     }
 //
 //
-//     nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.title);
+//     nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.id);
 //
 //     // Compute total seconds for this task
 //     totalTimeSeconds = (currentInitiative!.completionTime.hour * 60 + currentInitiative!.completionTime.minute) * 60;
@@ -469,7 +494,7 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
 //     else
 //       {
 //         currentInitiative = nextInitiative;
-//         nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.title);
+//         nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.id);
 //         isBreakGiven = false;
 //       }
 //
@@ -643,4 +668,4 @@ class _TimerPageState extends State<TimerPage> with TickerProviderStateMixin {
 //
 // }
 //
-//
+
