@@ -1,25 +1,8 @@
-// Represents a simple time structure with hour and minute.
-class AppTime {
-  final int hour;
-  final int minute;
 
-  const AppTime(this.hour, this.minute);
-
-  // Helper method for formatting time as HH:MM
-  String remainingTime() {
-    if (hour == 0) return "${minute}m";
-    if (minute == 0) return "${hour}h";
-    return "${hour}h ${minute}m";
-  }
-
-  String getTime() {
-    return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}";
-  }
-
-  bool get isZero => hour == 0 && minute == 0;
-}
 
 // Common base class containing shared properties and logic.
+import '../test/sun_animation.dart';
+
 abstract class BaseInitiative {
   final String id;
   final AppTime dynamicTime;

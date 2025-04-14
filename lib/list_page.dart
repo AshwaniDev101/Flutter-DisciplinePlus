@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:discipline_plus/models/data_types.dart';
 import 'package:discipline_plus/taskmanager.dart';
+import 'package:discipline_plus/test/sun_animation.dart';
 import 'package:discipline_plus/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
@@ -23,7 +24,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
 
   late Timer _timer;
-  late String currentTime;
+  late AppTime currentTime;
   late String currentWeekday;
 
   final ScrollController _scrollController = ScrollController();
@@ -138,12 +139,18 @@ class _ListPageState extends State<ListPage> with RouteAware {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(currentWeekday, style: TextStyle(fontSize:22, fontWeight: FontWeight.w600, color:Colors.indigo[900])),
-                  Text(currentTime,   style: TextStyle(fontSize:34, fontWeight: FontWeight.bold, color:Colors.indigo[900])),
+                  Text(currentTime.toString(),   style: TextStyle(fontSize:34, fontWeight: FontWeight.bold, color:Colors.indigo[900])),
                 ],
               ),
 
 
             ),
+
+            // AnimatedSkyHeader(
+            //   currentWeekday: 'Wednesday',
+            //   currentTime: currentTime,
+            //   isFastForward: true, // Pass true for fast-forward mode
+            // ),
 
 
             // Listview
@@ -347,13 +354,25 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
 
 
+  // void _updateWeekTime() {
+  //   final now = DateTime.now();
+  //   final hour12 = now.hour % 12 == 0 ? 12 : now.hour % 12;
+  //   final minute = now.minute.toString().padLeft(2, '0');
+  //   final period = now.hour >= 12 ? 'PM' : 'AM';
+  //   setState(() {
+  //     currentTime = '$hour12:$minute $period';
+  //     currentWeekday = _weekdayName(now.weekday);
+  //   });
+  // }
+
   void _updateWeekTime() {
     final now = DateTime.now();
-    final hour12 = now.hour % 12 == 0 ? 12 : now.hour % 12;
-    final minute = now.minute.toString().padLeft(2, '0');
-    final period = now.hour >= 12 ? 'PM' : 'AM';
+
+    // Create an instance of AppTime with the current hour and minute
+    final appTime = AppTime(now.hour, now.minute);
+
     setState(() {
-      currentTime = '$hour12:$minute $period';
+      currentTime = appTime; // This will return time in HH:MM AM/PM format
       currentWeekday = _weekdayName(now.weekday);
     });
   }

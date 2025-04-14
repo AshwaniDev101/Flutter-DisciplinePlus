@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:discipline_plus/resource_managers/audio_manager.dart';
 import 'package:discipline_plus/taskmanager.dart';
+import 'package:discipline_plus/test/sun_animation.dart';
 import 'package:discipline_plus/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/constants.dart';
