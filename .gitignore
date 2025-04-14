@@ -78,3 +78,9 @@ app.*.map.json
 
 # Optional: Ignore metadata (not needed in repo)
 .metadata
+/android/app/google-services.json
+/firestore.rules
+/firestore.indexes.json
+/lib/firebase_options.dart
+/firebase.json
+/.firebaserc

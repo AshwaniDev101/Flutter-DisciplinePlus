@@ -83,10 +83,10 @@ abstract class StudyBreak {
 
 // Represents a short break.
 class ShortBreak extends StudyBreak {
-  const ShortBreak() : super(title: 'Short break', completionTime: const AppTime(0, 1));
+  const ShortBreak() : super(title: 'Short break', completionTime: const AppTime(0, 10));
 }
 
 // Represents a long break.
 class LongBreak extends StudyBreak {
-  const LongBreak() : super(title: 'Long break', completionTime: const AppTime(0, 2));
+  const LongBreak() : super(title: 'Long break', completionTime: const AppTime(0, 20));
 }

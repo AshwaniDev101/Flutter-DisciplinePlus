@@ -3,6 +3,7 @@
 
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/data_types.dart';
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/test/sun_animation.dart';
@@ -26,6 +27,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
   late Timer _timer;
   late AppTime currentTime;
   late String currentWeekday;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -33,9 +35,9 @@ class _ListPageState extends State<ListPage> with RouteAware {
     InitiativeGroup(
       title: 'DSA',
       initiativeList: [
-        Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 2)),
-        Initiative(title: 'Implementation', completionTime: AppTime(0, 2)),
-        Initiative(title: 'Efficient-Solution', completionTime: AppTime(0, 2)),
+        Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 15)),
+        Initiative(title: 'Implementation', completionTime: AppTime(0, 15)),
+        Initiative(title: 'Efficient-Solution', completionTime: AppTime(0, 15)),
         Initiative(
           title: 'Deployment',
           completionTime: AppTime(0, 15),
@@ -47,18 +49,18 @@ class _ListPageState extends State<ListPage> with RouteAware {
     InitiativeGroup(
       title: 'JavaScript',
       initiativeList: [
-        Initiative(title: 'Video-1', completionTime: AppTime(0, 1)),
-        Initiative(title: 'Apply-1', completionTime: AppTime(0, 1)),
-        Initiative(title: 'Video-2', completionTime: AppTime(0, 1)),
-        Initiative(title: 'Apply-2', completionTime: AppTime(0, 1), studyBreak: LongBreak(),),
+        Initiative(title: 'Video-1', completionTime: AppTime(0, 15)),
+        Initiative(title: 'Apply-1', completionTime: AppTime(0, 15)),
+        Initiative(title: 'Video-2', completionTime: AppTime(0, 15)),
+        Initiative(title: 'Apply-2', completionTime: AppTime(0, 15), studyBreak: LongBreak(),),
       ],
     ),
 
-    Initiative(title: 'Meditation', completionTime: AppTime(0, 2)),
+    Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
 
-    Initiative(title: 'English', completionTime: AppTime(0, 5)),
-    Initiative(title: 'Drawing', completionTime: AppTime(0, 1)),
-    Initiative(title: 'Assignment', completionTime: AppTime(0, 2)),
+    Initiative(title: 'English', completionTime: AppTime(0, 15)),
+    Initiative(title: 'Drawing', completionTime: AppTime(0, 15)),
+    Initiative(title: 'Assignment', completionTime: AppTime(0, 15)),
     Initiative(title: 'Maker Project', completionTime: AppTime(0, 15)),
     Initiative(title: 'GYM', completionTime: AppTime(0, 15)),
   ];
@@ -144,6 +146,11 @@ class _ListPageState extends State<ListPage> with RouteAware {
               ),
 
 
+            ),
+
+            ElevatedButton(
+              onPressed: (){addData();},
+              child: const Text('next'),
             ),
 
             // AnimatedSkyHeader(
@@ -424,6 +431,19 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
+
+  Future<void> addData() async {
+    try {
+      await firestore.collection('users').add({
+        'name': 'John Doe',
+        'email': 'john@example.com',
+        'age': 30,
+      });
+      print('Document Added');
+    } catch (e) {
+      print('Error adding document: $e');
+    }
+  }
 
 
 }
