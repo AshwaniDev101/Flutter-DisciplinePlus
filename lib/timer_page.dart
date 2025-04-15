@@ -5,7 +5,7 @@ import 'package:discipline_plus/resource_managers/audio_manager.dart';
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:discipline_plus/constants.dart';
+import 'package:discipline_plus/utils/constants.dart';
 import 'package:discipline_plus/models/data_types.dart';
 
 class TimerPage extends StatefulWidget {

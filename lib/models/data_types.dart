@@ -1,4 +1,5 @@
 
+
 class AppTime {
   final int hour;
   final int minute;
@@ -47,22 +48,24 @@ abstract class BaseInitiative {
     required this.title,
     required this.completionTime,
     bool isComplete = false,
-  })  : id = id ?? DateTime.now().microsecondsSinceEpoch.toString(),
+
+  })  : id = id ?? _generateReadableId(),
         dynamicTime = dynamicTime ?? const AppTime(0, 0) {
     _isComplete = isComplete;
 
-    id = generateReadableId();
+
   }
 
   bool get isComplete => _isComplete;
   set isComplete(bool v) => _isComplete = v;
 
-  String generateReadableId() {
+  static String _generateReadableId() {
     final now = DateTime.now();
-    return "${now.year}-${_twoDigits(now.month)}-${_twoDigits(now.day)}_${_twoDigits(now.hour)}:${_twoDigits(now.minute)}.${now.millisecond}";
+    return "${now.year}-${_twoDigits(now.month)}-${_twoDigits(now.day)}_${_twoDigits(now.hour)}:${_twoDigits(now.minute)}.${now.millisecond}_${now.microsecond}";
   }
+  static String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
-  String _twoDigits(int n) => n.toString().padLeft(2, '0');
+
 
   /// common fields to map
   Map<String, dynamic> baseToMap() => {

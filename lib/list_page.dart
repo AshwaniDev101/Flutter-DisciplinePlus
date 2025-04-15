@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'constants.dart';
+import 'utils/constants.dart';
 import 'database/repository/initiative_repository.dart';
 import 'database/services/firebase_initiative_service.dart';
 
