@@ -6,13 +6,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/data_types.dart';
 import 'package:discipline_plus/taskmanager.dart';
-import 'package:discipline_plus/test/sun_animation.dart';
 import 'package:discipline_plus/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'constants.dart';
+import 'database/repository/initiative_repository.dart';
+import 'database/services/firebase_initiative_service.dart';
 
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
@@ -23,6 +24,8 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> with RouteAware {
 
+
+  InitiativeRepository repo = InitiativeRepository(FirebaseInitiativeService());
 
   late Timer _timer;
   late AppTime currentTime;
@@ -148,10 +151,10 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
             ),
 
-            ElevatedButton(
-              onPressed: (){addData();},
-              child: const Text('next'),
-            ),
+            // ElevatedButton(
+            //   onPressed: (){addData();},
+            //   child: const Text('next'),
+            // ),
 
             // AnimatedSkyHeader(
             //   currentWeekday: 'Wednesday',
@@ -269,7 +272,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
                   ),
                 ),
                 onTap: () {
-                  // existing onTap logic...
+                  addData(ini);
                 },
               ),
             );
@@ -287,7 +290,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
         leading: buildLeading(item, topIndex),
         title: buildRichTitle(item),
         onTap: () {
-          // existing onTap logic...
+          addData(item);
         },
       );
     }
@@ -432,17 +435,22 @@ class _ListPageState extends State<ListPage> with RouteAware {
   }
 
 
-  Future<void> addData() async {
-    try {
-      await firestore.collection('users').add({
-        'name': 'John Doe',
-        'email': 'john@example.com',
-        'age': 30,
-      });
-      print('Document Added');
-    } catch (e) {
-      print('Error adding document: $e');
-    }
+
+
+  // Future<void> addData() async {
+  //   try {
+  //     await firestore.collection('users').add({
+  //       'name': 'John Doe',
+  //       'email': 'john@example.com',
+  //       'age': 30,
+  //     });
+  //     print('Document Added');
+  //   } catch (e) {
+  //     print('Error adding document: $e');
+  //   }
+  // }
+  Future<void> addData(Initiative ini) async {
+      repo.addInitiative(ini);
   }
 
 

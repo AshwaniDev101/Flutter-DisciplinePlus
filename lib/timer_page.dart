@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:math';
 import 'package:discipline_plus/resource_managers/audio_manager.dart';
 import 'package:discipline_plus/taskmanager.dart';
-import 'package:discipline_plus/test/sun_animation.dart';
 import 'package:discipline_plus/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/constants.dart';
@@ -27,7 +26,7 @@ class _TimerPageState extends State<TimerPage> {
   // Feature flags and style settings
   final bool showNumbers = true;
   final bool autoNextTask = true;
-  final int? clockSpeed = 80; // null = real‐time; >1 = multiplier
+  final int? clockSpeed = null; // null = real‐time; >1 = multiplier
   final Color tickColor = Colors.white;
   final double numberFontSize = 12.0;
   final Color numberColor = Colors.white;
@@ -64,7 +63,7 @@ class _TimerPageState extends State<TimerPage> {
     // Initialize current initiative from baseInitiative
     if (widget.baseInitiative is InitiativeGroup) {
       var group = widget.baseInitiative as InitiativeGroup;
-      if (group.hasNoInitiatives()) {
+      if (!group.hasInitiatives()) {
         _showErrorDialog("Empty Group");
         return;
       }

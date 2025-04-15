@@ -1,34 +1,32 @@
 
-
-
-
 import 'dart:math';
+import 'package:discipline_plus/models/data_types.dart';
 import 'package:flutter/material.dart';
 
 // Represents a simple time structure with hour and minute.
-class AppTime {
-  final int hour;
-  final int minute;
-
-  const AppTime(this.hour, this.minute);
-
-  // Helper method for formatting time as HH:MM
-  String remainingTime() {
-    if (hour == 0) return "${minute}m";
-    if (minute == 0) return "${hour}h";
-    return "${hour}h ${minute}m";
-  }
-
-  @override
-  String toString() {
-    // Convert hour to 12-hour format and determine AM/PM
-    final displayHour = hour % 12 == 0 ? 12 : hour % 12;
-    final period = hour >= 12 ? 'PM' : 'AM';
-    return "${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
-  }
-
-  bool get isZero => hour == 0 && minute == 0;
-}
+// class AppTime {
+//   final int hour;
+//   final int minute;
+//
+//   const AppTime(this.hour, this.minute);
+//
+//   // Helper method for formatting time as HH:MM
+//   String remainingTime() {
+//     if (hour == 0) return "${minute}m";
+//     if (minute == 0) return "${hour}h";
+//     return "${hour}h ${minute}m";
+//   }
+//
+//   @override
+//   String toString() {
+//     // Convert hour to 12-hour format and determine AM/PM
+//     final displayHour = hour % 12 == 0 ? 12 : hour % 12;
+//     final period = hour >= 12 ? 'PM' : 'AM';
+//     return "${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+//   }
+//
+//   bool get isZero => hour == 0 && minute == 0;
+// }
 
 class AnimatedSkyHeader extends StatefulWidget {
   final String currentWeekday;
