@@ -9,8 +9,10 @@ import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'dilog/custom_pop_up_dialog.dart';
 import 'utils/constants.dart';
 import 'database/repository/initiative_repository.dart';
 import 'database/services/firebase_initiative_service.dart';
@@ -30,43 +32,77 @@ class _ListPageState extends State<ListPage> with RouteAware {
   late Timer _timer;
   late AppTime currentTime;
   late String currentWeekday;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
 
   final ScrollController _scrollController = ScrollController();
 
-  final List<BaseInitiative> _items_list = [
-    InitiativeGroup(
-      title: 'DSA',
-      initiativeList: [
-        Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Implementation', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Efficient-Solution', completionTime: AppTime(0, 15)),
-        Initiative(
-          title: 'Deployment',
-          completionTime: AppTime(0, 15),
-          studyBreak: LongBreak(),
-        ),
-      ],
-    ),
-    // Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
-    InitiativeGroup(
-      title: 'JavaScript',
-      initiativeList: [
-        Initiative(title: 'Video-1', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Apply-1', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Video-2', completionTime: AppTime(0, 15)),
-        Initiative(title: 'Apply-2', completionTime: AppTime(0, 15), studyBreak: LongBreak(),),
-      ],
-    ),
+  // final List<BaseInitiative> _items_list = [
+  //   InitiativeGroup(
+  //     title: 'DSA',
+  //     initiativeList: [
+  //       Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 15)),
+  //       Initiative(title: 'Implementation', completionTime: AppTime(0, 15)),
+  //       Initiative(title: 'Efficient-Solution', completionTime: AppTime(0, 15)),
+  //       Initiative(
+  //         title: 'Deployment',
+  //         completionTime: AppTime(0, 15),
+  //         studyBreak: LongBreak(),
+  //       ),
+  //     ],
+  //   ),
+  //   // Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
+  //   InitiativeGroup(
+  //     title: 'JavaScript',
+  //     initiativeList: [
+  //       Initiative(title: 'Video-1', completionTime: AppTime(0, 15)),
+  //       Initiative(title: 'Apply-1', completionTime: AppTime(0, 15)),
+  //       Initiative(title: 'Video-2', completionTime: AppTime(0, 15)),
+  //       Initiative(title: 'Apply-2', completionTime: AppTime(0, 15), studyBreak: LongBreak(),),
+  //     ],
+  //   ),
+  //
+  //   Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
+  //
+  //   Initiative(title: 'English', completionTime: AppTime(0, 15)),
+  //   Initiative(title: 'Drawing', completionTime: AppTime(0, 15)),
+  //   Initiative(title: 'Assignment', completionTime: AppTime(0, 15)),
+  //   Initiative(title: 'Maker Project', completionTime: AppTime(0, 15)),
+  //   Initiative(title: 'GYM', completionTime: AppTime(0, 15)),
+  // ];
 
-    Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
 
-    Initiative(title: 'English', completionTime: AppTime(0, 15)),
-    Initiative(title: 'Drawing', completionTime: AppTime(0, 15)),
-    Initiative(title: 'Assignment', completionTime: AppTime(0, 15)),
-    Initiative(title: 'Maker Project', completionTime: AppTime(0, 15)),
-    Initiative(title: 'GYM', completionTime: AppTime(0, 15)),
-  ];
+  List<BaseInitiative> _items_list = [];
+
+
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
+
+  void _onRefresh() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+    // items.add((items.length+1).toString());
+    if(mounted)
+      setState(() {
+
+      });
+    _refreshController.loadComplete();
+  }
+
+
+
+  Future<void> loadInitiatives()
+  async {
+    _items_list.clear();
+    _items_list.addAll(await repo.getAllInitiatives());
+  }
 
 
   @override
@@ -74,9 +110,14 @@ class _ListPageState extends State<ListPage> with RouteAware {
     super.initState();
     _updateWeekTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateWeekTime());
+
+    // Call Database
+    loadInitiatives();
+
     // Initialize TaskManager
     TaskManager.instance.updateList(_items_list);
   }
+
 
   @override // call when return to the this route from some other route
   void didPopNext() {
@@ -91,80 +132,120 @@ class _ListPageState extends State<ListPage> with RouteAware {
   }
 
 
+  void showDialogAdd()
+  {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomPopupDialog(repo: repo,);
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
 
-
-      body: SlidingUpPanel(
-
-        // HeatMap
-        panel: HeatMapCalendar(
-          defaultColor: Colors.white,
-          flexible: true,
-          colorMode: ColorMode.color,
-          textColor: Colors.black45,
-          datasets: {
-            DateTime(2025,4,6):0,
-            DateTime(2025,4,7):1,
-            DateTime(2025,4,8):2,
-            DateTime(2025,4,9):3,
-            DateTime(2025,4,13):4,
-          },
-          colorsets: {
-            0: Colors.red[400]!,
-            1: Colors.green[100]!,
-            2: Colors.green[300]!,
-            3: Colors.green[400]!,
-            4: Colors.green[500]!,
-            5: Colors.green[600]!,
-          },
-          onClick: (value) {
-            // Do something
-          },
-        ),
+      floatingActionButton:Stack(
+        children: [
+          // Your main content here
+          Positioned(
+            bottom: 150,  // 200 pixels from top
+            right: 1, // 16 pixels from right (classic FAB spacing)
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  onPressed: showDialogAdd,
+                  child: Icon(Icons.add),
+                ),
+                SizedBox(height: 10), // space between buttons
+                FloatingActionButton(
+                  onPressed: () {},
+                  child: Icon(Icons.add_home_outlined),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
 
 
+      // body: SlidingUpPanel(
+      //
+      //   // HeatMap
+      //   panel: HeatMapCalendar(
+      //     defaultColor: Colors.white,
+      //     flexible: true,
+      //     colorMode: ColorMode.color,
+      //     textColor: Colors.black45,
+      //     datasets: {
+      //       DateTime(2025,4,6):0,
+      //       DateTime(2025,4,7):1,
+      //       DateTime(2025,4,8):2,
+      //       DateTime(2025,4,9):3,
+      //       DateTime(2025,4,13):4,
+      //     },
+      //     colorsets: {
+      //       0: Colors.red[400]!,
+      //       1: Colors.green[100]!,
+      //       2: Colors.green[300]!,
+      //       3: Colors.green[400]!,
+      //       4: Colors.green[500]!,
+      //       5: Colors.green[600]!,
+      //     },
+      //     onClick: (value) {
+      //       // Do something
+      //     },
+      //   ),
+      //
+      //
+      //
+      //   body:
 
-        body: Column(
-          children: [
+      body: Column(
+        children: [
 
-            // Wednesday   09:15
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
-              decoration: BoxDecoration(
-                color: Colors.indigo[100],
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
-              ),
-
-
-
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(currentWeekday, style: TextStyle(fontSize:22, fontWeight: FontWeight.w600, color:Colors.indigo[900])),
-                  Text(currentTime.toString(),   style: TextStyle(fontSize:34, fontWeight: FontWeight.bold, color:Colors.indigo[900])),
-                ],
-              ),
-
-
+          // Wednesday   09:15
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
+            decoration: BoxDecoration(
+              color: Colors.indigo[100],
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
             ),
 
-            // ElevatedButton(
-            //   onPressed: (){addData();},
-            //   child: const Text('next'),
-            // ),
-
-            // AnimatedSkyHeader(
-            //   currentWeekday: 'Wednesday',
-            //   currentTime: currentTime,
-            //   isFastForward: true, // Pass true for fast-forward mode
-            // ),
 
 
-            // Listview
-            Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(currentWeekday, style: TextStyle(fontSize:22, fontWeight: FontWeight.w600, color:Colors.indigo[900])),
+                Text(currentTime.toString(),   style: TextStyle(fontSize:34, fontWeight: FontWeight.bold, color:Colors.indigo[900])),
+              ],
+            ),
+
+
+          ),
+
+          // ElevatedButton(
+          //   onPressed: (){addData();},
+          //   child: const Text('next'),
+          // ),
+
+          // AnimatedSkyHeader(
+          //   currentWeekday: 'Wednesday',
+          //   currentTime: currentTime,
+          //   isFastForward: true, // Pass true for fast-forward mode
+          // ),
+
+
+          // Listview
+          Expanded(
+            child: SmartRefresher(
+
+              controller: _refreshController,
               child: ReorderableListView(
                 scrollController: _scrollController,
                 padding: const EdgeInsets.all(8),
@@ -210,12 +291,50 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
 
 
+
+
                 ],
               ),
             ),
-          ],
+          ),
+
+      SizedBox(
+        height: 150,  // enough for 7 rows
+        child: GridView.builder(
+          scrollDirection: Axis.horizontal,  // Horizontal grid for 31 columns
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,             // 7 rows
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2,
+          ),
+          itemCount: 7 * 31,               // total cells = 217
+          itemBuilder: (context, index) {
+            final heatLevel = index % 5;    // mock data for now
+
+            final colors = [
+              Color(0xFFEBEDF0), // empty
+              Color(0xFF9BE9A8), // light
+              Color(0xFF40C463), // medium
+              Color(0xFF30A14E), // strong
+              Color(0xFF216E39), // very strong
+            ];
+
+            return Container(
+              decoration: BoxDecoration(
+                color: colors[heatLevel],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            );
+          },
+          padding: EdgeInsets.all(2),
         ),
+      )
+
+
+
+        ],
       ),
+      // ),
     );
   }
 

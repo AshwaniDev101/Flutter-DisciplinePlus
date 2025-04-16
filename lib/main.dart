@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 import 'list_page.dart';
@@ -39,17 +40,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'DisciplinePlus',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
 
-          colorScheme: ColorScheme.fromSeed(seedColor: Constants.background_color),
-          useMaterial3: true,
-        ),
-        home: ListPage()
-      // home: TimerPage()
+    return MaterialApp(
+      title: 'DisciplinePlus',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Constants.background_color),
+        useMaterial3: true,
+      ),
+      home: ListPage(),
     );
+
+
+
+
+
   }
 }
 
