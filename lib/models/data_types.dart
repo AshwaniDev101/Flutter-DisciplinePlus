@@ -81,19 +81,13 @@ class Initiative extends BaseInitiative {
   final StudyBreak studyBreak;
 
   Initiative({
-    String? id,
-    AppTime? dynamicTime,
-    required String title,
-    required AppTime completionTime,
+    super.id,
+    super.dynamicTime,
+    required super.title,
+    required super.completionTime,
     this.studyBreak = const ShortBreak(),
-    bool isComplete = false,
-  }) : super(
-    id: id,
-    dynamicTime: dynamicTime,
-    title: title,
-    completionTime: completionTime,
-    isComplete: isComplete,
-  );
+    super.isComplete,
+  });
 
   String get type => studyBreak.title;
 
@@ -122,17 +116,13 @@ class InitiativeGroup extends BaseInitiative {
   final List<Initiative> initiativeList;
 
   InitiativeGroup({
-    String? id,
-    AppTime? dynamicTime,
-    required String title,
+    super.id,
+    super.dynamicTime,
+    required super.title,
     required this.initiativeList,
-    bool isComplete = false,
+    super.isComplete,
   }) : super(
-    id: id,
-    dynamicTime: dynamicTime,
-    title: title,
     completionTime: _calculateCompletionTime(initiativeList),
-    isComplete: isComplete,
   );
 
   // Calculate total sum of all sub items, to display in the header

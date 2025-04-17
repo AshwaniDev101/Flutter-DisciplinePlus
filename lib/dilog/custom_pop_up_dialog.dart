@@ -28,7 +28,7 @@ class CustomPopupDialog extends StatelessWidget {
     return AlertDialog(
       backgroundColor: Colors.white, // White background for dialog
       contentPadding: EdgeInsets.all(16),
-      content: Container(
+      content: SizedBox(
         width: 400, // Increase the width of the dialog
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -45,7 +45,7 @@ class CustomPopupDialog extends StatelessWidget {
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   hintText: 'Enter title here',
-                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.6)),
+                  hintStyle: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.6)),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 ),
@@ -68,7 +68,7 @@ class CustomPopupDialog extends StatelessWidget {
                     style: TextStyle(color: Colors.black),
                     decoration: InputDecoration(
                       hintText: '0',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.6)),
+                      hintStyle: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.6)),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     ),
@@ -90,18 +90,18 @@ class CustomPopupDialog extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Cancel'),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.red, // White text on red background
           ),
+          child: Text('Cancel'),
         ),
         // Add Button with blue color
         ElevatedButton(
           onPressed: addInitiative,
-          child: Text('Add'),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.blue, // White text on blue background
           ),
+          child: Text('Add'),
         ),
       ],
     );

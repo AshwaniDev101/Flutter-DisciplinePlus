@@ -1,16 +1,11 @@
 
-// lib/list_page.dart
-
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/data_types.dart';
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/timer_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'dilog/custom_pop_up_dialog.dart';
 import 'utils/constants.dart';
@@ -35,66 +30,29 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
 
   final ScrollController _scrollController = ScrollController();
-
-  // final List<BaseInitiative> _items_list = [
-  //   InitiativeGroup(
-  //     title: 'DSA',
-  //     initiativeList: [
-  //       Initiative(title: 'Self-Attempt', completionTime: AppTime(0, 15)),
-  //       Initiative(title: 'Implementation', completionTime: AppTime(0, 15)),
-  //       Initiative(title: 'Efficient-Solution', completionTime: AppTime(0, 15)),
-  //       Initiative(
-  //         title: 'Deployment',
-  //         completionTime: AppTime(0, 15),
-  //         studyBreak: LongBreak(),
-  //       ),
-  //     ],
-  //   ),
-  //   // Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
-  //   InitiativeGroup(
-  //     title: 'JavaScript',
-  //     initiativeList: [
-  //       Initiative(title: 'Video-1', completionTime: AppTime(0, 15)),
-  //       Initiative(title: 'Apply-1', completionTime: AppTime(0, 15)),
-  //       Initiative(title: 'Video-2', completionTime: AppTime(0, 15)),
-  //       Initiative(title: 'Apply-2', completionTime: AppTime(0, 15), studyBreak: LongBreak(),),
-  //     ],
-  //   ),
-  //
-  //   Initiative(title: 'Meditation', completionTime: AppTime(0, 20)),
-  //
-  //   Initiative(title: 'English', completionTime: AppTime(0, 15)),
-  //   Initiative(title: 'Drawing', completionTime: AppTime(0, 15)),
-  //   Initiative(title: 'Assignment', completionTime: AppTime(0, 15)),
-  //   Initiative(title: 'Maker Project', completionTime: AppTime(0, 15)),
-  //   Initiative(title: 'GYM', completionTime: AppTime(0, 15)),
-  // ];
-
-
-  List<BaseInitiative> _items_list = [];
-
-
-  RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+  final List<BaseInitiative> _items_list = [];
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   void _onRefresh() async{
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
+    await loadInitiatives();
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use loadFailed(),if no data return,use LoadNodata()
-    // items.add((items.length+1).toString());
-    if(mounted)
-      setState(() {
-
-      });
-    _refreshController.loadComplete();
-  }
+  // void _onLoading() async{
+  //   // monitor network fetch
+  //   await Future.delayed(Duration(milliseconds: 1000));
+  //   // if failed,use loadFailed(),if no data return,use LoadNodata()
+  //   // items.add((items.length+1).toString());
+  //   if(mounted) {
+  //     setState(() {
+  //       // loadInitiatives();
+  //     });
+  //   }
+  //   _refreshController.loadComplete();
+  // }
 
 
 
@@ -111,7 +69,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
     _updateWeekTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateWeekTime());
 
-    // Call Database
     loadInitiatives();
 
     // Initialize TaskManager
@@ -160,11 +117,11 @@ class _ListPageState extends State<ListPage> with RouteAware {
                   onPressed: showDialogAdd,
                   child: Icon(Icons.add),
                 ),
-                SizedBox(height: 10), // space between buttons
-                FloatingActionButton(
-                  onPressed: () {},
-                  child: Icon(Icons.add_home_outlined),
-                ),
+                // SizedBox(height: 10), // space between buttons
+                // FloatingActionButton(
+                //   onPressed: () {},
+                //   child: Icon(Icons.add_home_outlined),
+                // ),
               ],
             ),
           ),
@@ -244,8 +201,8 @@ class _ListPageState extends State<ListPage> with RouteAware {
           // Listview
           Expanded(
             child: SmartRefresher(
-
               controller: _refreshController,
+              onRefresh: _onRefresh,
               child: ReorderableListView(
                 scrollController: _scrollController,
                 padding: const EdgeInsets.all(8),
@@ -299,7 +256,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
           ),
 
       SizedBox(
-        height: 150,  // enough for 7 rows
+        height: 100,  // enough for 7 rows
         child: GridView.builder(
           scrollDirection: Axis.horizontal,  // Horizontal grid for 31 columns
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -391,7 +348,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
                   ),
                 ),
                 onTap: () {
-                  addData(ini);
+                  // addData(ini);
                 },
               ),
             );
@@ -409,7 +366,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
         leading: buildLeading(item, topIndex),
         title: buildRichTitle(item),
         onTap: () {
-          addData(item);
+          // addData(item);
         },
       );
     }
@@ -481,19 +438,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-
-
-  // void _updateWeekTime() {
-  //   final now = DateTime.now();
-  //   final hour12 = now.hour % 12 == 0 ? 12 : now.hour % 12;
-  //   final minute = now.minute.toString().padLeft(2, '0');
-  //   final period = now.hour >= 12 ? 'PM' : 'AM';
-  //   setState(() {
-  //     currentTime = '$hour12:$minute $period';
-  //     currentWeekday = _weekdayName(now.weekday);
-  //   });
-  // }
-
   void _updateWeekTime() {
     final now = DateTime.now();
 
@@ -553,24 +497,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-
-
-
-  // Future<void> addData() async {
-  //   try {
-  //     await firestore.collection('users').add({
-  //       'name': 'John Doe',
-  //       'email': 'john@example.com',
-  //       'age': 30,
-  //     });
-  //     print('Document Added');
-  //   } catch (e) {
-  //     print('Error adding document: $e');
-  //   }
-  // }
-  Future<void> addData(Initiative ini) async {
-      repo.addInitiative(ini);
-  }
 
 
 }

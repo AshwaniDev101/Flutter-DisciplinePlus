@@ -2,9 +2,7 @@ import 'package:discipline_plus/utils/constants.dart';
 import 'package:discipline_plus/resource_managers/audio_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 import 'list_page.dart';

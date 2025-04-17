@@ -34,11 +34,11 @@ class AnimatedSkyHeader extends StatefulWidget {
   final bool isFastForward;
 
   const AnimatedSkyHeader({
-    Key? key,
+    super.key,
     required this.currentWeekday,
     required this.currentTime,
     required this.isFastForward,
-  }) : super(key: key);
+  });
 
   @override
   _AnimatedSkyHeaderState createState() => _AnimatedSkyHeaderState();

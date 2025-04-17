@@ -10,7 +10,7 @@ import 'package:discipline_plus/models/data_types.dart';
 
 class TimerPage extends StatefulWidget {
   final BaseInitiative baseInitiative;
-  const TimerPage({required this.baseInitiative, Key? key}) : super(key: key);
+  const TimerPage({required this.baseInitiative, super.key});
 
   @override
   State<TimerPage> createState() => _TimerPageState();
