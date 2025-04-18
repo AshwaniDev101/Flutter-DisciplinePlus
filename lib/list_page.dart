@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:discipline_plus/models/initiative.dart';
@@ -10,7 +9,6 @@ import 'dilog/custom_pop_up_dialog.dart';
 import 'models/app_time.dart';
 import 'utils/constants.dart';
 
-
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
 
@@ -19,20 +17,16 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> with RouteAware {
-
-
-
-
   late Timer _timer;
   late AppTime currentTime;
   late String currentWeekday;
 
-
   final ScrollController _scrollController = ScrollController();
 
-  final RefreshController _refreshController = RefreshController(initialRefresh: true);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: true);
 
-  void _onRefresh() async{
+  void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
@@ -40,35 +34,18 @@ class _ListPageState extends State<ListPage> with RouteAware {
     _refreshController.refreshCompleted();
   }
 
-  // void _onLoading() async{
-  //   // monitor network fetch
-  //   await Future.delayed(Duration(milliseconds: 1000));
-  //   // if failed,use loadFailed(),if no data return,use LoadNodata()
-  //   // items.add((items.length+1).toString());
-  //   if(mounted) {
-  //     setState(() {
-  //       // loadInitiatives();
-  //     });
-  //   }
-  //   _refreshController.loadComplete();
-  // }
-
-
-
-
-
   @override
   void initState() {
     super.initState();
     _updateWeekTime();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateWeekTime());
+    _timer =
+        Timer.periodic(const Duration(seconds: 1), (_) => _updateWeekTime());
 
     // loadInitiatives();
     //
     // // Initialize TaskManager
     // TaskManager.instance.updateList(_items_list);
   }
-
 
   @override // call when return to the this route from some other route
   void didPopNext() {
@@ -82,9 +59,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
     super.dispose();
   }
 
-
-  void showDialogAdd()
-  {
+  void showDialogAdd() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -93,16 +68,14 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      floatingActionButton:Stack(
+      floatingActionButton: Stack(
         children: [
           // Your main content here
           Positioned(
-            bottom: 150,  // 200 pixels from top
+            bottom: 150, // 200 pixels from top
             right: 1, // 16 pixels from right (classic FAB spacing)
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -121,7 +94,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
           ),
         ],
       ),
-
 
       // body: SlidingUpPanel(
       //
@@ -157,42 +129,44 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
       body: Column(
         children: [
-
           // Wednesday   09:15
           Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
             decoration: BoxDecoration(
               color: Colors.indigo[100],
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+              borderRadius:
+                  const BorderRadius.vertical(bottom: Radius.circular(20)),
             ),
-
-
-
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(currentWeekday, style: TextStyle(fontSize:22, fontWeight: FontWeight.w600, color:Colors.indigo[900])),
-                Text(currentTime.toString(),   style: TextStyle(fontSize:34, fontWeight: FontWeight.bold, color:Colors.indigo[900])),
+                Text(currentWeekday,
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.indigo[900])),
+                Text(currentTime.toString(),
+                    style: TextStyle(
+                        fontSize: 34,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.indigo[900])),
               ],
             ),
-
-
           ),
 
           // ElevatedButton(
           //   onPressed: (){addData();},
           //   child: const Text('next'),
           // ),
-
           // AnimatedSkyHeader(
           //   currentWeekday: 'Wednesday',
           //   currentTime: currentTime,
           //   isFastForward: true, // Pass true for fast-forward mode
           // ),
 
-
           // Listview
+
           Expanded(
             child: SmartRefresher(
               controller: _refreshController,
@@ -201,84 +175,87 @@ class _ListPageState extends State<ListPage> with RouteAware {
                 scrollController: _scrollController,
                 padding: const EdgeInsets.all(8),
                 onReorder: (oldIndex, newIndex) {
-                  setState(() {
-                    if (newIndex > oldIndex) newIndex--;
-                    final item = TaskManager.instance.initiativesListTaskManager.removeAt(oldIndex);
-                    TaskManager.instance.initiativesListTaskManager.insert(newIndex, item);
+                  if (newIndex > oldIndex) newIndex--;
 
+                  setState(() {
+                    final item = TaskManager.instance.getInitiativeAt(oldIndex);
+                    TaskManager.instance.removeInitiativeAt(oldIndex);
+                    TaskManager.instance.insertInitiativeAt(newIndex, item);
                   });
+
+                  TaskManager.instance.updateAllOrders();
+
                 },
                 children: [
-
-
                   // Every list Item
-                  for (int i = 0; i < TaskManager.instance.initiativesListTaskManager.length; i++)
+                  for (var i = 0; i < TaskManager.instance.getLength(); i++)
+
                     Dismissible(
-                      key: ValueKey(TaskManager.instance.initiativesListTaskManager[i].id),
+                      key: ValueKey(TaskManager
+                          .instance.getInitiativeAt(i).id),
                       direction: DismissDirection.horizontal,
                       background: Container(
                         color: Constants.background_color,
                         alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(left:20),
-                        child: const Icon(Icons.timer, color:Colors.white),
+                        padding: const EdgeInsets.only(left: 20),
+                        child: const Icon(Icons.timer, color: Colors.white),
                       ),
                       secondaryBackground: Container(
                         color: Constants.background_color,
                         alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right:20),
-                        child: const Icon(Icons.timer, color:Colors.white),
+                        padding: const EdgeInsets.only(right: 20),
+                        child: const Icon(Icons.timer, color: Colors.white),
                       ),
-                      child: _buildinitiativeItem(TaskManager.instance.initiativesListTaskManager[i], i),
+                      child: _buildinitiativeItem(
+                          TaskManager.instance.getInitiativeAt(i),
+                          i),
                       confirmDismiss: (direction) async {
-                        navigateToTimerPage(dismissDirection:direction,initiative: TaskManager.instance.initiativesListTaskManager[i]);
+                        navigateToTimerPage(
+                            dismissDirection: direction,
+                            initiative: TaskManager
+                                .instance.getInitiativeAt(i));
                         return false; // Item won't get removed
                       },
                     ),
-
-
-
-
-
-
                 ],
               ),
             ),
           ),
 
-      SizedBox(
-        height: 100,  // enough for 7 rows
-        child: GridView.builder(
-          scrollDirection: Axis.horizontal,  // Horizontal grid for 31 columns
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7,             // 7 rows
-            crossAxisSpacing: 2,
-            mainAxisSpacing: 2,
-          ),
-          itemCount: 7 * 31,               // total cells = 217
-          itemBuilder: (context, index) {
-            final heatLevel = index % 5;    // mock data for now
-
-            final colors = [
-              Color(0xFFEBEDF0), // empty
-              Color(0xFF9BE9A8), // light
-              Color(0xFF40C463), // medium
-              Color(0xFF30A14E), // strong
-              Color(0xFF216E39), // very strong
-            ];
-
-            return Container(
-              decoration: BoxDecoration(
-                color: colors[heatLevel],
-                borderRadius: BorderRadius.circular(2),
+          //     Heatmap
+          SizedBox(
+            height: 100, // enough for 7 rows
+            child: GridView.builder(
+              scrollDirection: Axis.horizontal,
+              // Horizontal grid for 31 columns
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7, // 7 rows
+                crossAxisSpacing: 2,
+                mainAxisSpacing: 2,
               ),
-            );
-          },
-          padding: EdgeInsets.all(2),
-        ),
-      )
+              itemCount: 7 * 31,
+              // total cells = 217
+              itemBuilder: (context, index) {
+                final heatLevel = index % 5; // mock data for now
 
+                final colors = [
+                  Color(0xFFEBEDF0), // empty
+                  Color(0xFF9BE9A8), // light
+                  Color(0xFF40C463), // medium
+                  Color(0xFF30A14E), // strong
+                  Color(0xFF216E39), // very strong
+                ];
 
-
+                return Container(
+                  decoration: BoxDecoration(
+                    color: colors[heatLevel],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                );
+              },
+              padding: EdgeInsets.all(2),
+            ),
+          )
         ],
       ),
       // ),
@@ -286,20 +263,16 @@ class _ListPageState extends State<ListPage> with RouteAware {
   }
 
   Widget _buildinitiativeItem(Initiative item, int index) {
-
     return Builder(
       builder: (context) {
         return GestureDetector(
+          // Option Menu
           onLongPressStart: (details) {
             final position = details.globalPosition;
             showMenu(
               context: context,
               position: RelativeRect.fromLTRB(
-                  position.dx,
-                  position.dy,
-                  position.dx,
-                  position.dy
-              ),
+                  position.dx, position.dy, position.dx, position.dy),
               items: [
                 PopupMenuItem(value: 'edit', child: Text('Edit')),
                 PopupMenuItem(value: 'delete', child: Text('Delete')),
@@ -308,12 +281,11 @@ class _ListPageState extends State<ListPage> with RouteAware {
               if (value == 'edit') {
                 // handle edit
               } else if (value == 'delete') {
-
-                TaskManager.instance.removeInitiativeByIndex(index);
-
+                TaskManager.instance.removeInitiativeAt(index);
               }
             });
           },
+          // Item
           child: ListTile(
             leading: buildLeading(item, index),
             title: buildRichTitle(item),
@@ -324,84 +296,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
         );
       },
     );
-
-
-    // // InitiativeGroup
-    // if (item is InitiativeGroup) {
-    //   return Theme(
-    //     data: Theme.of(context).copyWith(dividerColor: Colors.indigo[300]),
-    //     child: ExpansionTile(
-    //       key: ValueKey(item.id),
-    //       leading: buildLeading(item, topIndex),
-    //       title: buildRichTitle(item, fontWeight: FontWeight.bold),
-    //       children: item.initiativeList.asMap().entries.map((e) {
-    //         // final childIndex = e.key;
-    //         final ini = e.value;
-    //
-    //         // Initiative Group Children
-    //         return Dismissible(
-    //           key: ValueKey(ini.id),
-    //           direction: DismissDirection.horizontal,
-    //           background: Container(
-    //             color: Constants.background_color,
-    //             alignment: Alignment.centerLeft,
-    //             padding: const EdgeInsets.only(left: 20),
-    //             child: const Icon(Icons.timer, color: Colors.white),
-    //           ),
-    //           secondaryBackground: Container(
-    //             color: Constants.background_color,
-    //             alignment: Alignment.centerRight,
-    //             padding: const EdgeInsets.only(right: 20),
-    //             child: const Icon(Icons.timer, color: Colors.white),
-    //           ),
-    //           confirmDismiss: (direction) async {
-    //             // Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( initiative: ini)));
-    //             navigateToTimerPage(dismissDirection:direction,initiative: ini);
-    //
-    //             return false; // don't actually dismiss
-    //           },
-    //           child: ListTile(
-    //             leading: buildChildLeading(ini),
-    //             title: RichText(
-    //               text: TextSpan(
-    //                 children: [
-    //                   TextSpan(
-    //                     text: '   ${ini.title} ',
-    //                     style: const TextStyle(fontSize: 16, color: Colors.indigo),
-    //                   ),
-    //                   TextSpan(
-    //                     text: ini.completionTime.remainingTime(),
-    //                     style: const TextStyle(fontSize: 14, color: Colors.grey),
-    //                   ),
-    //                 ],
-    //               ),
-    //             ),
-    //             onTap: () {
-    //               // addData(ini);
-    //             },
-    //           ),
-    //         );
-    //
-    //
-    //       }).toList(),
-    //     ),
-    //   );
-    //
-    //
-    //   // Normal Initiative
-    // } else {
-    //   item as Initiative;
-    //   return ListTile(
-    //     leading: buildLeading(item, topIndex),
-    //     title: buildRichTitle(item),
-    //     onTap: () {
-    //       // addData(item);
-    //     },
-    //   );
-    // }
   }
-
-
 
   //================  build and updating Leading Icon ===========================
   ReorderableDragStartListener buildLeading(Initiative bi, int index) {
@@ -418,12 +313,17 @@ class _ListPageState extends State<ListPage> with RouteAware {
   Widget buildChildLeading(Initiative ini) {
     return buildLeadingIcon(
       isComplete: ini.isComplete,
-      whiteCircleSize: 14,// small then the icon size to make sure it remain behind the circle
+      whiteCircleSize: 14,
+      // small then the icon size to make sure it remain behind the circle
       iconSize: 18,
     );
   }
 
-  Widget buildLeadingIcon({required bool isComplete, required double whiteCircleSize, required double iconSize,}) {
+  Widget buildLeadingIcon({
+    required bool isComplete,
+    required double whiteCircleSize,
+    required double iconSize,
+  }) {
     return SizedBox(
       width: 24,
       height: 48,
@@ -438,16 +338,16 @@ class _ListPageState extends State<ListPage> with RouteAware {
             child: Container(width: 2, color: Colors.indigo[300]),
           ),
           // if (!isComplete)
-            Container(
-              width: whiteCircleSize,
-              height: whiteCircleSize,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
+          Container(
+            width: whiteCircleSize,
+            height: whiteCircleSize,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
             ),
+          ),
           Icon(
-            isComplete ? Icons.circle_rounded: Icons.circle_outlined,
+            isComplete ? Icons.circle_rounded : Icons.circle_outlined,
             size: iconSize,
             color: Colors.indigo[300],
           ),
@@ -456,13 +356,19 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-
 //================  build and updating Title ===========================
   Widget buildRichTitle(Initiative u, {FontWeight? fontWeight}) {
     return RichText(
       text: TextSpan(children: [
-        TextSpan(text: '${u.title} ', style: TextStyle(fontSize:18, color:Colors.indigo[700], fontWeight:fontWeight)),
-        TextSpan(text: u.completionTime.remainingTime(), style: const TextStyle(fontSize:16, color:Colors.grey)),
+        TextSpan(
+            text: '${u.title} ',
+            style: TextStyle(
+                fontSize: 18,
+                color: Colors.indigo[700],
+                fontWeight: fontWeight)),
+        TextSpan(
+            text: u.completionTime.remainingTime(),
+            style: const TextStyle(fontSize: 16, color: Colors.grey)),
       ]),
     );
   }
@@ -492,7 +398,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
     return weekdays[weekdayNumber - 1];
   }
 
-
   void navigateToTimerPage({
     required DismissDirection dismissDirection,
     required Initiative initiative,
@@ -502,16 +407,17 @@ class _ListPageState extends State<ListPage> with RouteAware {
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, secondaryAnimation) =>
-            TimerPage(initiative:initiative),
+            TimerPage(initiative: initiative),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           // Determine the start and end offset based on the dismiss direction
           Offset beginOffset;
           if (dismissDirection == DismissDirection.startToEnd) {
-            beginOffset = const Offset(-1.0, 0.0);  // Slide from left to right
+            beginOffset = const Offset(-1.0, 0.0); // Slide from left to right
           } else if (dismissDirection == DismissDirection.endToStart) {
-            beginOffset = const Offset(1.0, 0.0);  // Slide from right to left
+            beginOffset = const Offset(1.0, 0.0); // Slide from right to left
           } else {
-            beginOffset = const Offset(0.0, 1.0);  // Slide from top to bottom (fallback case)
+            beginOffset = const Offset(
+                0.0, 1.0); // Slide from top to bottom (fallback case)
           }
 
           return SlideTransition(
@@ -525,7 +431,4 @@ class _ListPageState extends State<ListPage> with RouteAware {
       ),
     );
   }
-
-
-
 }

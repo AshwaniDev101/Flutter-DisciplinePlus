@@ -24,4 +24,12 @@ class InitiativeRepository {
     ini.isComplete = isComplete;
     return _service.update(ini);
   }
+
+  Future<void> updateInitiative(Initiative ini) {
+    return _service.update(ini);
+  }
+
+
+
+
 }

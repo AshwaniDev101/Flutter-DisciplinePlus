@@ -70,7 +70,7 @@ class _TimerPageState extends State<TimerPage> {
       _showErrorDialog("No Current Initiatives");
       return;
     }
-    nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.index);
+    nextInitiative = TaskManager.instance.getNextInitiative(currentInitiative!.index);
 
     // Calculate total time in seconds
     totalTimeSeconds =
@@ -153,7 +153,7 @@ class _TimerPageState extends State<TimerPage> {
     } else {
       // 3) else go to next real initiative
       currentInitiative = nextInitiative;
-      nextInitiative = TaskManager.instance.nextInitiative(currentInitiative!.index);
+      nextInitiative = TaskManager.instance.getNextInitiative(currentInitiative!.index);
       onBreak = false;
     }
 

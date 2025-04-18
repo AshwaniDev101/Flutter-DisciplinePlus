@@ -8,7 +8,7 @@ class Initiative {
   final AppTime dynamicTime;
   bool isComplete;
   final StudyBreak studyBreak;
-  final int index;
+  int index;
 
   Initiative({
     String? id,

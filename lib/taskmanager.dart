@@ -7,41 +7,80 @@ import 'models/initiative.dart';
 
 class TaskManager {
   TaskManager._internal();
+
   static final TaskManager _instance = TaskManager._internal();
+
   static TaskManager get instance => _instance;
 
 
   InitiativeRepository repo = InitiativeRepository(FireInitiativeService());
 
-  final List<Initiative> initiativesListTaskManager = [];
+  final List<Initiative> _initiativesListTaskManager = [];
 
+
+// ====================== Repository management functions ==================================
   Future<void> reloadRepository() async {
-
     var list = await repo.getAllInitiatives();
-    initiativesListTaskManager.clear();
-    initiativesListTaskManager.addAll(list);
-
-    printList();
+    _initiativesListTaskManager.clear();
+    _initiativesListTaskManager.addAll(list);
   }
 
-  void addInitiative(Initiative initiative) {
-    initiativesListTaskManager.add(initiative);
-    repo.addInitiative(initiative);
-    printList();
+  Future<void> addInitiative(Initiative initiative) async {
+    _initiativesListTaskManager.add(initiative);
+    await repo.addInitiative(initiative);
   }
 
-  void removeInitiativeByID(String id) {
-    initiativesListTaskManager.removeWhere((element) => element.id == id);
-    printList();
+  Future<void> removeInitiative(String id) async {
+    await repo.removeInitiative(id);
+    _initiativesListTaskManager.removeWhere((element) => element.id == id);
   }
 
-  void removeInitiativeByIndex(int index) {
-    initiativesListTaskManager.removeAt(index);
-    printList();
+
+  // void updateAllOrders() {
+  //   // loop through the list, set each .index, and push an update to Firebase
+  //   for (int i = 0; i < _initiativesListTaskManager.length; i++) {
+  //     final ini = _initiativesListTaskManager[i];
+  //     ini.index = i;
+  //    repo.updateInitiative(ini);
+  //   }
+  // }
+
+  Future<void> updateAllOrders() async {
+    final batchUpdates = _initiativesListTaskManager.asMap().entries.map((e) {
+      e.value.index = e.key;
+      return repo.updateInitiative(e.value);
+    }).toList();
+
+    await Future.wait(batchUpdates);
+  }
+
+// ====================== Local management functions ==================================
+
+  void insertInitiativeAt(int index, Initiative ini) {
+    _initiativesListTaskManager.insert(index, ini);
+  }
+
+  Initiative removeInitiativeAt(int index) {
+    final removed = _initiativesListTaskManager[index];
+    _initiativesListTaskManager.removeAt(index);
+    return removed;
+  }
+
+  Initiative getInitiativeAt(int index) {
+    return _initiativesListTaskManager[index];
+  }
+
+
+  Initiative? getNextInitiative(int currentIndex) {
+    final nextIndex = currentIndex + 1;
+    if (nextIndex >= 0 && nextIndex < _initiativesListTaskManager.length) {
+      return _initiativesListTaskManager[nextIndex];
+    }
+    return null;
   }
 
   int getNextIndex() {
-    int listSize = initiativesListTaskManager.length;
+    int listSize = _initiativesListTaskManager.length;
     if (listSize == 0) {
       return 0;
     } else {
@@ -49,30 +88,14 @@ class TaskManager {
     }
   }
 
-
-  void updateInitiative(String id, Initiative updated) {
-    final index = initiativesListTaskManager.indexWhere((e) => e.id == id);
-    if (index != -1) {
-      initiativesListTaskManager[index] = updated;
-      printList();
-    } else {
-      debugPrint("Initiative with ID $id not found.");
-    }
+  int getLength() {
+    return _initiativesListTaskManager.length;
   }
 
-  Initiative? nextInitiative(int currentIndex) {
-    final nextIndex = currentIndex + 1;
-    if (nextIndex >= 0 && nextIndex < initiativesListTaskManager.length) {
-      return initiativesListTaskManager[nextIndex];
-    }
-    return null;
-  }
 
-  void printList() {
-    debugPrint("------------------- TaskManager title index Map -----------------------------");
-    debugPrint("=================== TaskManager Initiatives List ============================");
-    for (var i = 0; i < initiativesListTaskManager.length; i++) {
-      debugPrint("$i. ID ${initiativesListTaskManager[i].id}, ${initiativesListTaskManager[i].title}");
-    }
-  }
+
+
+
+
+
 }
