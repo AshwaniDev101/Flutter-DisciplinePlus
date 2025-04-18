@@ -1,25 +1,21 @@
-import 'package:discipline_plus/database/repository/initiative_repository.dart';
-import 'package:discipline_plus/models/data_types.dart';
+import 'package:discipline_plus/models/initiative.dart';
+import 'package:discipline_plus/taskmanager.dart';
 import 'package:flutter/material.dart';
+import '../models/app_time.dart';
 
 class CustomPopupDialog extends StatelessWidget {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
 
-  final InitiativeRepository repo;
-
-  CustomPopupDialog({super.key, required this.repo});
-
-
-
+  CustomPopupDialog({super.key});
 
 
 
 
   void  addInitiative()
   {
-    var ini = Initiative(title: titleController.text, completionTime: AppTime(0, int.parse(numberController.text)));
-    repo.addInitiative(ini);
+    var ini = Initiative(index: TaskManager.instance.getNextIndex(), title: titleController.text, completionTime: AppTime(0, int.parse(numberController.text)));
+    TaskManager.instance.addInitiative(ini);
   }
 
 

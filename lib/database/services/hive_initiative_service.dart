@@ -1,8 +1,6 @@
-// hive_initiative_service.dart
 
 import 'package:hive/hive.dart';
-
-import '../../models/data_types.dart';
+import '../../models/initiative.dart';
 import 'initiative_service.dart';
 
 class HiveInitiativeService implements InitiativeService {
@@ -11,15 +9,20 @@ class HiveInitiativeService implements InitiativeService {
   Future<Box> get _box async => await Hive.openBox(_boxName);
 
   @override
-  Future<List<BaseInitiative>> fetchAll() async {
+  Future<List<Initiative>> fetchAll() async {
     final box = await _box;
-    return box.values.cast<BaseInitiative>().toList();
+    return box.values.map((value) {
+      // Each value is stored as a Map<String, dynamic>
+      final map = Map<String, dynamic>.from(value as Map);
+      return Initiative.fromMap(map);
+    }).toList();
   }
 
   @override
-  Future<void> save(BaseInitiative initiative) async {
+  Future<void> save(Initiative initiative) async {
     final box = await _box;
-    await box.put(initiative.id, initiative);
+    // Store the Initiative as a Map
+    await box.put(initiative.id, initiative.toMap());
   }
 
   @override
@@ -29,8 +32,9 @@ class HiveInitiativeService implements InitiativeService {
   }
 
   @override
-  Future<void> update(BaseInitiative initiative) async {
+  Future<void> update(Initiative initiative) async {
     final box = await _box;
-    await box.put(initiative.id, initiative);
+    // Overwrite the existing entry
+    await box.put(initiative.id, initiative.toMap());
   }
 }

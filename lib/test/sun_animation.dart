@@ -1,7 +1,8 @@
 
 import 'dart:math';
-import 'package:discipline_plus/models/data_types.dart';
 import 'package:flutter/material.dart';
+
+import '../models/app_time.dart';
 
 // Represents a simple time structure with hour and minute.
 // class AppTime {

@@ -1,10 +1,10 @@
 // initiative_service.dart
 
-import '../../models/data_types.dart';
+import '../../models/initiative.dart';
 
 abstract class InitiativeService {
-  Future<List<BaseInitiative>> fetchAll();
-  Future<void> save(BaseInitiative initiative);
+  Future<List<Initiative>> fetchAll();
+  Future<void> save(Initiative initiative);
   Future<void> delete(String id);
-  Future<void> update(BaseInitiative initiative);
+  Future<void> update(Initiative initiative);
 }

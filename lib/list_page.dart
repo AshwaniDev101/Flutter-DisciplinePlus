@@ -1,16 +1,15 @@
 
 import 'dart:async';
 
-import 'package:discipline_plus/models/data_types.dart';
+import 'package:discipline_plus/models/initiative.dart';
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import 'dilog/custom_pop_up_dialog.dart';
+import 'models/app_time.dart';
 import 'utils/constants.dart';
-import 'database/repository/initiative_repository.dart';
-import 'database/services/firebase_initiative_service.dart';
+
 
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
@@ -22,7 +21,7 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage> with RouteAware {
 
 
-  InitiativeRepository repo = InitiativeRepository(FirebaseInitiativeService());
+
 
   late Timer _timer;
   late AppTime currentTime;
@@ -30,14 +29,14 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
 
   final ScrollController _scrollController = ScrollController();
-  final List<BaseInitiative> _items_list = [];
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  final RefreshController _refreshController = RefreshController(initialRefresh: true);
 
   void _onRefresh() async{
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
-    await loadInitiatives();
+    TaskManager.instance.reloadRepository();
     _refreshController.refreshCompleted();
   }
 
@@ -56,11 +55,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
 
 
-  Future<void> loadInitiatives()
-  async {
-    _items_list.clear();
-    _items_list.addAll(await repo.getAllInitiatives());
-  }
 
 
   @override
@@ -69,10 +63,10 @@ class _ListPageState extends State<ListPage> with RouteAware {
     _updateWeekTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateWeekTime());
 
-    loadInitiatives();
-
-    // Initialize TaskManager
-    TaskManager.instance.updateList(_items_list);
+    // loadInitiatives();
+    //
+    // // Initialize TaskManager
+    // TaskManager.instance.updateList(_items_list);
   }
 
 
@@ -94,7 +88,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomPopupDialog(repo: repo,);
+        return CustomPopupDialog();
       },
     );
   }
@@ -209,19 +203,18 @@ class _ListPageState extends State<ListPage> with RouteAware {
                 onReorder: (oldIndex, newIndex) {
                   setState(() {
                     if (newIndex > oldIndex) newIndex--;
-                    final item = _items_list.removeAt(oldIndex);
-                    _items_list.insert(newIndex, item);
-                    // Keep TaskManager in sync
-                    TaskManager.instance.updateList(_items_list);
+                    final item = TaskManager.instance.initiativesListTaskManager.removeAt(oldIndex);
+                    TaskManager.instance.initiativesListTaskManager.insert(newIndex, item);
+
                   });
                 },
                 children: [
 
 
                   // Every list Item
-                  for (int i = 0; i < _items_list.length; i++)
+                  for (int i = 0; i < TaskManager.instance.initiativesListTaskManager.length; i++)
                     Dismissible(
-                      key: ValueKey(_items_list[i].id),
+                      key: ValueKey(TaskManager.instance.initiativesListTaskManager[i].id),
                       direction: DismissDirection.horizontal,
                       background: Container(
                         color: Constants.background_color,
@@ -235,13 +228,10 @@ class _ListPageState extends State<ListPage> with RouteAware {
                         padding: const EdgeInsets.only(right:20),
                         child: const Icon(Icons.timer, color:Colors.white),
                       ),
-                      child: _buildBaseInitiativeItem(_items_list[i], i),
+                      child: _buildinitiativeItem(TaskManager.instance.initiativesListTaskManager[i], i),
                       confirmDismiss: (direction) async {
-                        // Navigate to TimerPage but don't remove
-                        // Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( baseInitiative: _items_list[i])));
-
-                        navigateToTimerPage(dismissDirection:direction,baseInitiative: _items_list[i]);
-                        return false;
+                        navigateToTimerPage(dismissDirection:direction,initiative: TaskManager.instance.initiativesListTaskManager[i]);
+                        return false; // Item won't get removed
                       },
                     ),
 
@@ -295,87 +285,126 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-  Widget _buildBaseInitiativeItem(BaseInitiative item, int topIndex) {
+  Widget _buildinitiativeItem(Initiative item, int index) {
 
-    // InitiativeGroup
-    if (item is InitiativeGroup) {
-      return Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.indigo[300]),
-        child: ExpansionTile(
-          key: ValueKey(item.id),
-          leading: buildLeading(item, topIndex),
-          title: buildRichTitle(item, fontWeight: FontWeight.bold),
-          children: item.initiativeList.asMap().entries.map((e) {
-            // final childIndex = e.key;
-            final ini = e.value;
-
-            // Initiative Group Children
-            return Dismissible(
-              key: ValueKey(ini.id),
-              direction: DismissDirection.horizontal,
-              background: Container(
-                color: Constants.background_color,
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 20),
-                child: const Icon(Icons.timer, color: Colors.white),
+    return Builder(
+      builder: (context) {
+        return GestureDetector(
+          onLongPressStart: (details) {
+            final position = details.globalPosition;
+            showMenu(
+              context: context,
+              position: RelativeRect.fromLTRB(
+                  position.dx,
+                  position.dy,
+                  position.dx,
+                  position.dy
               ),
-              secondaryBackground: Container(
-                color: Constants.background_color,
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: 20),
-                child: const Icon(Icons.timer, color: Colors.white),
-              ),
-              confirmDismiss: (direction) async {
-                // Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( baseInitiative: ini)));
-                navigateToTimerPage(dismissDirection:direction,baseInitiative: ini);
+              items: [
+                PopupMenuItem(value: 'edit', child: Text('Edit')),
+                PopupMenuItem(value: 'delete', child: Text('Delete')),
+              ],
+            ).then((value) {
+              if (value == 'edit') {
+                // handle edit
+              } else if (value == 'delete') {
 
-                return false; // don't actually dismiss
-              },
-              child: ListTile(
-                leading: buildChildLeading(ini),
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '   ${ini.title} ',
-                        style: const TextStyle(fontSize: 16, color: Colors.indigo),
-                      ),
-                      TextSpan(
-                        text: ini.completionTime.remainingTime(),
-                        style: const TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-                onTap: () {
-                  // addData(ini);
-                },
-              ),
-            );
+                TaskManager.instance.removeInitiativeByIndex(index);
+
+              }
+            });
+          },
+          child: ListTile(
+            leading: buildLeading(item, index),
+            title: buildRichTitle(item),
+            onTap: () {
+              // handle tap
+            },
+          ),
+        );
+      },
+    );
 
 
-          }).toList(),
-        ),
-      );
-
-
-      // Normal Initiative
-    } else {
-      item as Initiative;
-      return ListTile(
-        leading: buildLeading(item, topIndex),
-        title: buildRichTitle(item),
-        onTap: () {
-          // addData(item);
-        },
-      );
-    }
+    // // InitiativeGroup
+    // if (item is InitiativeGroup) {
+    //   return Theme(
+    //     data: Theme.of(context).copyWith(dividerColor: Colors.indigo[300]),
+    //     child: ExpansionTile(
+    //       key: ValueKey(item.id),
+    //       leading: buildLeading(item, topIndex),
+    //       title: buildRichTitle(item, fontWeight: FontWeight.bold),
+    //       children: item.initiativeList.asMap().entries.map((e) {
+    //         // final childIndex = e.key;
+    //         final ini = e.value;
+    //
+    //         // Initiative Group Children
+    //         return Dismissible(
+    //           key: ValueKey(ini.id),
+    //           direction: DismissDirection.horizontal,
+    //           background: Container(
+    //             color: Constants.background_color,
+    //             alignment: Alignment.centerLeft,
+    //             padding: const EdgeInsets.only(left: 20),
+    //             child: const Icon(Icons.timer, color: Colors.white),
+    //           ),
+    //           secondaryBackground: Container(
+    //             color: Constants.background_color,
+    //             alignment: Alignment.centerRight,
+    //             padding: const EdgeInsets.only(right: 20),
+    //             child: const Icon(Icons.timer, color: Colors.white),
+    //           ),
+    //           confirmDismiss: (direction) async {
+    //             // Navigator.push(context, MaterialPageRoute(builder: (_) => TimerPage( initiative: ini)));
+    //             navigateToTimerPage(dismissDirection:direction,initiative: ini);
+    //
+    //             return false; // don't actually dismiss
+    //           },
+    //           child: ListTile(
+    //             leading: buildChildLeading(ini),
+    //             title: RichText(
+    //               text: TextSpan(
+    //                 children: [
+    //                   TextSpan(
+    //                     text: '   ${ini.title} ',
+    //                     style: const TextStyle(fontSize: 16, color: Colors.indigo),
+    //                   ),
+    //                   TextSpan(
+    //                     text: ini.completionTime.remainingTime(),
+    //                     style: const TextStyle(fontSize: 14, color: Colors.grey),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             onTap: () {
+    //               // addData(ini);
+    //             },
+    //           ),
+    //         );
+    //
+    //
+    //       }).toList(),
+    //     ),
+    //   );
+    //
+    //
+    //   // Normal Initiative
+    // } else {
+    //   item as Initiative;
+    //   return ListTile(
+    //     leading: buildLeading(item, topIndex),
+    //     title: buildRichTitle(item),
+    //     onTap: () {
+    //       // addData(item);
+    //     },
+    //   );
+    // }
   }
 
 
 
   //================  build and updating Leading Icon ===========================
-  ReorderableDragStartListener buildLeading(BaseInitiative bi, int index) {
+  ReorderableDragStartListener buildLeading(Initiative bi, int index) {
     return ReorderableDragStartListener(
       index: index,
       child: buildLeadingIcon(
@@ -429,7 +458,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
 
 //================  build and updating Title ===========================
-  Widget buildRichTitle(BaseInitiative u, {FontWeight? fontWeight}) {
+  Widget buildRichTitle(Initiative u, {FontWeight? fontWeight}) {
     return RichText(
       text: TextSpan(children: [
         TextSpan(text: '${u.title} ', style: TextStyle(fontSize:18, color:Colors.indigo[700], fontWeight:fontWeight)),
@@ -466,14 +495,14 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
   void navigateToTimerPage({
     required DismissDirection dismissDirection,
-    required BaseInitiative baseInitiative,
+    required Initiative initiative,
   }) {
     Navigator.push(
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, secondaryAnimation) =>
-            TimerPage(baseInitiative: baseInitiative),
+            TimerPage(initiative:initiative),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           // Determine the start and end offset based on the dismiss direction
           Offset beginOffset;
