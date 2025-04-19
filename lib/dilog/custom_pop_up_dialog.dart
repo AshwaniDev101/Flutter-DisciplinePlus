@@ -7,7 +7,9 @@ import '../widget/quantity_selector.dart';
 
 class CustomPopupDialog extends StatelessWidget {
   final TextEditingController initiativeTitleController = TextEditingController();
-  final TextEditingController initiativeCompletionTimeController = TextEditingController();
+  late int initiativeCompletionTime = 5;
+
+  final TextEditingController breakTimeController = TextEditingController();
 
   CustomPopupDialog({super.key});
 
@@ -15,7 +17,8 @@ class CustomPopupDialog extends StatelessWidget {
   void addInitiative() {
     var ini = Initiative(index: TaskManager.instance.getNextIndex(),
         title: initiativeTitleController.text,
-        completionTime: AppTime(0, int.parse(initiativeCompletionTimeController.text)));
+        completionTime: AppTime(0, initiativeCompletionTime));
+
     TaskManager.instance.addInitiative(ini);
   }
 
@@ -28,7 +31,8 @@ class CustomPopupDialog extends StatelessWidget {
       backgroundColor: Colors.white,
       // White background for dialog
       // contentPadding: EdgeInsets.zero,
-      actionsPadding: EdgeInsets.zero,
+      actionsPadding: EdgeInsets.all(16),
+
 
 
 
@@ -44,10 +48,14 @@ class CustomPopupDialog extends StatelessWidget {
             // Title TextField with colorful border and white background
             TextField(
               controller: initiativeTitleController,
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(
+                  color: Colors.black45,    // Your desired text color
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold
+              ),
               decoration: InputDecoration(
                 hintText: 'Enter Initiative Name',
-                hintStyle: TextStyle(color: Colors.black26),
+                hintStyle: TextStyle(color: Colors.black26, fontSize: 16,),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
                   borderSide: BorderSide(color: Colors.blue, width: 2),
@@ -60,82 +68,35 @@ class CustomPopupDialog extends StatelessWidget {
 
             // Number TextField with colorful border and width of 50
             Row(
+
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  width: 80,
-                  child: TextField(
-                    controller: initiativeCompletionTimeController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    style: TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                      hintText: '0',
-                      hintStyle: TextStyle(color: Colors.black26),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4),
-                        borderSide: BorderSide(color: Colors.blue, width: 2),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 4),
-                Text(
-                  'min',
-                  style: TextStyle(color: Colors.black26, fontSize: 14),
-                ),
-                SizedBox(width: 50),
+
+
+                Text("Duration", style: TextStyle(color: Colors.black38, fontSize: 16,)),
                 Flexible(
                   child: QuantitySelector(
-                    initialValue: 1,
+
                     onChanged: (value) {
-                      // do something with value
+                      initiativeCompletionTime = value;
                     },
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20,),
-            // Divider(),
-            SizedBox(height: 5,),
-
-            Text("Break", style: TextStyle(color: Colors.black38, fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10,),
+            // SizedBox(height: 10,),
+            Divider(),
 
 
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  width: 80,
-                  child: TextField(
-                    controller: initiativeCompletionTimeController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    style: TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                      hintText: '0',
-                      hintStyle: TextStyle(color: Colors.black26),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4),
-                        borderSide: BorderSide(color: Colors.blue, width: 2),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 4),
-                Text(
-                  'min',
-                  style: TextStyle(color: Colors.black26, fontSize: 14),
-                ),
-                SizedBox(width: 50),
+                Text("Break", style: TextStyle(color: Colors.black38, fontSize: 16,)),
                 Flexible(
                   child: QuantitySelector(
-                    initialValue: 1,
+
                     onChanged: (value) {
-                      // do something with value
+                      breakTimeController.text = value.toString();
                     },
                   ),
                 ),
@@ -172,12 +133,12 @@ class CustomPopupDialog extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(4),
                   topRight: Radius.circular(4),
-                  bottomLeft: Radius.circular(0),
+                  bottomLeft: Radius.circular(4),
                   bottomRight: Radius.circular(4),
                 ),
                 child: InkWell(
 
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: addInitiative,
                     child: Center(child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text("Add", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),

@@ -31,8 +31,9 @@ class TaskManager {
   }
 
   Future<void> removeInitiative(String id) async {
-    await repo.removeInitiative(id);
     _initiativesListTaskManager.removeWhere((element) => element.id == id);
+    await repo.removeInitiative(id);
+
   }
 
 

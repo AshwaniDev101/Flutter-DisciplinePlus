@@ -281,7 +281,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
               if (value == 'edit') {
                 // handle edit
               } else if (value == 'delete') {
-                TaskManager.instance.removeInitiativeAt(index);
+                TaskManager.instance.removeInitiative(item.id);
               }
             });
           },
