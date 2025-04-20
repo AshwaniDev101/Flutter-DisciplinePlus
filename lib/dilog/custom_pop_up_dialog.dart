@@ -38,9 +38,6 @@ class CustomPopupDialog extends StatelessWidget {
       // contentPadding: EdgeInsets.zero,
       actionsPadding: EdgeInsets.all(16),
 
-
-
-
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16), // Square corners
       ),

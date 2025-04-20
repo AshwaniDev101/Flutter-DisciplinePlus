@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/timer_page.dart';
+import 'package:discipline_plus/widget/heatmap.dart';
+import 'package:discipline_plus/widget/heatmap_line.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'dilog/custom_pop_up_dialog.dart';
 import 'models/app_time.dart';
 import 'utils/constants.dart';
@@ -20,6 +23,8 @@ class _ListPageState extends State<ListPage> with RouteAware {
   late Timer _timer;
   late AppTime currentTime;
   late String currentWeekday;
+
+  double panelValue = 0.0;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -74,8 +79,10 @@ class _ListPageState extends State<ListPage> with RouteAware {
       floatingActionButton: Stack(
         children: [
           // Your main content here
+
+          if (panelValue>0.5)
           Positioned(
-            bottom: 150, // 200 pixels from top
+            bottom: 100, // 200 pixels from top
             right: 1, // 16 pixels from right (classic FAB spacing)
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -127,137 +134,140 @@ class _ListPageState extends State<ListPage> with RouteAware {
       //
       //   body:
 
-      body: Column(
-        children: [
-          // Wednesday   09:15
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
-            decoration: BoxDecoration(
-              color: Colors.indigo[100],
-              borderRadius:
-                  const BorderRadius.vertical(bottom: Radius.circular(20)),
+      body: SlidingUpPanel(
+
+        minHeight: 100, // collapsed size
+        maxHeight: 550, // expanded size
+
+
+
+        panel: Column(
+
+          children: [
+
+
+
+            SizedBox(
+              // height: 300,
+              height: 80,
+              child: HeatmapLine(),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(currentWeekday,
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.indigo[900])),
-                Text(currentTime.toString(),
-                    style: TextStyle(
-                        fontSize: 34,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.indigo[900])),
-              ],
-            ),
+
+          SizedBox(
+            height: 450,  // or any height that fits your design
+            child: Heatmap(),
           ),
+        ],),
 
-          // ElevatedButton(
-          //   onPressed: (){addData();},
-          //   child: const Text('next'),
-          // ),
-          // AnimatedSkyHeader(
-          //   currentWeekday: 'Wednesday',
-          //   currentTime: currentTime,
-          //   isFastForward: true, // Pass true for fast-forward mode
-          // ),
-
-          // Listview
-
-          Expanded(
-            child: SmartRefresher(
-              controller: _refreshController,
-              onRefresh: _onRefresh,
-              child: ReorderableListView(
-                scrollController: _scrollController,
-                padding: const EdgeInsets.all(8),
-                onReorder: (oldIndex, newIndex) {
-                  if (newIndex > oldIndex) newIndex--;
-
-                  setState(() {
-                    final item = TaskManager.instance.getInitiativeAt(oldIndex);
-                    TaskManager.instance.removeInitiativeAt(oldIndex);
-                    TaskManager.instance.insertInitiativeAt(newIndex, item);
-                  });
-
-                  TaskManager.instance.updateAllOrders();
-
-                },
+        body: Column(
+          children: [
+            // Wednesday   09:15
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
+              decoration: BoxDecoration(
+                color: Colors.indigo[100],
+                borderRadius:
+                const BorderRadius.vertical(bottom: Radius.circular(20)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Every list Item
-                  for (var i = 0; i < TaskManager.instance.getLength(); i++)
-
-                    Dismissible(
-                      key: ValueKey(TaskManager
-                          .instance.getInitiativeAt(i).id),
-                      direction: DismissDirection.horizontal,
-                      background: Container(
-                        color: Constants.background_color,
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(left: 20),
-                        child: const Icon(Icons.timer, color: Colors.white),
-                      ),
-                      secondaryBackground: Container(
-                        color: Constants.background_color,
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20),
-                        child: const Icon(Icons.timer, color: Colors.white),
-                      ),
-                      child: _buildinitiativeItem(
-                          TaskManager.instance.getInitiativeAt(i),
-                          i),
-                      confirmDismiss: (direction) async {
-                        navigateToTimerPage(
-                            dismissDirection: direction,
-                            initiative: TaskManager
-                                .instance.getInitiativeAt(i));
-                        return false; // Item won't get removed
-                      },
-                    ),
+                  Text(currentWeekday,
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.indigo[900])),
+                  Text(currentTime.toString(),
+                      style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.indigo[900])),
                 ],
               ),
             ),
-          ),
 
-          //     Heatmap
-          SizedBox(
-            height: 100, // enough for 7 rows
-            child: GridView.builder(
-              scrollDirection: Axis.horizontal,
-              // Horizontal grid for 31 columns
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7, // 7 rows
-                crossAxisSpacing: 2,
-                mainAxisSpacing: 2,
+            // ElevatedButton(
+            //   onPressed: (){addData();},
+            //   child: const Text('next'),
+            // ),
+            // AnimatedSkyHeader(
+            //   currentWeekday: 'Wednesday',
+            //   currentTime: currentTime,
+            //   isFastForward: true, // Pass true for fast-forward mode
+            // ),
+
+            // Listview
+
+            Expanded(
+              child: SmartRefresher(
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                child: ReorderableListView(
+                  scrollController: _scrollController,
+                  padding: const EdgeInsets.all(8),
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) newIndex--;
+
+                    setState(() {
+                      final item = TaskManager.instance.getInitiativeAt(oldIndex);
+                      TaskManager.instance.removeInitiativeAt(oldIndex);
+                      TaskManager.instance.insertInitiativeAt(newIndex, item);
+                    });
+
+                    TaskManager.instance.updateAllOrders();
+
+                  },
+                  children: [
+                    // Every list Item
+                    for (var i = 0; i < TaskManager.instance.getLength(); i++)
+
+                      Dismissible(
+                        key: ValueKey(TaskManager
+                            .instance.getInitiativeAt(i).id),
+                        direction: DismissDirection.horizontal,
+                        background: Container(
+                          color: Constants.background_color,
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.only(left: 20),
+                          child: const Icon(Icons.timer, color: Colors.white),
+                        ),
+                        secondaryBackground: Container(
+                          color: Constants.background_color,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 20),
+                          child: const Icon(Icons.timer, color: Colors.white),
+                        ),
+                        child: _buildinitiativeItem(
+                            TaskManager.instance.getInitiativeAt(i),
+                            i),
+                        confirmDismiss: (direction) async {
+                          navigateToTimerPage(
+                              dismissDirection: direction,
+                              initiative: TaskManager
+                                  .instance.getInitiativeAt(i));
+                          return false; // Item won't get removed
+                        },
+                      ),
+                  ],
+                ),
               ),
-              itemCount: 7 * 31,
-              // total cells = 217
-              itemBuilder: (context, index) {
-                final heatLevel = index % 5; // mock data for now
-
-                final colors = [
-                  Color(0xFFEBEDF0), // empty
-                  Color(0xFF9BE9A8), // light
-                  Color(0xFF40C463), // medium
-                  Color(0xFF30A14E), // strong
-                  Color(0xFF216E39), // very strong
-                ];
-
-                return Container(
-                  decoration: BoxDecoration(
-                    color: colors[heatLevel],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                );
-              },
-              padding: EdgeInsets.all(2),
             ),
-          )
-        ],
-      ),
+
+            //     Heatmap
+
+
+
+
+
+          ],
+        ),
+      )
+
+
+
+
+
       // ),
     );
   }
