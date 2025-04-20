@@ -1,4 +1,5 @@
 import 'package:discipline_plus/models/initiative.dart';
+import 'package:discipline_plus/models/study_break.dart';
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,19 +8,23 @@ import '../widget/quantity_selector.dart';
 
 class CustomPopupDialog extends StatelessWidget {
   final TextEditingController initiativeTitleController = TextEditingController();
-  late int initiativeCompletionTime = 5;
 
-  final TextEditingController breakTimeController = TextEditingController();
+  late int initiativeCompletionTime = 30;
+  late int breakTime = 15;
+
 
   CustomPopupDialog({super.key});
 
 
-  void addInitiative() {
+  void addInitiative(context) {
     var ini = Initiative(index: TaskManager.instance.getNextIndex(),
         title: initiativeTitleController.text,
-        completionTime: AppTime(0, initiativeCompletionTime));
+        completionTime: AppTime(0, initiativeCompletionTime),
+        studyBreak: StudyBreak(title: "$breakTime min break",  completionTime: AppTime(0, breakTime))
+    );
 
     TaskManager.instance.addInitiative(ini);
+    Navigator.of(context).pop();
   }
 
 
@@ -54,7 +59,7 @@ class CustomPopupDialog extends StatelessWidget {
                   fontWeight: FontWeight.bold
               ),
               decoration: InputDecoration(
-                hintText: 'Enter Initiative Name',
+                hintText: 'Enter title here',
                 hintStyle: TextStyle(color: Colors.black26, fontSize: 16,),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -73,10 +78,11 @@ class CustomPopupDialog extends StatelessWidget {
               children: [
 
 
-                Text("Duration", style: TextStyle(color: Colors.black38, fontSize: 16,)),
+                Text("Duration", style: TextStyle(color: Colors.black26, fontSize: 16,)),
                 Flexible(
                   child: QuantitySelector(
-
+                    initialValue: initiativeCompletionTime,
+                    initialStep: 5,
                     onChanged: (value) {
                       initiativeCompletionTime = value;
                     },
@@ -91,12 +97,14 @@ class CustomPopupDialog extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Break", style: TextStyle(color: Colors.black38, fontSize: 16,)),
+                Text("Break", style: TextStyle(color: Colors.black26, fontSize: 16,)),
+
                 Flexible(
                   child: QuantitySelector(
-
+                    initialValue: breakTime,
+                    initialStep: 5,
                     onChanged: (value) {
-                      breakTimeController.text = value.toString();
+                      breakTime = value;
                     },
                   ),
                 ),
@@ -138,7 +146,7 @@ class CustomPopupDialog extends StatelessWidget {
                 ),
                 child: InkWell(
 
-                    onTap: addInitiative,
+                    onTap: ()=> addInitiative(context),
                     child: Center(child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text("Add", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),

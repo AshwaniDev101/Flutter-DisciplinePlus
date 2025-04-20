@@ -16,7 +16,7 @@ class Initiative {
     required this.completionTime,
     this.dynamicTime = const AppTime(0, 0),
     this.isComplete = false,
-    this.studyBreak = const ShortBreak(),
+    this.studyBreak = const StudyBreak(),
     required this.index,
   }) : id = id ?? _generateReadableId();
 

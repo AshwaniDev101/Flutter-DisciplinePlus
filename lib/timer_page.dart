@@ -143,11 +143,11 @@ class _TimerPageState extends State<TimerPage> {
 
     // 2) if break not given, go to break
     if (!onBreak) {
-      final studyBreak = currentInitiative!.studyBreak;
+      // final studyBreak = currentInitiative!.studyBreak;
       currentInitiative = Initiative(
         index: -1,
-        title: studyBreak.title,
-        completionTime: studyBreak.completionTime,
+        title: currentInitiative!.studyBreak.title,
+        completionTime: currentInitiative!.studyBreak.completionTime,
       );
       onBreak = true;
     } else {
@@ -225,7 +225,7 @@ class _TimerPageState extends State<TimerPage> {
     return Scaffold(
       backgroundColor: Constants.background_color,
       appBar: AppBar(
-        title: const Text(''),
+        // title: const Text(''),
         backgroundColor: Constants.background_color,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
