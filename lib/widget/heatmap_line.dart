@@ -1,5 +1,6 @@
 
 
+import 'package:discipline_plus/widget/snap_scrolling/snap_scrolling.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +17,7 @@ class _HeatmapLineState extends State<HeatmapLine> {
   DateTime? selectedDate;
   late Map<String, int> heatLevelMap;
   ScrollController _scrollController = ScrollController();
+
 
 
   final List<HeatmapData> yourDataList = [
@@ -162,6 +164,7 @@ class _HeatmapLineState extends State<HeatmapLine> {
       height: 80,
       child: ListView.builder(
         controller: _scrollController,
+        physics: SnappingScrollPhysics(itemWidth:44.0), // Use 44.0 as the item width + margins (matches your ListView items)
         scrollDirection: Axis.horizontal,
         itemCount: daysInMonth,
         itemBuilder: (context, index) {

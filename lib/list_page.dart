@@ -12,6 +12,7 @@ import 'dilog/custom_pop_up_dialog.dart';
 import 'models/app_time.dart';
 import 'utils/constants.dart';
 
+
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
 
@@ -24,7 +25,9 @@ class _ListPageState extends State<ListPage> with RouteAware {
   late AppTime currentTime;
   late String currentWeekday;
 
-  double panelValue = 0.0;
+  // double panelValue = 0.0;
+  final ValueNotifier<double> panelValue = ValueNotifier(0.0);
+
 
   final ScrollController _scrollController = ScrollController();
 
@@ -80,25 +83,32 @@ class _ListPageState extends State<ListPage> with RouteAware {
         children: [
           // Your main content here
 
-          if (panelValue>0.5)
-          Positioned(
-            bottom: 100, // 200 pixels from top
-            right: 1, // 16 pixels from right (classic FAB spacing)
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FloatingActionButton(
-                  onPressed: showDialogAdd,
-                  child: Icon(Icons.add),
-                ),
-                // SizedBox(height: 10), // space between buttons
-                // FloatingActionButton(
-                //   onPressed: () {},
-                //   child: Icon(Icons.add_home_outlined),
-                // ),
-              ],
-            ),
-          ),
+          // if (panelValue<0.5)
+
+          ValueListenableBuilder(
+              valueListenable: panelValue,
+              builder: (context,value,child){
+                return Positioned(
+                    bottom: 10 + (1 - value) * 90, // 200 pixels from top
+                  right: 1, // 16 pixels from right (classic FAB spacing)
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FloatingActionButton(
+                        onPressed: showDialogAdd,
+                        child: Icon(Icons.add),
+                      ),
+                      // SizedBox(height: 10), // space between buttons
+                      // FloatingActionButton(
+                      //   onPressed: () {},
+                      //   child: Icon(Icons.add_home_outlined),
+                      // ),
+                    ],
+                  ),
+                );
+              }
+          )
+
         ],
       ),
 
@@ -139,7 +149,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
         minHeight: 100, // collapsed size
         maxHeight: 550, // expanded size
 
-
+        onPanelSlide: (val) => panelValue.value = val,
 
         panel: Column(
 
