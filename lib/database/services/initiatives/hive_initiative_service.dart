@@ -1,6 +1,6 @@
 
 import 'package:hive/hive.dart';
-import '../../models/initiative.dart';
+import '../../../models/initiative.dart';
 import 'initiative_service.dart';
 
 class HiveInitiativeService implements InitiativeService {

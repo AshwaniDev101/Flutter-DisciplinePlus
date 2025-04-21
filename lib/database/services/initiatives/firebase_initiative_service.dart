@@ -1,7 +1,7 @@
 // firebase_initiative_service.dart
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../models/initiative.dart';
+import '../../../models/initiative.dart';
 import 'initiative_service.dart';
 
 class FireInitiativeService implements InitiativeService {
@@ -21,12 +21,6 @@ class FireInitiativeService implements InitiativeService {
     map.remove('id');
     return map;
   }
-
-/*  @override
-  Future<List<Initiative>> fetchAll() async {
-    final snap = await _col.get();
-    return snap.docs.map(_fromDoc).toList();
-  }*/
 
   @override
   Future<List<Initiative>> fetchAll() async {

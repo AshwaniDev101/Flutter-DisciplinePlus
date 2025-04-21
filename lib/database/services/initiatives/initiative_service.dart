@@ -1,6 +1,6 @@
 // initiative_service.dart
 
-import '../../models/initiative.dart';
+import '../../../models/initiative.dart';
 
 abstract class InitiativeService {
   Future<List<Initiative>> fetchAll();

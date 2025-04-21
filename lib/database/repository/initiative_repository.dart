@@ -1,6 +1,6 @@
 
 import '../../models/initiative.dart';
-import '../services/initiative_service.dart';
+import '../services/initiatives/initiative_service.dart';
 
 
 class InitiativeRepository {

@@ -1,19 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class HeatmapData {
-  final int year;
-  final int month;
-  final int date;
-  final int heatLevel;
-
-  HeatmapData({
-    required this.year,
-    required this.month,
-    required this.date,
-    required this.heatLevel,
-  });
-}
+import '../models/heatmap_data.dart';
 
 class Heatmap extends StatefulWidget {
   const Heatmap({super.key});

@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'database/repository/initiative_repository.dart';
-import 'database/services/firebase_initiative_service.dart';
+import 'database/services/initiatives/firebase_initiative_service.dart';
 import 'models/initiative.dart';
 
 class TaskManager {

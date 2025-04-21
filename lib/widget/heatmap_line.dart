@@ -4,6 +4,10 @@ import 'package:discipline_plus/widget/snap_scrolling/snap_scrolling.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../database/repository/overall_heatmap_repository.dart';
+import '../database/services/overall_heatmap/overall_heatmap_service.dart';
+import '../models/heatmap_data.dart';
+
 class HeatmapLine extends StatefulWidget {
   const HeatmapLine({super.key});
 
@@ -18,19 +22,21 @@ class _HeatmapLineState extends State<HeatmapLine> {
   late Map<String, int> heatLevelMap;
   ScrollController _scrollController = ScrollController();
 
+  final OverallHeatmapRepository _heatmapRepository = OverallHeatmapRepository(OverallHeatmapService());
 
 
-  final List<HeatmapData> yourDataList = [
-    HeatmapData(year: 2025, month: 4, date: 1, heatLevel: 0),
-    HeatmapData(year: 2025, month: 4, date: 2, heatLevel: 2),
-    HeatmapData(year: 2025, month: 4, date: 3, heatLevel: 4),
-    HeatmapData(year: 2025, month: 4, date: 4, heatLevel: 3),
-    HeatmapData(year: 2025, month: 4, date: 5, heatLevel: 1),
-    HeatmapData(year: 2025, month: 4, date: 6, heatLevel: 5),
-    HeatmapData(year: 2025, month: 4, date: 7, heatLevel: 2),
-    HeatmapData(year: 2025, month: 4, date: 8, heatLevel: 0),
-    HeatmapData(year: 2025, month: 4, date: 9, heatLevel: 1),
-    HeatmapData(year: 2025, month: 4, date: 10, heatLevel: 3),
+
+  final List<HeatmapData> yourOverallHeatmapDataList = [
+    // HeatmapData(year: 2025, month: 4, date: 1, heatLevel: 0),
+    // HeatmapData(year: 2025, month: 4, date: 2, heatLevel: 2),
+    // HeatmapData(year: 2025, month: 4, date: 3, heatLevel: 4),
+    // HeatmapData(year: 2025, month: 4, date: 4, heatLevel: 3),
+    // HeatmapData(year: 2025, month: 4, date: 5, heatLevel: 1),
+    // HeatmapData(year: 2025, month: 4, date: 6, heatLevel: 5),
+    // HeatmapData(year: 2025, month: 4, date: 7, heatLevel: 2),
+    // HeatmapData(year: 2025, month: 4, date: 8, heatLevel: 0),
+    // HeatmapData(year: 2025, month: 4, date: 9, heatLevel: 1),
+    // HeatmapData(year: 2025, month: 4, date: 10, heatLevel: 3),
   ];
 
   @override
@@ -38,13 +44,42 @@ class _HeatmapLineState extends State<HeatmapLine> {
     super.initState();
     today = DateTime.now();
     currentDate = DateTime(today.year, today.month);
-    _updateHeatMap();
+
+    uploadDummyData();
+    loadData();
     moveToCurrent();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+
+
+  void uploadDummyData()
+  {
+
+    yourOverallHeatmapDataList.forEach((heatmap_data){
+      _heatmapRepository.addOverallHeatmapData(heatmap_data);
+    });
+
+
+  }
+
+  void loadData() async {
+    List<HeatmapData> heatmap_list = await _heatmapRepository.getOverallHeatmapData(2025, 4);
+    setState(() {
+      yourOverallHeatmapDataList.clear();
+      yourOverallHeatmapDataList.addAll(heatmap_list);
+      _updateHeatMap();
+    });
   }
 
   void _updateHeatMap() {
     heatLevelMap = {
-      for (var data in yourDataList)
+      for (var data in yourOverallHeatmapDataList)
         '${data.year}-${data.month}-${data.date}': data.heatLevel
     };
   }
@@ -265,16 +300,3 @@ class _HeatmapLineState extends State<HeatmapLine> {
   String getMonthName(int month) => DateFormat('MMMM').format(DateTime(0, month));
 }
 
-class HeatmapData {
-  final int year;
-  final int month;
-  final int date;
-  final int heatLevel;
-
-  HeatmapData({
-    required this.year,
-    required this.month,
-    required this.date,
-    required this.heatLevel,
-  });
-}
