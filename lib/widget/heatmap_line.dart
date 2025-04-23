@@ -4,6 +4,7 @@ import 'package:discipline_plus/widget/snap_scrolling/snap_scrolling.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../core/refresh_reload_notifier.dart';
 import '../database/repository/overall_heatmap_repository.dart';
 import '../database/services/overall_heatmap/overall_heatmap_service.dart';
 import '../models/heatmap_data.dart';
@@ -19,8 +20,8 @@ class _HeatmapLineState extends State<HeatmapLine> {
   late DateTime currentDate;
   late DateTime today;
   DateTime? selectedDate;
-  late Map<String, int> heatLevelMap;
-  ScrollController _scrollController = ScrollController();
+  final Map<String, int> heatLevelMap = {};
+  final ScrollController _scrollController = ScrollController();
 
   final OverallHeatmapRepository _heatmapRepository = OverallHeatmapRepository(OverallHeatmapService());
 
@@ -45,8 +46,10 @@ class _HeatmapLineState extends State<HeatmapLine> {
     today = DateTime.now();
     currentDate = DateTime(today.year, today.month);
 
-    uploadDummyData();
-    loadData();
+    // uploadDummyData();
+    // Adding function to list of function to refresh them all at once
+    RefreshReloadNotifier.instance.register(loadData);
+    // loadData();
     moveToCurrent();
   }
 
@@ -78,11 +81,12 @@ class _HeatmapLineState extends State<HeatmapLine> {
   }
 
   void _updateHeatMap() {
-    heatLevelMap = {
-      for (var data in yourOverallHeatmapDataList)
-        '${data.year}-${data.month}-${data.date}': data.heatLevel
-    };
+    heatLevelMap.clear();
+    for (var data in yourOverallHeatmapDataList) {
+      heatLevelMap['${data.year}-${data.month}-${data.date}'] = data.heatLevel;
+    }
   }
+
 
   Color getColorForHeat(int level) {
     switch (level) {

@@ -1,15 +1,16 @@
 import 'dart:async';
 
+import 'package:discipline_plus/core/refresh_reload_notifier.dart';
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:discipline_plus/taskmanager.dart';
 import 'package:discipline_plus/timer_page.dart';
+import 'package:discipline_plus/widget/clock_banner.dart';
 import 'package:discipline_plus/widget/heatmap.dart';
 import 'package:discipline_plus/widget/heatmap_line.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'dilog/custom_pop_up_dialog.dart';
-import 'models/app_time.dart';
 import 'utils/constants.dart';
 
 
@@ -22,37 +23,49 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> with RouteAware {
   late Timer _timer;
-  late AppTime currentTime;
-  late String currentWeekday;
-
-  // double panelValue = 0.0;
-  final ValueNotifier<double> panelValue = ValueNotifier(0.0);
-
+  // late AppTime currentTime;
+  // late String currentWeekday;
+  final ValueNotifier<double> slidingPanelNotifier = ValueNotifier(0.0);
+  final ValueNotifier<double> timeNotifier = ValueNotifier(0.0);
 
   final ScrollController _scrollController = ScrollController();
-
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: true);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
     // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
+    // await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
-    TaskManager.instance.reloadRepository();
+
+    // await loadData(); // ----------------- work
+
+    await RefreshReloadNotifier.instance.notifyAll();
     _refreshController.refreshCompleted();
   }
+
+
+
 
   @override
   void initState() {
     super.initState();
-    _updateWeekTime();
-    _timer =
-        Timer.periodic(const Duration(seconds: 1), (_) => _updateWeekTime());
 
-    // loadInitiatives();
-    //
-    // // Initialize TaskManager
-    // TaskManager.instance.updateList(_items_list);
+    // Adding function to list of function to refresh them all at once
+    RefreshReloadNotifier.instance.register(loadData);
+    // To make sure widget is fully loaded before call load data
+
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // await loadData(); // Safe now: UI is rendered, context is ready
+      await RefreshReloadNotifier.instance.notifyAll();
+    });
+
+  }
+
+  Future <void> loadData() async
+  {
+
+    await TaskManager.instance.reloadRepository();
+    setState(() {});
   }
 
   @override // call when return to the this route from some other route
@@ -86,7 +99,7 @@ class _ListPageState extends State<ListPage> with RouteAware {
           // if (panelValue<0.5)
 
           ValueListenableBuilder(
-              valueListenable: panelValue,
+              valueListenable: slidingPanelNotifier,
               builder: (context,value,child){
                 return Positioned(
                     bottom: 10 + (1 - value) * 90, // 200 pixels from top
@@ -112,44 +125,13 @@ class _ListPageState extends State<ListPage> with RouteAware {
         ],
       ),
 
-      // body: SlidingUpPanel(
-      //
-      //   // HeatMap
-      //   panel: HeatMapCalendar(
-      //     defaultColor: Colors.white,
-      //     flexible: true,
-      //     colorMode: ColorMode.color,
-      //     textColor: Colors.black45,
-      //     datasets: {
-      //       DateTime(2025,4,6):0,
-      //       DateTime(2025,4,7):1,
-      //       DateTime(2025,4,8):2,
-      //       DateTime(2025,4,9):3,
-      //       DateTime(2025,4,13):4,
-      //     },
-      //     colorsets: {
-      //       0: Colors.red[400]!,
-      //       1: Colors.green[100]!,
-      //       2: Colors.green[300]!,
-      //       3: Colors.green[400]!,
-      //       4: Colors.green[500]!,
-      //       5: Colors.green[600]!,
-      //     },
-      //     onClick: (value) {
-      //       // Do something
-      //     },
-      //   ),
-      //
-      //
-      //
-      //   body:
 
       body: SlidingUpPanel(
 
         minHeight: 100, // collapsed size
         maxHeight: 550, // expanded size
 
-        onPanelSlide: (val) => panelValue.value = val,
+        onPanelSlide: (val) => slidingPanelNotifier.value = val,
 
         panel: Column(
 
@@ -172,39 +154,30 @@ class _ListPageState extends State<ListPage> with RouteAware {
         body: Column(
           children: [
             // Wednesday   09:15
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
-              decoration: BoxDecoration(
-                color: Colors.indigo[100],
-                borderRadius:
-                const BorderRadius.vertical(bottom: Radius.circular(20)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(currentWeekday,
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.indigo[900])),
-                  Text(currentTime.toString(),
-                      style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo[900])),
-                ],
-              ),
-            ),
-
-            // ElevatedButton(
-            //   onPressed: (){addData();},
-            //   child: const Text('next'),
-            // ),
-            // AnimatedSkyHeader(
-            //   currentWeekday: 'Wednesday',
-            //   currentTime: currentTime,
-            //   isFastForward: true, // Pass true for fast-forward mode
+            ClockBanner(),
+            // Container(
+            //   width: double.infinity,
+            //   padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
+            //   decoration: BoxDecoration(
+            //     color: Colors.indigo[100],
+            //     borderRadius:
+            //     const BorderRadius.vertical(bottom: Radius.circular(20)),
+            //   ),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       Text(currentWeekday,
+            //           style: TextStyle(
+            //               fontSize: 22,
+            //               fontWeight: FontWeight.w600,
+            //               color: Colors.indigo[900])),
+            //       Text(currentTime.toString(),
+            //           style: TextStyle(
+            //               fontSize: 34,
+            //               fontWeight: FontWeight.bold,
+            //               color: Colors.indigo[900])),
+            //     ],
+            //   ),
             // ),
 
             // Listview
@@ -393,30 +366,33 @@ class _ListPageState extends State<ListPage> with RouteAware {
     );
   }
 
-  void _updateWeekTime() {
-    final now = DateTime.now();
 
-    // Create an instance of AppTime with the current hour and minute
-    final appTime = AppTime(now.hour, now.minute);
 
-    setState(() {
-      currentTime = appTime; // This will return time in HH:MM AM/PM format
-      currentWeekday = _weekdayName(now.weekday);
-    });
-  }
-
-  String _weekdayName(int weekdayNumber) {
-    const weekdays = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-    return weekdays[weekdayNumber - 1];
-  }
+  //
+  // void _updateWeekTime() {
+  //   final now = DateTime.now();
+  //
+  //   // Create an instance of AppTime with the current hour and minute
+  //   final appTime = AppTime(now.hour, now.minute);
+  //
+  //   setState(() {
+  //     currentTime = appTime; // This will return time in HH:MM AM/PM format
+  //     currentWeekday = _weekdayName(now.weekday);
+  //   });
+  // }
+  //
+  // String _weekdayName(int weekdayNumber) {
+  //   const weekdays = [
+  //     'Monday',
+  //     'Tuesday',
+  //     'Wednesday',
+  //     'Thursday',
+  //     'Friday',
+  //     'Saturday',
+  //     'Sunday',
+  //   ];
+  //   return weekdays[weekdayNumber - 1];
+  // }
 
   void navigateToTimerPage({
     required DismissDirection dismissDirection,
