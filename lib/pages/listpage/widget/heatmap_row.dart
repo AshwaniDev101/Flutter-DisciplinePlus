@@ -1,22 +1,22 @@
 
 
-import 'package:discipline_plus/widget/snap_scrolling/snap_scrolling.dart';
+import 'package:discipline_plus/controller/snap_scrolling.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../core/refresh_reload_notifier.dart';
-import '../database/repository/overall_heatmap_repository.dart';
-import '../database/services/overall_heatmap/overall_heatmap_service.dart';
-import '../models/heatmap_data.dart';
+import '../../../core/refresh_reload_notifier.dart';
+import '../../../database/repository/overall_heatmap_repository.dart';
+import '../../../database/services/overall_heatmap/overall_heatmap_service.dart';
+import '../../../models/heatmap_data.dart';
 
-class HeatmapLine extends StatefulWidget {
-  const HeatmapLine({super.key});
+class HeatmapRow extends StatefulWidget {
+  const HeatmapRow({super.key});
 
   @override
-  State<HeatmapLine> createState() => _HeatmapLineState();
+  State<HeatmapRow> createState() => _HeatmapRowState();
 }
 
-class _HeatmapLineState extends State<HeatmapLine> {
+class _HeatmapRowState extends State<HeatmapRow> {
   late DateTime currentDate;
   late DateTime today;
   DateTime? selectedDate;

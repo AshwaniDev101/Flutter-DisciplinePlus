@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../models/heatmap_data.dart';
+import '../../../models/heatmap_data.dart';
 
-class Heatmap extends StatefulWidget {
-  const Heatmap({super.key});
+class HeatmapCalender extends StatefulWidget {
+  const HeatmapCalender({super.key});
 
   @override
-  State<Heatmap> createState() => _HeatmapState();
+  State<HeatmapCalender> createState() => _HeatmapCalenderState();
 }
 
-class _HeatmapState extends State<Heatmap> {
+class _HeatmapCalenderState extends State<HeatmapCalender> {
   late DateTime currentDate;
   late DateTime today;
   bool isCircle = false;

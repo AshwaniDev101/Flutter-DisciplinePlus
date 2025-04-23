@@ -1,10 +1,11 @@
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:discipline_plus/models/study_break.dart';
-import 'package:discipline_plus/taskmanager.dart';
+import 'package:discipline_plus/controller/taskmanager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../models/app_time.dart';
-import '../widget/quantity_selector.dart';
+
+import '../../../models/app_time.dart';
+import 'widget/quantity_selector.dart';
+
 
 class CustomPopupDialog extends StatelessWidget {
   final TextEditingController initiativeTitleController = TextEditingController();

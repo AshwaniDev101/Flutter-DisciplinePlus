@@ -2,26 +2,26 @@ import 'dart:async';
 
 import 'package:discipline_plus/core/refresh_reload_notifier.dart';
 import 'package:discipline_plus/models/initiative.dart';
-import 'package:discipline_plus/taskmanager.dart';
-import 'package:discipline_plus/timer_page.dart';
-import 'package:discipline_plus/widget/clock_banner.dart';
-import 'package:discipline_plus/widget/heatmap.dart';
-import 'package:discipline_plus/widget/heatmap_line.dart';
+import 'package:discipline_plus/controller/taskmanager.dart';
+import 'package:discipline_plus/pages/timerpage/timer_page.dart';
+import 'package:discipline_plus/pages/listpage/widget/clock_banner.dart';
+import 'package:discipline_plus/pages/listpage/widget/heatmap_calender.dart';
+import 'package:discipline_plus/pages/listpage/widget/heatmap_row.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'dilog/custom_pop_up_dialog.dart';
-import 'utils/constants.dart';
+import '../../core/utils/constants.dart';
+import 'dialog/custom_pop_up_dialog.dart';
 
 
-class ListPage extends StatefulWidget {
-  const ListPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  _ListPageState createState() => _ListPageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _ListPageState extends State<ListPage> with RouteAware {
+class _HomePageState extends State<HomePage> with RouteAware {
   late Timer _timer;
   // late AppTime currentTime;
   // late String currentWeekday;
@@ -63,7 +63,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
 
   Future <void> loadData() async
   {
-
     await TaskManager.instance.reloadRepository();
     setState(() {});
   }
@@ -142,12 +141,12 @@ class _ListPageState extends State<ListPage> with RouteAware {
             SizedBox(
               // height: 300,
               height: 80,
-              child: HeatmapLine(),
+              child: HeatmapRow(),
             ),
 
           SizedBox(
             height: 450,  // or any height that fits your design
-            child: Heatmap(),
+            child: HeatmapCalender(),
           ),
         ],),
 
@@ -155,32 +154,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
           children: [
             // Wednesday   09:15
             ClockBanner(),
-            // Container(
-            //   width: double.infinity,
-            //   padding: const EdgeInsets.fromLTRB(12, 40, 12, 12),
-            //   decoration: BoxDecoration(
-            //     color: Colors.indigo[100],
-            //     borderRadius:
-            //     const BorderRadius.vertical(bottom: Radius.circular(20)),
-            //   ),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       Text(currentWeekday,
-            //           style: TextStyle(
-            //               fontSize: 22,
-            //               fontWeight: FontWeight.w600,
-            //               color: Colors.indigo[900])),
-            //       Text(currentTime.toString(),
-            //           style: TextStyle(
-            //               fontSize: 34,
-            //               fontWeight: FontWeight.bold,
-            //               color: Colors.indigo[900])),
-            //     ],
-            //   ),
-            // ),
-
-            // Listview
 
             Expanded(
               child: SmartRefresher(
@@ -236,13 +209,6 @@ class _ListPageState extends State<ListPage> with RouteAware {
                 ),
               ),
             ),
-
-            //     Heatmap
-
-
-
-
-
           ],
         ),
       )

@@ -1,14 +1,14 @@
 
 import 'dart:async';
 import 'dart:math';
-import 'package:discipline_plus/resource_managers/audio_manager.dart';
-import 'package:discipline_plus/taskmanager.dart';
-import 'package:discipline_plus/widget/pai_chart_painter.dart';
+import 'package:discipline_plus/resource/audio_manager.dart';
+import 'package:discipline_plus/controller/taskmanager.dart';
+import 'package:discipline_plus/pages/timerpage/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:discipline_plus/utils/constants.dart';
 import 'package:discipline_plus/models/initiative.dart';
 
-import 'models/app_time.dart';
+import '../../core/utils/constants.dart';
+import '../../models/app_time.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;
