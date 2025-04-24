@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/refresh_reload_notifier.dart';
+import '../../../core/utils/helper.dart';
+import '../../../database/repository/overall_heatmap_repository.dart';
+import '../../../database/services/overall_heatmap/overall_heatmap_service.dart';
 import '../../../models/heatmap_data.dart';
 
 class HeatmapCalender extends StatefulWidget {
@@ -16,19 +20,21 @@ class _HeatmapCalenderState extends State<HeatmapCalender> {
   bool isCircle = false;
   Color currentDateColor = Colors.orange;
   DateTime? selectedDate;
-  late Map<String, int> heatLevelMap;
+  final Map<String, int> heatLevelMap = {};
+  final OverallHeatmapRepository _heatmapRepository = OverallHeatmapRepository(OverallHeatmapService());
 
-  final List<HeatmapData> yourDataList = [
-    HeatmapData(year: 2025, month: 4, date: 1, heatLevel: 0),
-    HeatmapData(year: 2025, month: 4, date: 2, heatLevel: 2),
-    HeatmapData(year: 2025, month: 4, date: 3, heatLevel: 4),
-    HeatmapData(year: 2025, month: 4, date: 4, heatLevel: 3),
-    HeatmapData(year: 2025, month: 4, date: 5, heatLevel: 1),
-    HeatmapData(year: 2025, month: 4, date: 6, heatLevel: 5),
-    HeatmapData(year: 2025, month: 4, date: 7, heatLevel: 2),
-    HeatmapData(year: 2025, month: 4, date: 8, heatLevel: 0),
-    HeatmapData(year: 2025, month: 4, date: 9, heatLevel: 1),
-    HeatmapData(year: 2025, month: 4, date: 10, heatLevel: 3),
+
+  final List<HeatmapData> yourOverallHeatmapDataList = [
+    // HeatmapData(year: 2025, month: 4, date: 1, heatLevel: 0),
+    // HeatmapData(year: 2025, month: 4, date: 2, heatLevel: 2),
+    // HeatmapData(year: 2025, month: 4, date: 3, heatLevel: 4),
+    // HeatmapData(year: 2025, month: 4, date: 4, heatLevel: 3),
+    // HeatmapData(year: 2025, month: 4, date: 5, heatLevel: 1),
+    // HeatmapData(year: 2025, month: 4, date: 6, heatLevel: 5),
+    // HeatmapData(year: 2025, month: 4, date: 7, heatLevel: 2),
+    // HeatmapData(year: 2025, month: 4, date: 8, heatLevel: 0),
+    // HeatmapData(year: 2025, month: 4, date: 9, heatLevel: 1),
+    // HeatmapData(year: 2025, month: 4, date: 10, heatLevel: 3),
   ];
 
   @override
@@ -36,27 +42,44 @@ class _HeatmapCalenderState extends State<HeatmapCalender> {
     super.initState();
     today = DateTime.now();
     currentDate = DateTime(today.year, today.month);
-    _updateHeatMap();
+    // _updateHeatMap();
+
+    RefreshReloadNotifier.instance.register(loadData);
+
+
+  }
+
+
+
+  void loadData() async {
+    List<HeatmapData> heatmap_list = await _heatmapRepository.getOverallHeatmapData(2025, 4);
+    setState(() {
+      yourOverallHeatmapDataList.clear();
+      yourOverallHeatmapDataList.addAll(heatmap_list);
+      _updateHeatMap();
+    });
   }
 
   void _updateHeatMap() {
-    heatLevelMap = {
-      for (var data in yourDataList)
-        '${data.year}-${data.month}-${data.date}': data.heatLevel
-    };
+    heatLevelMap.clear();
+    for (var data in yourOverallHeatmapDataList) {
+      heatLevelMap['${data.year}-${data.month}-${data.date}'] = data.heatLevel;
+    }
   }
+
 
   Color getColorForHeat(int level) {
     switch (level) {
-      case 0: return Colors.grey[300]!;
-      case 1: return Colors.green[100]!;
-      case 2: return Colors.green[300]!;
-      case 3: return Colors.green[500]!;
-      case 4: return Colors.green[700]!;
-      case 5: return Colors.green[900]!;
+      case 0: return hexToColor("#EBEDF0"); // Grey
+      case 1: return hexToColor("#005232"); // Pale green
+      case 2: return hexToColor("#007E4D"); // Light green
+      case 3: return hexToColor("#00A967"); // Brighter green
+      case 4: return hexToColor("#00E08A"); // Vivid green
+      case 5: return hexToColor("#00FF9C"); // Most intense green
       default: return Colors.grey;
     }
   }
+
 
   void goToPreviousMonth() => setState(() {
     currentDate = DateTime(currentDate.year, currentDate.month - 1);

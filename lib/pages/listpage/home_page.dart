@@ -13,6 +13,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../core/utils/constants.dart';
 import 'dialog/custom_pop_up_dialog.dart';
 
+// All your imports remain unchanged
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,246 +23,180 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with RouteAware {
-  late Timer _timer;
-  // late AppTime currentTime;
-  // late String currentWeekday;
+
   final ValueNotifier<double> slidingPanelNotifier = ValueNotifier(0.0);
-  final ValueNotifier<double> timeNotifier = ValueNotifier(0.0);
-
-  final ScrollController _scrollController = ScrollController();
+  // final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
-
-  void _onRefresh() async {
-    // monitor network fetch
-    // await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
-
-    // await loadData(); // ----------------- work
-
-    await RefreshReloadNotifier.instance.notifyAll();
-    _refreshController.refreshCompleted();
-  }
-
-
-
 
   @override
   void initState() {
     super.initState();
-
-    // Adding function to list of function to refresh them all at once
     RefreshReloadNotifier.instance.register(loadData);
-    // To make sure widget is fully loaded before call load data
-
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // await loadData(); // Safe now: UI is rendered, context is ready
       await RefreshReloadNotifier.instance.notifyAll();
     });
-
   }
 
-  Future <void> loadData() async
-  {
+  Future<void> loadData() async {
     await TaskManager.instance.reloadRepository();
     setState(() {});
   }
 
-  @override // call when return to the this route from some other route
-  void didPopNext() {
-    setState(() {});
-  }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    _scrollController.dispose();
-    super.dispose();
+  void _onRefresh() async {
+    await RefreshReloadNotifier.instance.notifyAll();
+    _refreshController.refreshCompleted();
   }
 
   void showDialogAdd() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return CustomPopupDialog();
-      },
+      builder: (BuildContext context) => CustomPopupDialog(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Stack(
-        children: [
-          // Your main content here
-
-          // if (panelValue<0.5)
-
-          ValueListenableBuilder(
-              valueListenable: slidingPanelNotifier,
-              builder: (context,value,child){
-                return Positioned(
-                    bottom: 10 + (1 - value) * 90, // 200 pixels from top
-                  right: 1, // 16 pixels from right (classic FAB spacing)
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FloatingActionButton(
-                        onPressed: showDialogAdd,
-                        child: Icon(Icons.add),
-                      ),
-                      // SizedBox(height: 10), // space between buttons
-                      // FloatingActionButton(
-                      //   onPressed: () {},
-                      //   child: Icon(Icons.add_home_outlined),
-                      // ),
-                    ],
-                  ),
-                );
-              }
-          )
-
-        ],
-      ),
-
-
+      floatingActionButton: _buildFAB(),
       body: SlidingUpPanel(
-
-        minHeight: 100, // collapsed size
-        maxHeight: 550, // expanded size
-
+        minHeight: 100,
+        maxHeight: 550,
         onPanelSlide: (val) => slidingPanelNotifier.value = val,
-
-        panel: Column(
-
-          children: [
-
-
-
-            SizedBox(
-              // height: 300,
-              height: 80,
-              child: HeatmapRow(),
-            ),
-
-          SizedBox(
-            height: 450,  // or any height that fits your design
-            child: HeatmapCalender(),
-          ),
-        ],),
-
-        body: Column(
-          children: [
-            // Wednesday   09:15
-            ClockBanner(),
-
-            Expanded(
-              child: SmartRefresher(
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                child: ReorderableListView(
-                  scrollController: _scrollController,
-                  padding: const EdgeInsets.all(8),
-                  onReorder: (oldIndex, newIndex) {
-                    if (newIndex > oldIndex) newIndex--;
-
-                    setState(() {
-                      final item = TaskManager.instance.getInitiativeAt(oldIndex);
-                      TaskManager.instance.removeInitiativeAt(oldIndex);
-                      TaskManager.instance.insertInitiativeAt(newIndex, item);
-                    });
-
-                    TaskManager.instance.updateAllOrders();
-
-                  },
-                  children: [
-                    // Every list Item
-                    for (var i = 0; i < TaskManager.instance.getLength(); i++)
-
-                      Dismissible(
-                        key: ValueKey(TaskManager
-                            .instance.getInitiativeAt(i).id),
-                        direction: DismissDirection.horizontal,
-                        background: Container(
-                          color: Constants.background_color,
-                          alignment: Alignment.centerLeft,
-                          padding: const EdgeInsets.only(left: 20),
-                          child: const Icon(Icons.timer, color: Colors.white),
-                        ),
-                        secondaryBackground: Container(
-                          color: Constants.background_color,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
-                          child: const Icon(Icons.timer, color: Colors.white),
-                        ),
-                        child: _buildinitiativeItem(
-                            TaskManager.instance.getInitiativeAt(i),
-                            i),
-                        confirmDismiss: (direction) async {
-                          navigateToTimerPage(
-                              dismissDirection: direction,
-                              initiative: TaskManager
-                                  .instance.getInitiativeAt(i));
-                          return false; // Item won't get removed
-                        },
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      )
-
-
-
-
-
-      // ),
+        panel: _buildPanelContent(),
+        body: _buildMainContent(),
+      ),
     );
   }
 
-  Widget _buildinitiativeItem(Initiative item, int index) {
-    return Builder(
-      builder: (context) {
-        return GestureDetector(
-          // Option Menu
-          onLongPressStart: (details) {
-            final position = details.globalPosition;
-            showMenu(
-              context: context,
-              position: RelativeRect.fromLTRB(
-                  position.dx, position.dy, position.dx, position.dy),
-              items: [
-                PopupMenuItem(value: 'edit', child: Text('Edit')),
-                PopupMenuItem(value: 'delete', child: Text('Delete')),
-              ],
-            ).then((value) {
-              if (value == 'edit') {
-                // handle edit
-              } else if (value == 'delete') {
-                TaskManager.instance.removeInitiative(item.id);
-              }
-            });
-          },
-          // Item
-          child: ListTile(
-            leading: buildLeading(item, index),
-            title: buildRichTitle(item),
-            onTap: () {
-              // handle tap
-            },
+  Widget _buildFAB() {
+    return Stack(
+      children: [
+        ValueListenableBuilder(
+            valueListenable: slidingPanelNotifier,
+            builder: (context,value,child){
+              return Positioned(
+                bottom: 10 + (1 - value) * 90, // 200 pixels from top
+                right: 1, // 16 pixels from right (classic FAB spacing)
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FloatingActionButton(
+                      onPressed: showDialogAdd,
+                      child: Icon(Icons.add),
+                    ),
+                    // SizedBox(height: 10), // space between buttons
+                    // FloatingActionButton(
+                    //   onPressed: () {},
+                    //   child: Icon(Icons.add_home_outlined),
+                    // ),
+                  ],
+                ),
+              );
+            }
+        )
+
+      ],
+    );
+
+  }
+
+  Widget _buildPanelContent() {
+    return Column(
+      children: [
+        SizedBox(height: 80, child: HeatmapRow()),
+        SizedBox(height: 450, child: HeatmapCalender()),
+      ],
+    );
+  }
+
+  Widget _buildMainContent() {
+    return Column(
+      children: [
+        ClockBanner(),
+        Expanded(
+          child: SmartRefresher(
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            child: ReorderableListView(
+              // scrollController: _scrollController,
+              padding: const EdgeInsets.all(8),
+              onReorder: _onReorder,
+              children: List.generate(
+                TaskManager.instance.getLength(),
+                    (i) => _buildDismissibleItem(i),
+              ),
+            ),
           ),
-        );
+        ),
+      ],
+    );
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) newIndex--;
+    setState(() {
+      final item = TaskManager.instance.getInitiativeAt(oldIndex);
+      TaskManager.instance.removeInitiativeAt(oldIndex);
+      TaskManager.instance.insertInitiativeAt(newIndex, item);
+    });
+    TaskManager.instance.updateAllOrders();
+  }
+
+  Widget _buildDismissibleItem(int index) {
+    final initiative = TaskManager.instance.getInitiativeAt(index);
+    return Dismissible(
+      key: ValueKey(initiative.id),
+      direction: DismissDirection.horizontal,
+      background: _buildDismissBackground(Icons.timer, Alignment.centerLeft, EdgeInsets.only(left: 20)),
+      secondaryBackground: _buildDismissBackground(Icons.timer, Alignment.centerRight, EdgeInsets.only(right: 20)),
+      child: _buildInitiativeItem(initiative, index),
+      confirmDismiss: (direction) async {
+        navigateToTimerPage(dismissDirection: direction, initiative: initiative);
+        return false;
       },
     );
   }
 
-  //================  build and updating Leading Icon ===========================
-  ReorderableDragStartListener buildLeading(Initiative bi, int index) {
+  Widget _buildDismissBackground(IconData icon, Alignment alignment, EdgeInsets padding) {
+    return Container(
+      color: Constants.background_color,
+      alignment: alignment,
+      padding: padding,
+      child: Icon(icon, color: Colors.white),
+    );
+  }
+
+  Widget _buildInitiativeItem(Initiative item, int index) {
+    return GestureDetector(
+      onLongPressStart: (details) => _showItemMenu(details.globalPosition, item),
+      child: ListTile(
+        leading: _buildLeading(item, index),
+        title: _buildRichTitle(item),
+        onTap: () {},
+      ),
+    );
+  }
+
+  void _showItemMenu(Offset position, Initiative item) {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, position.dy),
+      items: [
+        PopupMenuItem(value: 'edit', child: Text('Edit')),
+        PopupMenuItem(value: 'delete', child: Text('Delete')),
+      ],
+    ).then((value) {
+      if (value == 'delete') {
+        TaskManager.instance.removeInitiative(item.id);
+      }
+    });
+  }
+
+  ReorderableDragStartListener _buildLeading(Initiative bi, int index) {
     return ReorderableDragStartListener(
       index: index,
-      child: buildLeadingIcon(
+      child: _buildLeadingIcon(
         isComplete: bi.isComplete,
         whiteCircleSize: 20,
         iconSize: 24,
@@ -269,16 +204,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
     );
   }
 
-  Widget buildChildLeading(Initiative ini) {
-    return buildLeadingIcon(
-      isComplete: ini.isComplete,
-      whiteCircleSize: 14,
-      // small then the icon size to make sure it remain behind the circle
-      iconSize: 18,
-    );
-  }
-
-  Widget buildLeadingIcon({
+  Widget _buildLeadingIcon({
     required bool isComplete,
     required double whiteCircleSize,
     required double iconSize,
@@ -290,20 +216,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
         alignment: Alignment.center,
         clipBehavior: Clip.none,
         children: [
-          Positioned(
-            top: -8,
-            bottom: -8,
-            left: 11,
-            child: Container(width: 2, color: Colors.indigo[300]),
-          ),
-          // if (!isComplete)
+          Positioned(top: -8, bottom: -8, left: 11, child: Container(width: 2, color: Colors.indigo[300])),
           Container(
             width: whiteCircleSize,
             height: whiteCircleSize,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-            ),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
           ),
           Icon(
             isComplete ? Icons.circle_rounded : Icons.circle_outlined,
@@ -315,50 +232,22 @@ class _HomePageState extends State<HomePage> with RouteAware {
     );
   }
 
-//================  build and updating Title ===========================
-  Widget buildRichTitle(Initiative u, {FontWeight? fontWeight}) {
+  Widget _buildRichTitle(Initiative u, {FontWeight? fontWeight}) {
     return RichText(
-      text: TextSpan(children: [
-        TextSpan(
+      text: TextSpan(
+        children: [
+          TextSpan(
             text: '${u.title} ',
-            style: TextStyle(
-                fontSize: 18,
-                color: Colors.indigo[700],
-                fontWeight: fontWeight)),
-        TextSpan(
+            style: TextStyle(fontSize: 18, color: Colors.indigo[700], fontWeight: fontWeight),
+          ),
+          TextSpan(
             text: u.completionTime.remainingTime(),
-            style: const TextStyle(fontSize: 16, color: Colors.grey)),
-      ]),
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ],
+      ),
     );
   }
-
-
-
-  //
-  // void _updateWeekTime() {
-  //   final now = DateTime.now();
-  //
-  //   // Create an instance of AppTime with the current hour and minute
-  //   final appTime = AppTime(now.hour, now.minute);
-  //
-  //   setState(() {
-  //     currentTime = appTime; // This will return time in HH:MM AM/PM format
-  //     currentWeekday = _weekdayName(now.weekday);
-  //   });
-  // }
-  //
-  // String _weekdayName(int weekdayNumber) {
-  //   const weekdays = [
-  //     'Monday',
-  //     'Tuesday',
-  //     'Wednesday',
-  //     'Thursday',
-  //     'Friday',
-  //     'Saturday',
-  //     'Sunday',
-  //   ];
-  //   return weekdays[weekdayNumber - 1];
-  // }
 
   void navigateToTimerPage({
     required DismissDirection dismissDirection,
@@ -371,22 +260,17 @@ class _HomePageState extends State<HomePage> with RouteAware {
         pageBuilder: (context, animation, secondaryAnimation) =>
             TimerPage(initiative: initiative),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          // Determine the start and end offset based on the dismiss direction
           Offset beginOffset;
           if (dismissDirection == DismissDirection.startToEnd) {
-            beginOffset = const Offset(-1.0, 0.0); // Slide from left to right
+            beginOffset = Offset(-1.0, 0.0);
           } else if (dismissDirection == DismissDirection.endToStart) {
-            beginOffset = const Offset(1.0, 0.0); // Slide from right to left
+            beginOffset = Offset(1.0, 0.0);
           } else {
-            beginOffset = const Offset(
-                0.0, 1.0); // Slide from top to bottom (fallback case)
+            beginOffset = Offset(0.0, 1.0);
           }
 
           return SlideTransition(
-            position: Tween<Offset>(
-              begin: beginOffset,
-              end: Offset.zero,
-            ).animate(animation),
+            position: Tween<Offset>(begin: beginOffset, end: Offset.zero).animate(animation),
             child: child,
           );
         },

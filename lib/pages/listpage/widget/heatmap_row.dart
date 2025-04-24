@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/refresh_reload_notifier.dart';
+import '../../../core/utils/helper.dart';
 import '../../../database/repository/overall_heatmap_repository.dart';
 import '../../../database/services/overall_heatmap/overall_heatmap_service.dart';
 import '../../../models/heatmap_data.dart';
@@ -24,7 +25,6 @@ class _HeatmapRowState extends State<HeatmapRow> {
   final ScrollController _scrollController = ScrollController();
 
   final OverallHeatmapRepository _heatmapRepository = OverallHeatmapRepository(OverallHeatmapService());
-
 
 
   final List<HeatmapData> yourOverallHeatmapDataList = [
@@ -68,7 +68,6 @@ class _HeatmapRowState extends State<HeatmapRow> {
       _heatmapRepository.addOverallHeatmapData(heatmap_data);
     });
 
-
   }
 
   void loadData() async {
@@ -88,14 +87,28 @@ class _HeatmapRowState extends State<HeatmapRow> {
   }
 
 
+  // Color getColorForHeat(int level) {
+  //   switch (level) {
+  //     case 0: return hexToColor("#EBEDF0"); // Grey
+  //     case 1: return hexToColor("#003D28"); // Pale green
+  //     case 2: return hexToColor("#006642"); // Light green
+  //     case 3: return hexToColor("#008F5D"); // Brighter green
+  //     case 4: return hexToColor("#00B877"); // Vivid green
+  //     case 5: return hexToColor("#00FF9C"); // Most intense green
+  //     default: return Colors.grey;
+  //   }
+  // }
+
+
+
   Color getColorForHeat(int level) {
     switch (level) {
-      case 0: return Colors.grey[300]!;
-      case 1: return Colors.green[100]!;
-      case 2: return Colors.green[300]!;
-      case 3: return Colors.green[500]!;
-      case 4: return Colors.green[700]!;
-      case 5: return Colors.green[900]!;
+      case 0: return hexToColor("#EBEDF0"); // Grey
+      case 1: return hexToColor("#005232"); // Pale green
+      case 2: return hexToColor("#007E4D"); // Light green
+      case 3: return hexToColor("#00A967"); // Brighter green
+      case 4: return hexToColor("#00E08A"); // Vivid green
+      case 5: return hexToColor("#00FF9C"); // Most intense green
       default: return Colors.grey;
     }
   }
