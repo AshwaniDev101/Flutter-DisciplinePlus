@@ -15,7 +15,6 @@ import '../../models/study_break.dart';
 import '../drawer/drawer.dart';
 import '../logic/taskmanager.dart';
 import 'core/current_day_manager.dart';
-import 'dialog/custom_pop_up_dialog.dart';
 
 // All your imports remain unchanged
 

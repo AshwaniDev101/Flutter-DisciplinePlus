@@ -1,9 +1,6 @@
-// lib/task_manager.dart
 
-import 'package:flutter/cupertino.dart';
-import '../../database/repository/initiative_repository.dart';
+import 'package:discipline_plus/pages/listpage/core/current_day_manager.dart';
 import '../../database/repository/week_repository.dart';
-import '../../database/services/initiatives/firebase_initiative_service.dart';
 import '../../database/services/week_service/firebase_week_service.dart';
 import '../../models/initiative.dart';
 
@@ -15,7 +12,7 @@ class TaskManager {
   static TaskManager get instance => _instance;
 
 
-  InitiativeRepository repo = InitiativeRepository(FireInitiativeService());
+  // InitiativeRepository repo = InitiativeRepository(FireInitiativeService());
 
 
   WeekRepository weekRepository = WeekRepository(FirebaseWeekService.instance);
@@ -67,7 +64,7 @@ class TaskManager {
   Future<void> updateAllOrders() async {
     final batchUpdates = _initiativesListTaskManager.asMap().entries.map((e) {
       e.value.index = e.key;
-      return repo.updateInitiative(e.value);
+      return weekRepository.updateInitiative(CurrentDayManager.getCurrentDay(),e.value);
     }).toList();
 
     await Future.wait(batchUpdates);
