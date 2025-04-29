@@ -1,9 +1,11 @@
 // lib/task_manager.dart
 
 import 'package:flutter/cupertino.dart';
-import '../database/repository/initiative_repository.dart';
-import '../database/services/initiatives/firebase_initiative_service.dart';
-import '../models/initiative.dart';
+import '../../database/repository/initiative_repository.dart';
+import '../../database/repository/week_repository.dart';
+import '../../database/services/initiatives/firebase_initiative_service.dart';
+import '../../database/services/week_service/firebase_week_service.dart';
+import '../../models/initiative.dart';
 
 class TaskManager {
   TaskManager._internal();
@@ -15,24 +17,40 @@ class TaskManager {
 
   InitiativeRepository repo = InitiativeRepository(FireInitiativeService());
 
+
+  WeekRepository weekRepository = WeekRepository(FirebaseWeekService.instance);
+
   final List<Initiative> _initiativesListTaskManager = [];
 
 
 // ====================== Repository management functions ==================================
-  Future<void> reloadRepository() async {
-    var list = await repo.getAllInitiatives();
+//   Future<void> reloadRepository() async {
+//     var list = await repo.getAllInitiatives();
+//     _initiativesListTaskManager.clear();
+//     _initiativesListTaskManager.addAll(list);
+//   }
+
+
+  Future<void> reloadRepository(String day)
+  async {
+    var list = await weekRepository.fetchInitiatives(day);
     _initiativesListTaskManager.clear();
     _initiativesListTaskManager.addAll(list);
   }
 
-  Future<void> addInitiative(Initiative initiative) async {
+  // Future<void> addInitiative(Initiative initiative) async {
+  //   _initiativesListTaskManager.add(initiative);
+  //   await repo.addInitiative(initiative);
+  // }
+
+  Future<void> addInitiative(String day, Initiative initiative) async {
     _initiativesListTaskManager.add(initiative);
-    await repo.addInitiative(initiative);
+    await weekRepository.addInitiative(day,initiative);
   }
 
-  Future<void> removeInitiative(String id) async {
+  Future<void> removeInitiative(String day, String id) async {
     _initiativesListTaskManager.removeWhere((element) => element.id == id);
-    await repo.removeInitiative(id);
+    await weekRepository.removeInitiative(day, id);
 
   }
 
