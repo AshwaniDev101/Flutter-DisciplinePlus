@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../models/heatmap_data.dart';
+import '../../models/heatmap_data.dart';
 
 class OverallHeatmapService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;

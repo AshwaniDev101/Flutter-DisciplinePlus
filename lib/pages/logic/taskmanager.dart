@@ -1,7 +1,7 @@
 
 import 'package:discipline_plus/pages/listpage/core/current_day_manager.dart';
 import '../../database/repository/week_repository.dart';
-import '../../database/services/week_service/firebase_week_service.dart';
+import '../../database/services/firebase_week_service.dart';
 import '../../models/initiative.dart';
 
 class TaskManager {
@@ -51,20 +51,29 @@ class TaskManager {
 
   }
 
-
-  // void updateAllOrders() {
-  //   // loop through the list, set each .index, and push an update to Firebase
-  //   for (int i = 0; i < _initiativesListTaskManager.length; i++) {
-  //     final ini = _initiativesListTaskManager[i];
-  //     ini.index = i;
-  //    repo.updateInitiative(ini);
-  //   }
+  // Future<void> updateInitiative(String day, Initiative initiative) async {
+  //   // _initiativesListTaskManager.removeWhere((element) => element.id == id);
+  //   await weekRepository.updateInitiative(day, initiative.id, initiative);
+  //
   // }
+
+
+  Future<void> updateInitiative(String day, Initiative updated) async {
+    // // 1️⃣ Replace in local list
+    // final idx = _initiativesListTaskManager.indexWhere((e) => e.id == updated.id);
+    // if (idx != -1) {
+    //   _initiativesListTaskManager[idx] = updated;
+    // }
+
+    // 2️⃣ Persist to Firestore
+    await weekRepository.updateInitiative(day, updated.id, updated);
+  }
+
 
   Future<void> updateAllOrders() async {
     final batchUpdates = _initiativesListTaskManager.asMap().entries.map((e) {
       e.value.index = e.key;
-      return weekRepository.updateInitiative(CurrentDayManager.getCurrentDay(),e.value);
+      return weekRepository.updateInitiative(CurrentDayManager.getCurrentDay(),e.value.id,e.value);
     }).toList();
 
     await Future.wait(batchUpdates);

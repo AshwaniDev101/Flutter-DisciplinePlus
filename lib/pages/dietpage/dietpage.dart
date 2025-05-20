@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DietPage extends StatefulWidget {
-  const DietPage({Key? key}) : super(key: key);
+  const DietPage({super.key});
 
   @override
   _DietPageState createState() => _DietPageState();
@@ -24,7 +24,7 @@ class _DietPageState extends State<DietPage> {
   final double _maxProgress = 1500;
 
   // Date and pagination
-  DateTime _selectedDate = DateTime.now();
+  final DateTime _selectedDate = DateTime.now();
   final PageController _pageController = PageController(initialPage: 0);
   int _currentIndex = 0;
 

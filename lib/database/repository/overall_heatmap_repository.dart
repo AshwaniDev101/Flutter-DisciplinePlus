@@ -1,5 +1,5 @@
 import '../../models/heatmap_data.dart';
-import '../services/overall_heatmap/overall_heatmap_service.dart';
+import '../services/firebase_overall_heatmap_service.dart';
 
 class OverallHeatmapRepository {
   final OverallHeatmapService _service;

@@ -1,5 +1,6 @@
 
 
+import 'package:discipline_plus/pages/listpage/core/current_day_manager.dart';
 import 'package:discipline_plus/pages/listpage/core/snap_scrolling.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +8,7 @@ import 'package:intl/intl.dart';
 import '../core/refresh_reload_notifier.dart';
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/overall_heatmap_repository.dart';
-import '../../../database/services/overall_heatmap/overall_heatmap_service.dart';
+import '../../../database/services/firebase_overall_heatmap_service.dart';
 import '../../../models/heatmap_data.dart';
 
 class HeatmapRow extends StatefulWidget {
@@ -50,7 +51,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
     // Adding function to list of function to refresh them all at once
     RefreshReloadNotifier.instance.register(loadData);
     // loadData();
-    moveToCurrent();
+    moveCursorToCurrent();
   }
 
   @override
@@ -61,20 +62,20 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
 
 
-  void uploadDummyData()
-  {
-
-    yourOverallHeatmapDataList.forEach((heatmap_data){
-      _heatmapRepository.addOverallHeatmapData(heatmap_data);
-    });
-
-  }
+  // void uploadDummyData()
+  // {
+  //
+  //   yourOverallHeatmapDataList.forEach((heatmap_data){
+  //     _heatmapRepository.addOverallHeatmapData(heatmap_data);
+  //   });
+  //
+  // }
 
   void loadData() async {
-    List<HeatmapData> heatmap_list = await _heatmapRepository.getOverallHeatmapData(2025, 4);
+    List<HeatmapData> heatmapList = await _heatmapRepository.getOverallHeatmapData(2025, 4);
     setState(() {
       yourOverallHeatmapDataList.clear();
-      yourOverallHeatmapDataList.addAll(heatmap_list);
+      yourOverallHeatmapDataList.addAll(heatmapList);
       _updateHeatMap();
     });
   }
@@ -130,7 +131,26 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
   void _onDateTap(int day) => setState(() {
     selectedDate = DateTime(currentDate.year, currentDate.month, day);
+
+
+
+    var week = getWeekdayName(selectedDate!);
+
+    // CurrentDayManager.setIndex(2);
+    CurrentDayManager.setWeekday(week);
+
+    // Reload data from firebase
+    RefreshReloadNotifier.instance.notifyAll();
+
+    // print("======= ${selectedDate} = ${currentDate.year}, ${currentDate.month}, ${day}, ${week} =================");
+
+
   });
+
+  String getWeekdayName(DateTime datetime)
+  {
+    return DateFormat('EEEE').format(datetime);
+  }
 
   bool _isToday(int day) =>
       day == today.day &&
@@ -145,7 +165,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
 
 
-  void moveToCurrent() {
+  void moveCursorToCurrent() {
     if (currentDate.year == today.year && currentDate.month == today.month) {
 
 
@@ -229,27 +249,42 @@ class _HeatmapRowState extends State<HeatmapRow> {
           return GestureDetector(
             onTap: () => _onDateTap(day),
             child: Container(
+              // width: 35,
               width: 40,
+              color: Colors.transparent,
               margin: const EdgeInsets.symmetric(horizontal: 2),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Mon
                   Text(
                     DateFormat('EEE').format(date),
                     style: TextStyle(
                       fontSize: 9,
-                      color: isToday ? Colors.orange : Colors.black,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                      color: isToday
+                          ? Colors.orange
+                          : isSelected
+                          ? Colors.blue
+                          : Colors.black,
                     ),
                   ),
+                  // 5
                   Text(
                     day.toString(),
                     style: TextStyle(
                       fontSize: 8,
                       fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? Colors.blue : Colors.black,
+                      color: isToday
+                          ? Colors.orange
+                          : isSelected
+                          ? Colors.blue
+                          : Colors.black,
+                      // color: isSelected ? Colors.blue : Colors.black,
                     ),
                   ),
                   const SizedBox(height: 2),
+                  // Circle
                   Container(
                     width: 18,
                     height: 18,

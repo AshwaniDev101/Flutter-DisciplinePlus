@@ -1,7 +1,7 @@
 // lib/repositories/week_repository.dart
 
 import '../../models/initiative.dart';
-import '../services/week_service/firebase_week_service.dart';
+import '../services/firebase_week_service.dart';
 
 
 class WeekRepository {
@@ -25,8 +25,8 @@ class WeekRepository {
   }
 
   /// Update an existing initiative in [day]
-  Future<void> updateInitiative(String day, Initiative ini) {
-    return _service.updateInitiative(day, ini);
+  Future<void> updateInitiative(String day, String id, Initiative ini) {
+    return _service.updateInitiative(day, id, ini);
   }
 
   /// Delete initiative by [id] from [day]
@@ -35,9 +35,9 @@ class WeekRepository {
   }
 
   /// Mark an initiative complete/incomplete on [day]
-  Future<void> markComplete(String day, Initiative ini, bool isComplete) {
+  Future<void> markComplete(String day, String id, Initiative ini, bool isComplete) {
     ini.isComplete = isComplete;
-    return _service.updateInitiative(day, ini);
+    return _service.updateInitiative(day, id, ini);
   }
 
   /// Reorder the list under [day] by updating each Initiative.index
