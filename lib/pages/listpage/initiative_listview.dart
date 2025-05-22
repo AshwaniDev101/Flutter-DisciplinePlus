@@ -6,14 +6,14 @@ import '../logic/taskmanager.dart';
 import '../../core/utils/constants.dart';
 import 'core/current_day_manager.dart';
 
-class DayContent extends StatefulWidget {
+class InitiativeListview extends StatefulWidget {
   // final int dayIndex;
   final ScrollController scrollController;
   final RefreshController refreshController;
   final void Function(DismissDirection, Initiative) onItemSwipe;
   final void Function(Initiative) onItemEdit;
 
-  const DayContent({
+  const InitiativeListview({
     super.key,
     // required this.dayIndex,
     required this.scrollController,
@@ -23,10 +23,10 @@ class DayContent extends StatefulWidget {
   });
 
   @override
-  State<DayContent> createState() => _DayContentState();
+  State<InitiativeListview> createState() => _InitiativeListviewState();
 }
 
-class _DayContentState extends State<DayContent> {
+class _InitiativeListviewState extends State<InitiativeListview> {
   @override
   Widget build(BuildContext context) {
     return Column(

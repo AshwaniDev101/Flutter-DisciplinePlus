@@ -36,6 +36,8 @@ class FirebaseWeekService {
         .collection('InitiativeList')
         .doc(initiative.id);
     final map = initiative.toMap()..remove('id');
+
+    print(ref.toString());
     return ref.set(map);
   }
 

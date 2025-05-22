@@ -11,7 +11,7 @@ import '../listpage/core/current_day_manager.dart';
 import '../logic/taskmanager.dart';
 import '../timerpage/timer_page.dart';
 import 'heatmap_panel.dart';
-import 'day_content.dart';
+import 'initiative_listview.dart';
 import 'initiative_dialog.dart';
 
 const double _panelMinHeight = 90;
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                     borderRadius:
                     const BorderRadius.vertical(bottom: Radius.circular(12)),
                   ),
-                  child: DayContent(
+                  child: InitiativeListview(
                         // dayIndex: 0,
                         scrollController: _scrollController,
                         refreshController: _refreshControllers,
@@ -148,8 +148,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   },
                   child: const Icon(Icons.account_balance_wallet_sharp),
                 ),
-
-
                 FloatingActionButton(
                   onPressed: () {
 
