@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import '../../database/services/firebase_week_service.dart';
 import '../../models/initiative.dart';
 import '../listpage/core/refresh_reload_notifier.dart';
 import '../logic/taskmanager.dart';
@@ -27,41 +28,72 @@ class InitiativeListview extends StatefulWidget {
 }
 
 class _InitiativeListviewState extends State<InitiativeListview> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: SmartRefresher(
-            controller: widget.refreshController,
-            onRefresh: () async {
-              await RefreshReloadNotifier.instance.notifyAll();
-              widget.refreshController.refreshCompleted();
-            },
-            child: ReorderableListView(
-              scrollController: widget.scrollController,
-              padding: const EdgeInsets.all(8),
-              onReorder: (oldIndex, newIndex) {
 
-                setState(() {
-                  if (newIndex > oldIndex) newIndex--;
-                  final item = TaskManager.instance.getInitiativeAt(oldIndex);
-                  TaskManager.instance.removeInitiativeAt(oldIndex);
-                  TaskManager.instance.insertInitiativeAt(newIndex, item);
-                  TaskManager.instance.updateAllOrders();
-                });
-              },
-              children: [
-                for (int i = 0; i < TaskManager.instance.getLength(); i++)
-                  _dismissibleItem(context, TaskManager.instance.getInitiativeAt(i), i),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 100),
-      ],
+
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<Initiative>>(
+      stream: TaskManager.instance.weekRepository.watchInitiatives(CurrentDayManager.getCurrentDay()),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong'));
+        }
+
+        final initiatives = snapshot.data ?? [];
+
+        return ListView.builder(
+          itemCount: initiatives.length,
+          itemBuilder: (context, index) {
+            final initiative = initiatives[index];
+            return ListTile(
+              title: Text(initiative.title),
+              // subtitle: Text(initiative.description ?? ''),
+            );
+          },
+        );
+      },
     );
   }
+
+  //
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Column(
+  //     children: [
+  //       Expanded(
+  //         child: SmartRefresher(
+  //           controller: widget.refreshController,
+  //           onRefresh: () async {
+  //             await RefreshReloadNotifier.instance.notifyAll();
+  //             widget.refreshController.refreshCompleted();
+  //           },
+  //           child: ReorderableListView(
+  //             scrollController: widget.scrollController,
+  //             padding: const EdgeInsets.all(8),
+  //             onReorder: (oldIndex, newIndex) {
+  //
+  //               setState(() {
+  //                 if (newIndex > oldIndex) newIndex--;
+  //                 final item = TaskManager.instance.getInitiativeAt(oldIndex);
+  //                 TaskManager.instance.removeInitiativeAt(oldIndex);
+  //                 TaskManager.instance.insertInitiativeAt(newIndex, item);
+  //                 TaskManager.instance.updateAllOrders();
+  //               });
+  //             },
+  //             children: [
+  //               for (int i = 0; i < TaskManager.instance.getLength(); i++)
+  //                 _dismissibleItem(context, TaskManager.instance.getInitiativeAt(i), i),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //       const SizedBox(height: 100),
+  //     ],
+  //   );
+  // }
 
   Widget _dismissibleItem(BuildContext context, Initiative init, int index) {
     return Dismissible(

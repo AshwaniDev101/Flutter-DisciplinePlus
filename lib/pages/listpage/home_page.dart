@@ -1,5 +1,4 @@
 
-import 'package:discipline_plus/core/xlsx/xlsx_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -140,14 +139,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
             child: Row(
               children: [
 
-                FloatingActionButton(
-                  onPressed: () {
 
-                    excelMain();
-
-                  },
-                  child: const Icon(Icons.account_balance_wallet_sharp),
-                ),
                 FloatingActionButton(
                   onPressed: () {
 

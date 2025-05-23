@@ -27,8 +27,15 @@ class AppTime {
 
   factory AppTime.fromMap(Map<String, dynamic> map) {
     return AppTime(
-      map['hour'] as int,
-      map['minute'] as int,
+      (map['hour'] as num).toInt(),
+      (map['minute'] as num).toInt(),
     );
   }
-}
+
+  // factory AppTime.fromMap(Map<String, dynamic> map) {
+  //   return AppTime(
+  //     map['hour'] as int,
+  //     map['minute'] as int,
+  //   );
+  // }
+  }
