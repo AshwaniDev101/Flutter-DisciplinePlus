@@ -15,11 +15,15 @@ class TaskManager {
   // InitiativeRepository repo = InitiativeRepository(FireInitiativeService());
 
 
-  WeekRepository weekRepository = WeekRepository(FirebaseWeekService.instance);
+  final WeekRepository _weekRepository = WeekRepository(FirebaseWeekService.instance);
 
   final List<Initiative> _initiativesListTaskManager = [];
 
 
+
+  Stream<List<Initiative>> watchInitiatives(String day) {
+    return _weekRepository.watchInitiatives(day);
+  }
 // ====================== Repository management functions ==================================
 //   Future<void> reloadRepository() async {
 //     var list = await repo.getAllInitiatives();
@@ -28,12 +32,12 @@ class TaskManager {
 //   }
 
 
-  Future<void> reloadRepository(String day)
-  async {
-    var list = await weekRepository.fetchInitiatives(day);
-    _initiativesListTaskManager.clear();
-    _initiativesListTaskManager.addAll(list);
-  }
+  // Future<void> reloadRepository(String day)
+  // async {
+  //   var list = await weekRepository.fetchInitiatives(day);
+  //   _initiativesListTaskManager.clear();
+  //   _initiativesListTaskManager.addAll(list);
+  // }
 
   // Future<void> addInitiative(Initiative initiative) async {
   //   _initiativesListTaskManager.add(initiative);
@@ -42,12 +46,12 @@ class TaskManager {
 
   Future<void> addInitiative(String day, Initiative initiative) async {
     _initiativesListTaskManager.add(initiative);
-    await weekRepository.addInitiative(day,initiative);
+    await _weekRepository.addInitiative(day,initiative);
   }
 
   Future<void> removeInitiative(String day, String id) async {
     _initiativesListTaskManager.removeWhere((element) => element.id == id);
-    await weekRepository.removeInitiative(day, id);
+    await _weekRepository.removeInitiative(day, id);
 
   }
 
@@ -66,14 +70,14 @@ class TaskManager {
     // }
 
     // 2️⃣ Persist to Firestore
-    await weekRepository.updateInitiative(day, updated.id, updated);
+    await _weekRepository.updateInitiative(day, updated.id, updated);
   }
 
 
   Future<void> updateAllOrders() async {
     final batchUpdates = _initiativesListTaskManager.asMap().entries.map((e) {
       e.value.index = e.key;
-      return weekRepository.updateInitiative(CurrentDayManager.getCurrentDay(),e.value.id,e.value);
+      return _weekRepository.updateInitiative(CurrentDayManager.getCurrentDay(),e.value.id,e.value);
     }).toList();
 
     await Future.wait(batchUpdates);

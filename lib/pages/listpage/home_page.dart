@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
   }
 
   Future<void> _loadData() async {
-    await TaskManager.instance.reloadRepository(CurrentDayManager.getCurrentDay());
+    // await TaskManager.instance.reloadRepository(CurrentDayManager.getCurrentDay());
     setState(() {});
   }
 

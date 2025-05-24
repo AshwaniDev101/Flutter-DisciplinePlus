@@ -32,7 +32,7 @@ class _InitiativeListviewState extends State<InitiativeListview> {
 
   Widget build(BuildContext context) {
     return StreamBuilder<List<Initiative>>(
-      stream: TaskManager.instance.weekRepository.watchInitiatives(CurrentDayManager.getCurrentDay()),
+      stream: TaskManager.instance.watchInitiatives(CurrentDayManager.getCurrentDay()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
