@@ -30,70 +30,76 @@ class InitiativeListview extends StatefulWidget {
 class _InitiativeListviewState extends State<InitiativeListview> {
 
 
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<Initiative>>(
-      stream: TaskManager.instance.watchInitiatives(CurrentDayManager.getCurrentDay()),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    @override
+    Widget build(BuildContext context) {
+      return Column(
+        children: [
+          Expanded(
+            child: SmartRefresher(
+              controller: widget.refreshController,
+              onRefresh: () async {
+                await RefreshReloadNotifier.instance.notifyAll();
+                widget.refreshController.refreshCompleted();
+              },
+              child: StreamBuilder<List<Initiative>>(
+                stream: TaskManager.instance.watchInitiatives(CurrentDayManager.getCurrentDay()),
+                builder: (context, snapshot) {
 
-        if (snapshot.hasError) {
-          return const Center(child: Text('Something went wrong'));
-        }
+                  //
+                  // if (snapshot.connectionState == ConnectionState.waiting) {
+                  //   return const Center(child: CircularProgressIndicator());
+                  // }
 
-        final initiatives = snapshot.data ?? [];
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('Something went wrong'));
+                  }
 
-        return ListView.builder(
-          itemCount: initiatives.length,
-          itemBuilder: (context, index) {
-            final initiative = initiatives[index];
-            return ListTile(
-              title: Text(initiative.title),
-              // subtitle: Text(initiative.description ?? ''),
-            );
-          },
-        );
-      },
-    );
-  }
+                  final initiatives = snapshot.data ?? [];
 
-  //
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Column(
-  //     children: [
-  //       Expanded(
-  //         child: SmartRefresher(
-  //           controller: widget.refreshController,
-  //           onRefresh: () async {
-  //             await RefreshReloadNotifier.instance.notifyAll();
-  //             widget.refreshController.refreshCompleted();
-  //           },
-  //           child: ReorderableListView(
-  //             scrollController: widget.scrollController,
-  //             padding: const EdgeInsets.all(8),
-  //             onReorder: (oldIndex, newIndex) {
-  //
-  //               setState(() {
-  //                 if (newIndex > oldIndex) newIndex--;
-  //                 final item = TaskManager.instance.getInitiativeAt(oldIndex);
-  //                 TaskManager.instance.removeInitiativeAt(oldIndex);
-  //                 TaskManager.instance.insertInitiativeAt(newIndex, item);
-  //                 TaskManager.instance.updateAllOrders();
-  //               });
-  //             },
-  //             children: [
-  //               for (int i = 0; i < TaskManager.instance.getLength(); i++)
-  //                 _dismissibleItem(context, TaskManager.instance.getInitiativeAt(i), i),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //       const SizedBox(height: 100),
-  //     ],
-  //   );
-  // }
+                  return Stack(
+                    children : [
+                      ReorderableListView(
+                      scrollController: widget.scrollController,
+                      padding: const EdgeInsets.all(8),
+                      onReorder: (oldIndex, newIndex) {
+                        setState(() {
+                          if (newIndex > oldIndex) newIndex--;
+                          final item = initiatives[oldIndex];
+                          TaskManager.instance.removeInitiativeAt(oldIndex);
+                          TaskManager.instance.insertInitiativeAt(newIndex, item);
+                          TaskManager.instance.updateAllOrders();
+                        });
+                      },
+                      children: [
+                        for (int i = 0; i < initiatives.length; i++)
+                          _dismissibleItem(context, initiatives[i], i),
+                      ],
+                    ),
+
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        const Positioned.fill(
+                          child: IgnorePointer(
+                            ignoring: true,
+                            child: Center(
+                              child: SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CircularProgressIndicator(strokeWidth: 3),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ]
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 100),
+        ],
+      );
+    }
+
 
   Widget _dismissibleItem(BuildContext context, Initiative init, int index) {
     return Dismissible(
