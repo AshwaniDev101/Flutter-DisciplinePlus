@@ -1,5 +1,8 @@
+import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
+
+import '../../models/diet_food.dart';
 
 class DietPage extends StatefulWidget {
   const DietPage({super.key});
@@ -8,15 +11,15 @@ class DietPage extends StatefulWidget {
   _DietPageState createState() => _DietPageState();
 }
 
-class Food {
-  final String name;
-  final int kcal;
-  final int quantity;
-  final String mealType;
-  final DateTime time;
-
-  Food(this.name, this.kcal, this.quantity, this.mealType, this.time);
-}
+// class DietFood {
+//   final String name;
+//   final int kcal;
+//   final int quantity;
+//   final String mealType;
+//   final DateTime time;
+//
+//   DietFood(this.name, this.kcal, this.quantity, this.mealType, this.time);
+// }
 
 class _DietPageState extends State<DietPage> {
   // Progress tracking
@@ -28,37 +31,38 @@ class _DietPageState extends State<DietPage> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentIndex = 0;
 
-  // Food lists
-  final List<Food> _foodList = [
-    Food('Apple', 95, 1, 'Breakfast', DateTime.now()),
-    Food('Grilled Chicken', 250, 1, 'Lunch', DateTime.now()),
-    Food('Salad', 150, 1, 'Dinner', DateTime.now()),
-  ];
-  final List<Food> _foodEatenList = [];
+  // DietFood lists
+  // final List<DietFood> _DietFoodList = [
+  //   DietFood(id:"temp id", name: 'Apple',kcal: 95,quantity: 1,mealType: "Breakfast", time: DateTime.now()),
+  //   DietFood(id:"temp id", name: 'Grilled Chicken',kcal: 250,quantity: 1,mealType: "Lunch", time: DateTime.now()),
+  //   DietFood(id:"temp id", name: 'Salad',kcal: 150,quantity: 1,mealType: "Dinner", time: DateTime.now()),
+  //
+  // ];
+  // final List<DietFood> _DietFoodEatenList = [];
 
   @override
   void initState() {
     super.initState();
-    _updateProgress();
+    // _updateProgress();
   }
-
-  void _updateProgress() {
-    final total = _foodEatenList.fold<int>(0, (sum, f) => sum + f.kcal * f.quantity);
-    setState(() => _progress = total.toDouble());
-  }
-
-  void _moveItem(int index, bool fromEaten) {
-    setState(() {
-      if (fromEaten) {
-        final item = _foodEatenList.removeAt(index);
-        _foodList.add(item);
-      } else {
-        final item = _foodList.removeAt(index);
-        _foodEatenList.add(item);
-      }
-      _updateProgress();
-    });
-  }
+  //
+  // void _updateProgress() {
+  //   final total = _DietFoodEatenList.fold<int>(0, (sum, f) => sum + f.kcal * f.quantity);
+  //   setState(() => _progress = total.toDouble());
+  // }
+  //
+  // void _moveItem(int index, bool fromEaten) {
+  //   setState(() {
+  //     if (fromEaten) {
+  //       final item = _DietFoodEatenList.removeAt(index);
+  //       _DietFoodList.add(item);
+  //     } else {
+  //       final item = _DietFoodList.removeAt(index);
+  //       _DietFoodEatenList.add(item);
+  //     }
+  //     _updateProgress();
+  //   });
+  // }
 
   void _onHeaderSwipe(DragUpdateDetails details) {
     if (details.delta.dx < -10 && _currentIndex < 1) {
@@ -87,24 +91,7 @@ class _DietPageState extends State<DietPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(DateFormat('MMM dd, yyyy').format(_selectedDate)),
-      //   centerTitle: true,
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.calendar_today),
-      //       onPressed: () async {
-      //         final date = await showDatePicker(
-      //           context: context,
-      //           initialDate: _selectedDate,
-      //           firstDate: DateTime(2000),
-      //           lastDate: DateTime(2100),
-      //         );
-      //         if (date != null) setState(() => _selectedDate = date);
-      //       },
-      //     ),
-      //   ],
-      // ),
+
       body: Column(
         children: [
           // Header with progress + swipe/tap control
@@ -122,7 +109,7 @@ class _DietPageState extends State<DietPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildHeaderTab('Food', 0),
+                      _buildHeaderTab('DietFood', 0),
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -186,15 +173,15 @@ class _DietPageState extends State<DietPage> {
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                _buildListView(_foodList, false),
-                _buildListView(_foodEatenList, true),
+                _buildListView(FoodManager.instance.watchAvailableFood(), false),
+                _buildListView(FoodManager.instance.watchConsumedFood(), true),
               ],
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddFoodDialog,
+        onPressed: _showAddDietFoodDialog,
         child: const Icon(Icons.add),
       ),
     );
@@ -215,30 +202,69 @@ class _DietPageState extends State<DietPage> {
     );
   }
 
-  Widget _buildListView(List<Food> list, bool isEaten) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: list.length,
-      itemBuilder: (context, index) {
-        final item = list[index];
-        return Dismissible(
-          key: Key(item.hashCode.toString()),
-          background: Container(color: Colors.redAccent),
-          onDismissed: (_) => _moveItem(index, isEaten),
-          child: Card(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            child: ListTile(
-              leading: Icon(_iconForMeal(item.mealType)),
-              title: Text(item.name),
-              subtitle: Text(
-                  '${item.kcal * item.quantity} kcal (${item.quantity}x)'),
-              trailing: Text(DateFormat('HH:mm').format(item.time)),
-            ),
-          ),
+
+
+
+  Widget _buildListView(Stream<List<DietFood>> stream, bool isEaten) {
+    return StreamBuilder<List<DietFood>>(
+      stream: stream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text("No items yet"));
+        }
+
+        final list = snapshot.data!;
+        return ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            final item = list[index];
+            return Card(
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: ListTile(
+                title: Text(item.name),
+                subtitle: Text(
+                  "${item.kcal} kcal • ${item.quantity}g • ${item.mealType} • ${item.time.hour}:${item.time.minute.toString().padLeft(2, '0')}",
+                ),
+                trailing: isEaten
+                    ? Icon(Icons.check_circle, color: Colors.green)
+                    : Icon(Icons.fastfood, color: Colors.orange),
+              ),
+            );
+          },
         );
       },
     );
   }
+
+
+  // Widget _buildListView(List<DietFood> list, bool isEaten) {
+  //   return ListView.builder(
+  //     padding: const EdgeInsets.all(8),
+  //     itemCount: list.length,
+  //     itemBuilder: (context, index) {
+  //       final item = list[index];
+  //       return Dismissible(
+  //         key: Key(item.hashCode.toString()),
+  //         background: Container(color: Colors.redAccent),
+  //         onDismissed: (_) => _moveItem(index, isEaten),
+  //         child: Card(
+  //           margin: const EdgeInsets.symmetric(vertical: 6),
+  //           child: ListTile(
+  //             leading: Icon(_iconForMeal(item.mealType)),
+  //             title: Text(item.name),
+  //             subtitle: Text(
+  //                 '${item.kcal * item.quantity} kcal (${item.quantity}x)'),
+  //             trailing: Text(DateFormat('HH:mm').format(item.time)),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   IconData _iconForMeal(String type) {
     switch (type) {
@@ -249,18 +275,18 @@ class _DietPageState extends State<DietPage> {
       case 'Dinner':
         return Icons.dinner_dining;
       default:
-        return Icons.fastfood;
+        return Icons.breakfast_dining_rounded;
     }
   }
 
-  void _showAddFoodDialog() {
+  void _showAddDietFoodDialog() {
     final formKey = GlobalKey<FormState>();
     String name = '', calories = '', quantity = '1', mealType = 'Breakfast';
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Add New Food'),
+        title: const Text('Add New DietFood'),
         content: Form(
           key: formKey,
           child: SingleChildScrollView(
@@ -276,7 +302,7 @@ class _DietPageState extends State<DietPage> {
                   decoration: const InputDecoration(labelText: 'Meal Type'),
                 ),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Food Name'),
+                  decoration: const InputDecoration(labelText: 'DietFood Name'),
                   validator: (v) => v!.isEmpty ? 'Required' : null,
                   onSaved: (v) => name = v!,
                 ),
@@ -304,15 +330,18 @@ class _DietPageState extends State<DietPage> {
               if (formKey.currentState!.validate()) {
                 formKey.currentState!.save();
                 setState(() {
-                  final food = Food(
-                    name,
-                    int.parse(calories),
-                    int.parse(quantity),
-                    mealType,
-                    DateTime.now(),
+                  final newfood = DietFood(
+                    id:"temp id",
+                      name: name,
+                    kcal: int.parse(calories),
+                    quantity: int.parse(quantity),
+                    mealType:mealType,
+                    time: DateTime.now()
                   );
-                  _foodList.add(food);
-                  _updateProgress();
+
+                  FoodManager.instance.addToAvailableFood(newfood);
+                  // _DietFoodList.add(newfood);
+                  // _updateProgress();
                 });
                 Navigator.pop(context);
               }

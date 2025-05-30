@@ -3,7 +3,7 @@ import '../../models/initiative.dart';
 import '../../models/app_time.dart';
 import '../../models/study_break.dart';
 import '../listpage/widget/quantity_selector.dart';
-import '../logic/taskmanager.dart';
+import 'logic/taskmanager.dart';
 
 class InitiativeDialog extends StatefulWidget {
   final Initiative? existing;

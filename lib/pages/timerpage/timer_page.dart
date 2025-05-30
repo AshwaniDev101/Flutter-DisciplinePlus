@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:discipline_plus/resource/audio_manager.dart';
-import 'package:discipline_plus/pages/logic/taskmanager.dart';
+import 'package:discipline_plus/pages/listpage/logic/taskmanager.dart';
 import 'package:discipline_plus/pages/timerpage/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';

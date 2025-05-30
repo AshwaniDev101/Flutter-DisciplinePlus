@@ -7,7 +7,7 @@ import '../dietpage/dietpage.dart';
 import '../drawer/drawer.dart';
 import '../listpage/core/refresh_reload_notifier.dart';
 import '../listpage/core/current_day_manager.dart';
-import '../logic/taskmanager.dart';
+import 'logic/taskmanager.dart';
 import '../timerpage/timer_page.dart';
 import 'heatmap_panel.dart';
 import 'initiative_listview.dart';

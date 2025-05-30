@@ -3,7 +3,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../database/services/firebase_week_service.dart';
 import '../../models/initiative.dart';
 import '../listpage/core/refresh_reload_notifier.dart';
-import '../logic/taskmanager.dart';
+import 'logic/taskmanager.dart';
 import '../../core/utils/constants.dart';
 import 'core/current_day_manager.dart';
 
