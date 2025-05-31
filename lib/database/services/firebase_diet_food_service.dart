@@ -8,14 +8,14 @@ class FirebaseDietFoodService {
   FirebaseDietFoodService._();
   static final instance = FirebaseDietFoodService._();
 
-  final String userId = 'user1'; // replace this with dynamic user ID if needed
+  final String userId = 'user1'; // Make dynamic later
 
   /// Watch available food list
   Stream<List<DietFood>> watchAvailableFood() {
     return _db
-        .collection(userId)
-        .doc('food_available_list')
-        .collection('items')
+        .collection('users')
+        .doc(userId)
+        .collection('food_list')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
@@ -25,12 +25,16 @@ class FirebaseDietFoodService {
     }).toList());
   }
 
-  /// Watch consumed food list
-  Stream<List<DietFood>> watchConsumedFood() {
+  /// Watch consumed food list for specific date
+  Stream<List<DietFood>> watchConsumedFood(DateTime date) {
     return _db
-        .collection(userId)
-        .doc('food_consumed_list')
-        .collection('items')
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}')
+        .collection('food_consumed_list')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
@@ -43,20 +47,24 @@ class FirebaseDietFoodService {
   /// Add food to available list
   Future<void> addAvailableFood(DietFood food) {
     final ref = _db
-        .collection(userId)
-        .doc('food_available_list')
-        .collection('items')
+        .collection('users')
+        .doc(userId)
+        .collection('food_list')
         .doc(food.id);
     final map = food.toMap()..remove('id');
     return ref.set(map);
   }
 
   /// Add food to consumed list
-  Future<void> addConsumedFood(DietFood food) {
+  Future<void> addConsumedFood(DietFood food, DateTime date) {
     final ref = _db
-        .collection(userId)
-        .doc('food_consumed_list')
-        .collection('items')
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}')
+        .collection('food_consumed_list')
         .doc(food.id);
     final map = food.toMap()..remove('id');
     return ref.set(map);
@@ -65,19 +73,23 @@ class FirebaseDietFoodService {
   /// Delete food from available list
   Future<void> deleteAvailableFood(String id) {
     return _db
-        .collection(userId)
-        .doc('food_available_list')
-        .collection('items')
+        .collection('users')
+        .doc(userId)
+        .collection('food_list')
         .doc(id)
         .delete();
   }
 
   /// Delete food from consumed list
-  Future<void> deleteConsumedFood(String id) {
+  Future<void> deleteConsumedFood(String id, DateTime date) {
     return _db
-        .collection(userId)
-        .doc('food_consumed_list')
-        .collection('items')
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}')
+        .collection('food_consumed_list')
         .doc(id)
         .delete();
   }
@@ -85,20 +97,24 @@ class FirebaseDietFoodService {
   /// Update food in available list
   Future<void> updateAvailableFood(String id, DietFood food) {
     final ref = _db
-        .collection(userId)
-        .doc('food_available_list')
-        .collection('items')
+        .collection('users')
+        .doc(userId)
+        .collection('food_list')
         .doc(id);
     final map = food.toMap()..remove('id');
     return ref.update(map);
   }
 
   /// Update food in consumed list
-  Future<void> updateConsumedFood(String id, DietFood food) {
+  Future<void> updateConsumedFood(String id, DietFood food, DateTime date) {
     final ref = _db
-        .collection(userId)
-        .doc('food_consumed_list')
-        .collection('items')
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}')
+        .collection('food_consumed_list')
         .doc(id);
     final map = food.toMap()..remove('id');
     return ref.update(map);
