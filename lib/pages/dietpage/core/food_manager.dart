@@ -23,7 +23,7 @@ class FoodManager {
   }
   Stream<List<DietFood>> watchConsumedFood() {
 
-    return _dietFoodRepository.watchConsumedFood();
+    return _dietFoodRepository.watchConsumedFood(DateTime.now());
   }
 
   // Add to available food list
@@ -34,7 +34,7 @@ class FoodManager {
 
   void addToConsumedFood(DietFood food) {
     _availableFood.add(food);
-    _dietFoodRepository.addConsumedFood(food);
+    _dietFoodRepository.addConsumedFood(food, DateTime.now());
   }
   // Remove from available food list
   void removeFromAvailableFood(DietFood food) {
@@ -43,7 +43,7 @@ class FoodManager {
   }
   void removeFromConsumedFood(DietFood food) {
     _consumedFood.remove(food);
-    _dietFoodRepository.deleteConsumedFood(food.id);
+    _dietFoodRepository.deleteConsumedFood(food.id, DateTime.now());
   }
 
   // Edit available food
@@ -55,7 +55,7 @@ class FoodManager {
   void editConsumedFood(DietFood food) {
     final index = _consumedFood.indexWhere((element) => element.id == food.id);
     _consumedFood[index] = food;
-    _dietFoodRepository.updateConsumedFood(food.id, food);
+    _dietFoodRepository.updateConsumedFood(food.id, food, DateTime.now());
   }
 
 }
