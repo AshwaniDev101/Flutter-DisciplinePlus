@@ -23,7 +23,7 @@ class DietPage extends StatefulWidget {
 
 class _DietPageState extends State<DietPage> {
   // Progress tracking
-  double _progress = 0;
+  final double _progress = 0;
   final double _maxProgress = 1500;
 
   // Date and pagination
