@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/diet_food.dart';
+import 'package:discipline_plus/models/food_stats.dart';
 
 class FirebaseDietFoodService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -122,4 +123,25 @@ class FirebaseDietFoodService {
     final map = food.toMap()..remove('id');
     return ref.update(map);
   }
+
+
+
+  Future<void> updateTotalCaloriesConsumed(FoodStats foodStats, DateTime date) {
+    final ref = _db
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}');
+
+    final map = foodStats.toMap();
+
+    return ref.set(map, SetOptions(merge: true));
+  }
+
+
+
+
+
 }

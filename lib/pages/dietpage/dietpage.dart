@@ -48,74 +48,59 @@ class _DietPageState extends State<DietPage> {
           // Header with progress + swipe/tap control
 
           SafeArea(child: Text("")),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            // onHorizontalDragUpdate: _onHeaderSwipe,
-            child: Column(
-              children: [
-                Container(
-                  // color: Colors.white,
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // _buildHeaderTab('DietFood', 0),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            height: 130, // Increased from 150
-                            width: 130,  // Increased from 150
-                            child: CircularProgressIndicator(
-                              value: _progress / _maxProgress,
-                              strokeWidth: 15, // Increased from 10
-                              backgroundColor: Colors.grey.shade200,
-                              valueColor: AlwaysStoppedAnimation(_getProgressColor()),
-                            ),
-                          ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${_progress.toInt()}',
-                                style: const TextStyle(
-                                  fontSize: 32, // Increased from 20
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '/ ${_maxProgress.toInt()} kcal',
-                                style: TextStyle(
-                                  fontSize: 16, // Increased from 12
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+          Column(
+            children: [
+              Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      height: 130,
+                      width: 130,
+                      child: CircularProgressIndicator(
+                        value: _progress / _maxProgress,
+                        strokeWidth: 15,
+                        backgroundColor: Colors.grey.shade200,
+                        valueColor: AlwaysStoppedAnimation(_getProgressColor()),
                       ),
-
-                    ],
-                  ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${_progress.toInt()}',
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '/ ${_maxProgress.toInt()} kcal',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
+              ),
+              SizedBox(height: 20,),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Fat: 100g", style: TextStyle(fontSize: 12),),
-                      Text("Nutrition: 130g", style: TextStyle(fontSize: 12),),
-                      Text("Curbs: 220g", style: TextStyle(fontSize: 12),),
-                    ],),
-                ),
-              ],
-            ),
-
-
-
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Fat: 100g", style: TextStyle(fontSize: 12),),
+                    Text("Nutrition: 130g", style: TextStyle(fontSize: 12),),
+                    Text("Curbs: 220g", style: TextStyle(fontSize: 12),),
+                  ],),
+              ),
+            ],
           ),
+
 
           Expanded(
             child: Column(
