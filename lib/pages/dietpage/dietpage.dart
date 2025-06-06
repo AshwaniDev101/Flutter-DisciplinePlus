@@ -12,15 +12,6 @@ class DietPage extends StatefulWidget {
   _DietPageState createState() => _DietPageState();
 }
 
-// class DietFood {
-//   final String name;
-//   final int kcal;
-//   final int quantity;
-//   final String mealType;
-//   final DateTime time;
-//
-//   DietFood(this.name, this.kcal, this.quantity, this.mealType, this.time);
-// }
 
 class _DietPageState extends State<DietPage> {
   // Progress tracking
@@ -32,14 +23,7 @@ class _DietPageState extends State<DietPage> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentIndex = 0;
 
-  // DietFood lists
-  // final List<DietFood> _DietFoodList = [
-  //   DietFood(id:"temp id", name: 'Apple',kcal: 95,quantity: 1,mealType: "Breakfast", time: DateTime.now()),
-  //   DietFood(id:"temp id", name: 'Grilled Chicken',kcal: 250,quantity: 1,mealType: "Lunch", time: DateTime.now()),
-  //   DietFood(id:"temp id", name: 'Salad',kcal: 150,quantity: 1,mealType: "Dinner", time: DateTime.now()),
-  //
-  // ];
-  // final List<DietFood> _DietFoodEatenList = [];
+
 
   @override
   void initState() {
@@ -47,42 +31,6 @@ class _DietPageState extends State<DietPage> {
     // _updateProgress();
   }
 
-  // void _updateProgress() {
-  //   final total = _DietFoodEatenList.fold<int>(0, (sum, f) => sum + f.kcal * f.quantity);
-  //   setState(() => _progress = total.toDouble());
-  // }
-  //
-  // void _moveItem(int index, bool fromEaten) {
-  //   setState(() {
-  //     if (fromEaten) {
-  //
-  //       FoodManager.r
-  //       final item = _DietFoodEatenList.removeAt(index);
-  //       _DietFoodList.add(item);
-  //     } else {
-  //       final item = _DietFoodList.removeAt(index);
-  //       _DietFoodEatenList.add(item);
-  //     }
-  //     _updateProgress();
-  //   });
-  // }
-
-  void _onHeaderSwipe(DragUpdateDetails details) {
-    if (details.delta.dx < -10 && _currentIndex < 1) {
-      _goToPage(_currentIndex + 1);
-    } else if (details.delta.dx > 10 && _currentIndex > 0) {
-      _goToPage(_currentIndex - 1);
-    }
-  }
-
-  void _goToPage(int index) {
-    setState(() => _currentIndex = index);
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
 
   Color _getProgressColor() {
     final ratio = _progress / _maxProgress;
@@ -102,7 +50,7 @@ class _DietPageState extends State<DietPage> {
           SafeArea(child: Text("")),
           GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onHorizontalDragUpdate: _onHeaderSwipe,
+            // onHorizontalDragUpdate: _onHeaderSwipe,
             child: Column(
               children: [
                 Container(
@@ -112,7 +60,7 @@ class _DietPageState extends State<DietPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildHeaderTab('DietFood', 0),
+                      // _buildHeaderTab('DietFood', 0),
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -147,7 +95,7 @@ class _DietPageState extends State<DietPage> {
                           ),
                         ],
                       ),
-                      _buildHeaderTab('Eaten', 1),
+
                     ],
                   ),
                 ),
@@ -169,19 +117,31 @@ class _DietPageState extends State<DietPage> {
 
           ),
 
-
-
-          // PageView content
           Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
+            child: Column(
               children: [
-                _buildListView(FoodManager.instance.watchAvailableFood(), false),
-                _buildListView(FoodManager.instance.watchConsumedFood(), true),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildTabButton('Available', 0),
+                    _buildTabButton('Consumed', 1),
+                  ],
+                ),
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) => setState(() => _currentIndex = index),
+                    children: [
+                      _buildListView(FoodManager.instance.watchAvailableFood(), false),
+                      _buildListView(FoodManager.instance.watchConsumedFood(), true),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
+
+
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -191,16 +151,34 @@ class _DietPageState extends State<DietPage> {
     );
   }
 
-  Widget _buildHeaderTab(String label, int index) {
-    final selected = _currentIndex == index;
+
+
+  Widget _buildTabButton(String title, int index) {
+    final isSelected = _currentIndex == index;
     return GestureDetector(
-      onTap: () => _goToPage(index),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-          color: selected ? Colors.blue : Colors.black87,
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+          _pageController.animateToPage(
+            index,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue : Colors.grey[300],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
@@ -226,30 +204,31 @@ class _DietPageState extends State<DietPage> {
           itemCount: list.length,
           itemBuilder: (context, index) {
             final DietFood dietFood = list[index];
-            return Dismissible(
-
-              key: Key(dietFood.hashCode.toString()),
-              background: Container(color: Colors.redAccent),
-              onDismissed: (dir) {
-                // index, isEaten
-                FoodManager.instance.addToConsumedFood(dietFood);
-
-              },
-              confirmDismiss: (dir) async {
-                return false;
-              },
-
-              child: Card(
-                margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: ListTile(
-                  title: Text(dietFood.name),
-                  subtitle: Text(
-                    "${dietFood.kcal} kcal • ${dietFood.quantity}g • ${dietFood.mealType} • ${dietFood.time.hour}:${dietFood.time.minute.toString().padLeft(2, '0')}",
-                  ),
-                  trailing: isEaten
-                      ? Icon(Icons.check_circle, color: Colors.green)
-                      : Icon(Icons.fastfood, color: Colors.orange),
+            return Card(
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: ListTile(
+                title: Text(dietFood.name),
+                subtitle: Text(
+                  "${dietFood.kcal} kcal • ${dietFood.quantity}g • ${dietFood.mealType} • ${dietFood.time.hour}:${dietFood.time.minute.toString().padLeft(2, '0')}",
                 ),
+
+                  trailing: isEaten
+                      ? IconButton(icon: Icon(Icons.delete),
+                      onPressed: (){
+                        FoodManager.instance.removeFromConsumedFood(dietFood);
+
+                      },)
+                      : IconButton(icon: Icon(Icons.add),
+                      onPressed: (){
+                        FoodManager.instance.addToConsumedFood(dietFood);
+
+                      }
+
+                  )
+
+                // trailing: isEaten
+                //     ? Icon(Icons.check_circle, color: Colors.green)
+                //     : Icon(Icons.fastfood, color: Colors.orange),
               ),
             );
           },
@@ -258,31 +237,6 @@ class _DietPageState extends State<DietPage> {
     );
   }
 
-
-  // Widget _buildListView(List<DietFood> list, bool isEaten) {
-  //   return ListView.builder(
-  //     padding: const EdgeInsets.all(8),
-  //     itemCount: list.length,
-  //     itemBuilder: (context, index) {
-  //       final item = list[index];
-  //       return Dismissible(
-  //         key: Key(item.hashCode.toString()),
-  //         background: Container(color: Colors.redAccent),
-  //         onDismissed: (_) => _moveItem(index, isEaten),
-  //         child: Card(
-  //           margin: const EdgeInsets.symmetric(vertical: 6),
-  //           child: ListTile(
-  //             leading: Icon(_iconForMeal(item.mealType)),
-  //             title: Text(item.name),
-  //             subtitle: Text(
-  //                 '${item.kcal * item.quantity} kcal (${item.quantity}x)'),
-  //             trailing: Text(DateFormat('HH:mm').format(item.time)),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   IconData _iconForMeal(String type) {
     switch (type) {
