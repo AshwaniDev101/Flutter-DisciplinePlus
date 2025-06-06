@@ -11,7 +11,7 @@ import 'logic/taskmanager.dart';
 import '../timerpage/timer_page.dart';
 import 'heatmap_panel.dart';
 import 'initiative_listview.dart';
-import 'initiative_dialog.dart';
+import 'add_initiative_dialog.dart';
 
 const double _panelMinHeight = 90;
 const double _panelMaxHeight = 550;
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
     showDialog(
       context: context,
       builder: (_) => InitiativeDialog(
-        existing: initiative,
+        existing_initiative: initiative,
         onSubmit: (newInit, isEdit) {
           setState(() {
             if (isEdit) {

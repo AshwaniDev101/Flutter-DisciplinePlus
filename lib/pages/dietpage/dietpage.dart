@@ -1,3 +1,4 @@
+import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +46,7 @@ class _DietPageState extends State<DietPage> {
     super.initState();
     // _updateProgress();
   }
-  //
+
   // void _updateProgress() {
   //   final total = _DietFoodEatenList.fold<int>(0, (sum, f) => sum + f.kcal * f.quantity);
   //   setState(() => _progress = total.toDouble());
@@ -54,6 +55,8 @@ class _DietPageState extends State<DietPage> {
   // void _moveItem(int index, bool fromEaten) {
   //   setState(() {
   //     if (fromEaten) {
+  //
+  //       FoodManager.r
   //       final item = _DietFoodEatenList.removeAt(index);
   //       _DietFoodList.add(item);
   //     } else {
@@ -167,6 +170,7 @@ class _DietPageState extends State<DietPage> {
           ),
 
 
+
           // PageView content
           Expanded(
             child: PageView(
@@ -221,17 +225,31 @@ class _DietPageState extends State<DietPage> {
         return ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {
-            final item = list[index];
-            return Card(
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: ListTile(
-                title: Text(item.name),
-                subtitle: Text(
-                  "${item.kcal} kcal • ${item.quantity}g • ${item.mealType} • ${item.time.hour}:${item.time.minute.toString().padLeft(2, '0')}",
+            final DietFood dietFood = list[index];
+            return Dismissible(
+
+              key: Key(dietFood.hashCode.toString()),
+              background: Container(color: Colors.redAccent),
+              onDismissed: (dir) {
+                // index, isEaten
+                FoodManager.instance.addToConsumedFood(dietFood);
+
+              },
+              confirmDismiss: (dir) async {
+                return false;
+              },
+
+              child: Card(
+                margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: ListTile(
+                  title: Text(dietFood.name),
+                  subtitle: Text(
+                    "${dietFood.kcal} kcal • ${dietFood.quantity}g • ${dietFood.mealType} • ${dietFood.time.hour}:${dietFood.time.minute.toString().padLeft(2, '0')}",
+                  ),
+                  trailing: isEaten
+                      ? Icon(Icons.check_circle, color: Colors.green)
+                      : Icon(Icons.fastfood, color: Colors.orange),
                 ),
-                trailing: isEaten
-                    ? Icon(Icons.check_circle, color: Colors.green)
-                    : Icon(Icons.fastfood, color: Colors.orange),
               ),
             );
           },
@@ -331,7 +349,7 @@ class _DietPageState extends State<DietPage> {
                 formKey.currentState!.save();
                 setState(() {
                   final newfood = DietFood(
-                    id:"temp id",
+                    id:generateReadableTimestamp(),
                       name: name,
                     kcal: int.parse(calories),
                     quantity: int.parse(quantity),

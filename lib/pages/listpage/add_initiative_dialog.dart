@@ -6,12 +6,12 @@ import '../listpage/widget/quantity_selector.dart';
 import 'logic/taskmanager.dart';
 
 class InitiativeDialog extends StatefulWidget {
-  final Initiative? existing;
+  final Initiative? existing_initiative;
   final void Function(Initiative newInitiative, bool isEdit) onSubmit;
 
   const InitiativeDialog({
     super.key,
-    this.existing,
+    this.existing_initiative,
     required this.onSubmit,
   });
 
@@ -27,10 +27,10 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
   @override
   void initState() {
     super.initState();
-    if (widget.existing != null) {
-      _titleCtrl.text = widget.existing!.title;
-      _duration = widget.existing!.completionTime.minute;
-      _break = widget.existing!.studyBreak.completionTime.minute;
+    if (widget.existing_initiative != null) {
+      _titleCtrl.text = widget.existing_initiative!.title;
+      _duration = widget.existing_initiative!.completionTime.minute;
+      _break = widget.existing_initiative!.studyBreak.completionTime.minute;
     }
   }
 
@@ -42,9 +42,9 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
 
   void _save() {
     final init = Initiative(
-      id: widget.existing?.id ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
-      index: widget.existing?.index ??
+      // id: widget.existing_initiative?.id ??
+      //     DateTime.now().millisecondsSinceEpoch.toString(),
+      index: widget.existing_initiative?.index ??
           TaskManager.instance.getNextIndex(),
       title: _titleCtrl.text,
       completionTime: AppTime(0, _duration),
@@ -53,12 +53,12 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
         completionTime: AppTime(0, _break),
       ),
     );
-    widget.onSubmit(init, widget.existing != null);
+    widget.onSubmit(init, widget.existing_initiative != null);
   }
 
   @override
   Widget build(BuildContext c) {
-    final isEdit = widget.existing != null;
+    final isEdit = widget.existing_initiative != null;
     return AlertDialog(
       title: Text(isEdit ? 'Edit Initiative' : 'New Initiative',
           style: const TextStyle(

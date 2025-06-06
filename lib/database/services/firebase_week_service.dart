@@ -19,7 +19,7 @@ class FirebaseWeekService {
         .collection('InitiativeList')
         .orderBy('index')
         .snapshots()
-        .map((snap) => snap.docs
+        .map((snapshot) => snapshot.docs
         .map((doc) {
       final data = doc.data();
       data['id'] = doc.id;

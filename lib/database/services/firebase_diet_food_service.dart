@@ -16,7 +16,7 @@ class FirebaseDietFoodService {
         .collection('users')
         .doc(userId)
         .collection('food_list')
-        .orderBy('timestamp', descending: true)
+        // .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
       final data = doc.data();
@@ -35,11 +35,14 @@ class FirebaseDietFoodService {
         .collection('${date.month}')
         .doc('${date.day}')
         .collection('food_consumed_list')
-        .orderBy('timestamp', descending: true)
+        // .orderBy('timestamp', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) {
+        .map((snapshot) => snapshot.docs
+        .map((doc) {
       final data = doc.data();
       data['id'] = doc.id;
+
+      print("Printing doc ${data}");
       return DietFood.fromMap(data);
     }).toList());
   }

@@ -1,4 +1,5 @@
 import 'package:discipline_plus/models/study_break.dart';
+import '../core/utils/helper.dart';
 import 'app_time.dart';
 
 class Initiative {
@@ -18,14 +19,11 @@ class Initiative {
     this.isComplete = false,
     this.studyBreak = const StudyBreak(),
     required this.index,
-  }) : id = id ?? _generateReadableId();
+  }) : id = id ?? generateReadableTimestamp();
 
-  static String _generateReadableId() {
-    final now = DateTime.now();
-    return "${now.year}-${_twoDigits(now.month)}-${_twoDigits(now.day)}_${_twoDigits(now.hour)}:${_twoDigits(now.minute)}.${now.millisecond}_${now.microsecond}";
-  }
 
-  static String _twoDigits(int n) => n.toString().padLeft(2, '0');
+
+
 
   Map<String, dynamic> toMap() {
     return {
