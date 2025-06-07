@@ -1,4 +1,5 @@
 import 'package:discipline_plus/core/utils/helper.dart';
+import 'package:discipline_plus/models/food_stats.dart';
 import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class _DietPageState extends State<DietPage> {
   final double _maxProgress = 1500;
 
   // Date and pagination
-  final DateTime _selectedDate = DateTime.now();
+  // final DateTime _selectedDate = DateTime.now();
   final PageController _pageController = PageController(initialPage: 0);
   int _currentIndex = 0;
 
@@ -194,7 +195,7 @@ class _DietPageState extends State<DietPage> {
               child: ListTile(
                 title: Text(dietFood.name),
                 subtitle: Text(
-                  "${dietFood.kcal} kcal • ${dietFood.quantity}g • ${dietFood.mealType} • ${dietFood.time.hour}:${dietFood.time.minute.toString().padLeft(2, '0')}",
+                  "${dietFood.kcal} kcal • ${dietFood.quantity}g • ${dietFood.time.hour}:${dietFood.time.minute.toString().padLeft(2, '0')}",
                 ),
 
                   trailing: isEaten
@@ -223,22 +224,10 @@ class _DietPageState extends State<DietPage> {
   }
 
 
-  IconData _iconForMeal(String type) {
-    switch (type) {
-      case 'Breakfast':
-        return Icons.breakfast_dining;
-      case 'Lunch':
-        return Icons.lunch_dining;
-      case 'Dinner':
-        return Icons.dinner_dining;
-      default:
-        return Icons.breakfast_dining_rounded;
-    }
-  }
 
   void _showAddDietFoodDialog() {
     final formKey = GlobalKey<FormState>();
-    String name = '', calories = '', quantity = '1', mealType = 'Breakfast';
+    String name = '', calories = '', quantity = '1';
 
     showDialog(
       context: context,
@@ -250,14 +239,14 @@ class _DietPageState extends State<DietPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                DropdownButtonFormField<String>(
-                  value: mealType,
-                  items: ['Breakfast', 'Lunch', 'Dinner', 'Snack']
-                      .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                      .toList(),
-                  onChanged: (v) => mealType = v!,
-                  decoration: const InputDecoration(labelText: 'Meal Type'),
-                ),
+                // DropdownButtonFormField<String>(
+                //   value: mealType,
+                //   items: ['Breakfast', 'Lunch', 'Dinner', 'Snack']
+                //       .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                //       .toList(),
+                //   onChanged: (v) => mealType = v!,
+                //   decoration: const InputDecoration(labelText: 'Meal Type'),
+                // ),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'DietFood Name'),
                   validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -276,6 +265,55 @@ class _DietPageState extends State<DietPage> {
                   validator: (v) => v!.isEmpty ? 'Required' : null,
                   onSaved: (v) => quantity = v!,
                 ),
+
+                Row(children: [
+
+                  // proteins
+                  // carbohydrates
+                  // fats
+                  // vitamins
+                  // minerals
+
+
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'Proteins'),
+                    keyboardType: TextInputType.number,
+                    initialValue: '1',
+                    validator: (v) => v!.isEmpty ? 'Required' : null,
+                    onSaved: (v) => quantity = v!,
+                  ),
+
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'Carbohydrates'),
+                    keyboardType: TextInputType.number,
+                    initialValue: '1',
+                    validator: (v) => v!.isEmpty ? 'Required' : null,
+                    onSaved: (v) => quantity = v!,
+                  ),
+
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'fats'),
+                    keyboardType: TextInputType.number,
+                    initialValue: '1',
+                    validator: (v) => v!.isEmpty ? 'Required' : null,
+                    onSaved: (v) => quantity = v!,
+                  ),
+
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'vitamins'),
+                    keyboardType: TextInputType.number,
+                    initialValue: '1',
+                    validator: (v) => v!.isEmpty ? 'Required' : null,
+                    onSaved: (v) => quantity = v!,
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'minerals'),
+                    keyboardType: TextInputType.number,
+                    initialValue: '1',
+                    validator: (v) => v!.isEmpty ? 'Required' : null,
+                    onSaved: (v) => quantity = v!,
+                  ),
+                ],)
               ],
             ),
           ),
@@ -292,8 +330,9 @@ class _DietPageState extends State<DietPage> {
                       name: name,
                     kcal: int.parse(calories),
                     quantity: int.parse(quantity),
-                    mealType:mealType,
-                    time: DateTime.now()
+
+                    time: DateTime.now(),
+                    foodStats: FoodStats(proteins: 0, carbohydrates: 0, fats: 0, vitamins: 0, minerals: 0, calories: 0),
                   );
 
                   FoodManager.instance.addToAvailableFood(newfood);

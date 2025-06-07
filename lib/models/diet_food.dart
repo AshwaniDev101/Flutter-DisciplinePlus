@@ -1,19 +1,20 @@
+import 'package:discipline_plus/models/food_stats.dart';
 
 class DietFood {
   final String id;
   final String name;
   final int kcal;
   final int quantity; // Number of servings or grams
-  final String mealType; // e.g. 'Breakfast', 'Lunch', 'Dinner', 'Snack'
   final DateTime time;
+  final FoodStats foodStats;
 
   DietFood({
     required this.id,
     required this.name,
     required this.kcal,
     required this.quantity,
-    required this.mealType,
     required this.time,
+    required this.foodStats,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,19 +23,19 @@ class DietFood {
       'name': name,
       'kcal': kcal,
       'quantity': quantity,
-      'mealType': mealType,
       'time': time.toIso8601String(),
+      'foodStats': foodStats.toMap(),
     };
   }
 
   factory DietFood.fromMap(Map<String, dynamic> map) {
     return DietFood(
-      id: map['id'] ?? '', // fallback if id is not present
+      id: map['id'] ?? '',
       name: map['name'] as String,
       kcal: map['kcal'] as int,
       quantity: map['quantity'] as int,
-      mealType: map['mealType'] as String,
       time: DateTime.parse(map['time']),
+      foodStats: FoodStats.fromMap(map['foodStats']),
     );
   }
 }

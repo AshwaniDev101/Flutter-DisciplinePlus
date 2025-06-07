@@ -126,7 +126,7 @@ class FirebaseDietFoodService {
 
 
 
-  Future<void> updateTotalCaloriesConsumed(FoodStats foodStats, DateTime date) {
+  Future<void> updateConsumedFoodStats(FoodStats foodStats, DateTime date) {
     final ref = _db
         .collection('users')
         .doc(userId)
