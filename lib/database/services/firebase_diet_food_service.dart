@@ -48,6 +48,29 @@ class FirebaseDietFoodService {
     }).toList());
   }
 
+
+  /// Watch consumed food list for specific date
+  Stream<List<DietFood>> watchFoodStats(DateTime date) {
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}')
+        .collection('food_consumed_list')
+    // .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+
+      print("Printing doc ${data}");
+      return DietFood.fromMap(data);
+    }).toList());
+  }
+
   /// Add food to available list
   Future<void> addAvailableFood(DietFood food) {
     final ref = _db
@@ -71,6 +94,9 @@ class FirebaseDietFoodService {
         .collection('food_consumed_list')
         .doc(food.id);
     final map = food.toMap()..remove('id');
+
+    // add data to calories counter
+    _updateConsumedFoodStats(food.foodStats,date);
     return ref.set(map);
   }
 
@@ -126,7 +152,7 @@ class FirebaseDietFoodService {
 
 
 
-  Future<void> updateConsumedFoodStats(FoodStats foodStats, DateTime date) {
+  Future<void> _updateConsumedFoodStats(FoodStats foodStats, DateTime date) {
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -135,7 +161,9 @@ class FirebaseDietFoodService {
         .collection('${date.month}')
         .doc('${date.day}');
 
-    final map = foodStats.toMap();
+    final map = {
+      'foodStats': foodStats.toMap(),
+    };
 
     return ref.set(map, SetOptions(merge: true));
   }
