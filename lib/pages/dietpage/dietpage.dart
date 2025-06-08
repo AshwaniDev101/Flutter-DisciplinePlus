@@ -1,4 +1,5 @@
 import 'package:discipline_plus/core/utils/helper.dart';
+import 'package:discipline_plus/database/services/firebase_diet_food_service.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
 import 'package:flutter/material.dart';
@@ -46,61 +47,125 @@ class _DietPageState extends State<DietPage> {
 
       body: Column(
         children: [
-          // Header with progress + swipe/tap control
 
           SafeArea(child: Text("")),
-          Column(
-            children: [
-              Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      height: 130,
-                      width: 130,
-                      child: CircularProgressIndicator(
-                        value: _progress / _maxProgress,
-                        strokeWidth: 15,
-                        backgroundColor: Colors.grey.shade200,
-                        valueColor: AlwaysStoppedAnimation(_getProgressColor()),
-                      ),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
+
+          StreamBuilder<FoodStats?>(
+
+            stream: FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()),
+            builder: (context, snapshot) {
+              final stats = snapshot.data;
+
+              final progress = stats?.calories ?? 0;
+              final maxProgress = 2000; // Replace with user goal or app setting
+
+              return Column(
+                children: [
+                  Center(
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        Text(
-                          '${_progress.toInt()}',
-                          style: const TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          height: 130,
+                          width: 130,
+                          child: CircularProgressIndicator(
+                            value: progress / maxProgress,
+                            strokeWidth: 15,
+                            backgroundColor: Colors.grey.shade200,
+                            valueColor: AlwaysStoppedAnimation(_getProgressColor()),
                           ),
                         ),
-                        Text(
-                          '/ ${_maxProgress.toInt()} kcal',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey.shade600,
-                          ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$progress',
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '/ $maxProgress kcal',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20,),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Fat: 100g", style: TextStyle(fontSize: 12),),
-                    Text("Nutrition: 130g", style: TextStyle(fontSize: 12),),
-                    Text("Curbs: 220g", style: TextStyle(fontSize: 12),),
-                  ],),
-              ),
-            ],
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Fat: ${stats?.fats ?? 0}g", style: const TextStyle(fontSize: 12)),
+                        Text("Protein: ${stats?.proteins ?? 0}g", style: const TextStyle(fontSize: 12)),
+                        Text("Carbs: ${stats?.carbohydrates ?? 0}g", style: const TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
+
+          // Column(
+          //   children: [
+          //     Center(
+          //       child: Stack(
+          //         alignment: Alignment.center,
+          //         children: [
+          //           SizedBox(
+          //             height: 130,
+          //             width: 130,
+          //             child: CircularProgressIndicator(
+          //               value: _progress / _maxProgress,
+          //               strokeWidth: 15,
+          //               backgroundColor: Colors.grey.shade200,
+          //               valueColor: AlwaysStoppedAnimation(_getProgressColor()),
+          //             ),
+          //           ),
+          //           Column(
+          //             mainAxisSize: MainAxisSize.min,
+          //             children: [
+          //               Text(
+          //                 '${_progress.toInt()}',
+          //                 style: const TextStyle(
+          //                   fontSize: 32,
+          //                   fontWeight: FontWeight.bold,
+          //                 ),
+          //               ),
+          //               Text(
+          //                 '/ ${_maxProgress.toInt()} kcal',
+          //                 style: TextStyle(
+          //                   fontSize: 16,
+          //                   color: Colors.grey.shade600,
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //     SizedBox(height: 20,),
+          //
+          //     Padding(
+          //       padding: const EdgeInsets.symmetric(horizontal: 40),
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           Text("Fat: 100g", style: TextStyle(fontSize: 12),),
+          //           Text("Nutrition: 130g", style: TextStyle(fontSize: 12),),
+          //           Text("Curbs: 220g", style: TextStyle(fontSize: 12),),
+          //         ],),
+          //     ),
+          //   ],
+          // ),
 
 
           Expanded(

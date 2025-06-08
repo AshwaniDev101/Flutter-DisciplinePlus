@@ -49,27 +49,27 @@ class FirebaseDietFoodService {
   }
 
 
-  /// Watch consumed food list for specific date
-  Stream<List<DietFood>> watchFoodStats(DateTime date) {
-    return _db
+  Stream<FoodStats?> watchConsumedFoodStats(DateTime date) {
+    final ref = _db
         .collection('users')
         .doc(userId)
         .collection('history')
         .doc('${date.year}')
         .collection('${date.month}')
-        .doc('${date.day}')
-        .collection('food_consumed_list')
-    // .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) {
-      final data = doc.data();
-      data['id'] = doc.id;
+        .doc('${date.day}');
 
-      print("Printing doc ${data}");
-      return DietFood.fromMap(data);
-    }).toList());
+    return ref.snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data != null && data['foodStats'] != null) {
+          return FoodStats.fromMap(Map<String, dynamic>.from(data['foodStats']));
+        }
+      }
+      return null;
+    });
   }
+
+
 
   /// Add food to available list
   Future<void> addAvailableFood(DietFood food) {
