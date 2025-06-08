@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:discipline_plus/database/services/firebase_diet_food_service.dart';
 import 'package:discipline_plus/models/food_stats.dart';
@@ -27,10 +29,23 @@ class _DietPageState extends State<DietPage> {
 
 
 
+  FoodStats? _latestFoodStatsData;
+  final foodStatsController = StreamController<FoodStats?>.broadcast();
+  void initFoodStatsStream() {
+    FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()).listen((data) {
+      _latestFoodStatsData = data;
+      foodStatsController.add(data);
+    });
+  }
+  Stream<FoodStats?> get foodStatsStream => foodStatsController.stream;
+
+
+
+
   @override
   void initState() {
     super.initState();
-    // _updateProgress();
+    initFoodStatsStream();
   }
 
 
@@ -40,6 +55,11 @@ class _DietPageState extends State<DietPage> {
     if (ratio < 0.9) return Colors.orange;
     return Colors.red;
   }
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +72,8 @@ class _DietPageState extends State<DietPage> {
 
           StreamBuilder<FoodStats?>(
 
-            stream: FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()),
+            // stream: FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()),
+            stream: foodStatsStream,
             builder: (context, snapshot) {
               final stats = snapshot.data;
 
@@ -114,58 +135,7 @@ class _DietPageState extends State<DietPage> {
             },
           ),
 
-          // Column(
-          //   children: [
-          //     Center(
-          //       child: Stack(
-          //         alignment: Alignment.center,
-          //         children: [
-          //           SizedBox(
-          //             height: 130,
-          //             width: 130,
-          //             child: CircularProgressIndicator(
-          //               value: _progress / _maxProgress,
-          //               strokeWidth: 15,
-          //               backgroundColor: Colors.grey.shade200,
-          //               valueColor: AlwaysStoppedAnimation(_getProgressColor()),
-          //             ),
-          //           ),
-          //           Column(
-          //             mainAxisSize: MainAxisSize.min,
-          //             children: [
-          //               Text(
-          //                 '${_progress.toInt()}',
-          //                 style: const TextStyle(
-          //                   fontSize: 32,
-          //                   fontWeight: FontWeight.bold,
-          //                 ),
-          //               ),
-          //               Text(
-          //                 '/ ${_maxProgress.toInt()} kcal',
-          //                 style: TextStyle(
-          //                   fontSize: 16,
-          //                   color: Colors.grey.shade600,
-          //                 ),
-          //               ),
-          //             ],
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //     SizedBox(height: 20,),
-          //
-          //     Padding(
-          //       padding: const EdgeInsets.symmetric(horizontal: 40),
-          //       child: Row(
-          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //         children: [
-          //           Text("Fat: 100g", style: TextStyle(fontSize: 12),),
-          //           Text("Nutrition: 130g", style: TextStyle(fontSize: 12),),
-          //           Text("Curbs: 220g", style: TextStyle(fontSize: 12),),
-          //         ],),
-          //     ),
-          //   ],
-          // ),
+
 
 
           Expanded(
@@ -266,12 +236,22 @@ class _DietPageState extends State<DietPage> {
                   trailing: isEaten
                       ? IconButton(icon: Icon(Icons.delete),
                       onPressed: (){
-                        FoodManager.instance.removeFromConsumedFood(dietFood);
+
+                        if (_latestFoodStatsData!=null){
+                          FoodManager.instance.removeFromConsumedFood(_latestFoodStatsData!, dietFood);
+                        }
+
 
                       },)
                       : IconButton(icon: Icon(Icons.add),
                       onPressed: (){
-                        FoodManager.instance.addToConsumedFood(dietFood);
+
+
+                        if (_latestFoodStatsData!=null){
+                          FoodManager.instance.addToConsumedFood(_latestFoodStatsData!, dietFood);
+                        }
+
+
 
                       }
 
@@ -397,7 +377,8 @@ class _DietPageState extends State<DietPage> {
               if (formKey.currentState!.validate()) {
                 formKey.currentState!.save();
                 setState(() {
-                  final newfood = DietFood(
+
+                  final newDietFood = DietFood(
                     id: generateReadableTimestamp(),
                     name: name,
                     quantity: int.parse(quantity),
@@ -411,7 +392,7 @@ class _DietPageState extends State<DietPage> {
                       calories: int.parse(calories),
                     ),
                   );
-                  FoodManager.instance.addToAvailableFood(newfood);
+                  FoodManager.instance.addToAvailableFood(newDietFood);
                 });
                 Navigator.pop(context);
               }

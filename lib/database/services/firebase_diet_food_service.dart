@@ -83,7 +83,7 @@ class FirebaseDietFoodService {
   }
 
   /// Add food to consumed list
-  Future<void> addConsumedFood(DietFood food, DateTime date) {
+  Future<void> addConsumedFood(FoodStats latestFoodStatsData, DietFood food, DateTime date) {
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -96,7 +96,7 @@ class FirebaseDietFoodService {
     final map = food.toMap()..remove('id');
 
     // add data to calories counter
-    _updateConsumedFoodStats(food.foodStats,date);
+    _updateConsumedFoodStats(isSum:true,latestFoodStatsData, food.foodStats, date);
     return ref.set(map);
   }
 
@@ -111,7 +111,9 @@ class FirebaseDietFoodService {
   }
 
   /// Delete food from consumed list
-  Future<void> deleteConsumedFood(String id, DateTime date) {
+  Future<void> deleteConsumedFood(FoodStats latestFoodStatsData, DietFood dietFood, DateTime date) {
+
+    _updateConsumedFoodStats(isSum:false,latestFoodStatsData, dietFood.foodStats, date);
     return _db
         .collection('users')
         .doc(userId)
@@ -120,7 +122,7 @@ class FirebaseDietFoodService {
         .collection('${date.month}')
         .doc('${date.day}')
         .collection('food_consumed_list')
-        .doc(id)
+        .doc(dietFood.id)
         .delete();
   }
 
@@ -152,7 +154,21 @@ class FirebaseDietFoodService {
 
 
 
-  Future<void> _updateConsumedFoodStats(FoodStats foodStats, DateTime date) {
+  Future<void> _updateConsumedFoodStats(
+      FoodStats latestFoodStatsData,
+      FoodStats newFoodStats,
+      DateTime date, {
+        required bool isSum,
+      }) async {
+
+    FoodStats updatedFoodStats;
+
+    if (isSum) {
+      updatedFoodStats = latestFoodStatsData.sum(newFoodStats);
+    } else {
+      updatedFoodStats = latestFoodStatsData.subtract(newFoodStats);
+    }
+
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -162,10 +178,10 @@ class FirebaseDietFoodService {
         .doc('${date.day}');
 
     final map = {
-      'foodStats': foodStats.toMap(),
+      'foodStats': updatedFoodStats.toMap(),
     };
 
-    return ref.set(map, SetOptions(merge: true));
+    await ref.set(map, SetOptions(merge: true));
   }
 
 

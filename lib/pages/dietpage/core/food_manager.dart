@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../../../database/services/firebase_diet_food_service.dart';
 import '../../../models/diet_food.dart';
+import '../../../models/food_stats.dart';
 
 class FoodManager {
   FoodManager._internal();
@@ -32,18 +33,18 @@ class FoodManager {
     _dietFoodRepository.addAvailableFood(food);
   }
 
-  void addToConsumedFood(DietFood food) {
+  void addToConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
     _availableFood.add(food);
-    _dietFoodRepository.addConsumedFood(food, DateTime.now());
+    _dietFoodRepository.addConsumedFood(latestFoodStatsData,food, DateTime.now());
   }
   // Remove from available food list
   void removeFromAvailableFood(DietFood food) {
     _availableFood.remove(food);
     _dietFoodRepository.deleteAvailableFood(food.id);
   }
-  void removeFromConsumedFood(DietFood food) {
+  void removeFromConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
     _consumedFood.remove(food);
-    _dietFoodRepository.deleteConsumedFood(food.id, DateTime.now());
+    _dietFoodRepository.deleteConsumedFood(latestFoodStatsData, food, DateTime.now());
   }
 
   // Edit available food
