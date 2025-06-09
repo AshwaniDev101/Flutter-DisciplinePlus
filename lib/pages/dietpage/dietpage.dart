@@ -5,6 +5,7 @@ import 'package:discipline_plus/database/services/firebase_diet_food_service.dar
 import 'package:discipline_plus/models/food_stats.dart';
 import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 
 import '../../models/diet_food.dart';
@@ -30,15 +31,42 @@ class _DietPageState extends State<DietPage> {
 
 
   FoodStats? _latestFoodStatsData;
+  StreamSubscription? _foodStatsSubscription;
   final foodStatsController = StreamController<FoodStats?>.broadcast();
+
+
+  // void initFoodStatsStream() {
+  //   FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()).listen((data) {
+  //     _latestFoodStatsData = data;
+  //     foodStatsController.add(data);
+  //   });
+  // }
+  Stream<FoodStats?> get foodStatsStream => foodStatsController.stream;
+
+
+
+
   void initFoodStatsStream() {
-    FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()).listen((data) {
+    _foodStatsSubscription = FirebaseDietFoodService.instance
+        .watchConsumedFoodStats(DateTime.now())
+        .listen((data) {
       _latestFoodStatsData = data;
       foodStatsController.add(data);
     });
   }
-  Stream<FoodStats?> get foodStatsStream => foodStatsController.stream;
 
+  @override
+  void dispose() {
+    _foodStatsSubscription?.cancel();
+    foodStatsController.close();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+
+  late final Stream<List<DietFood>> _sharedMerged;
+  late final Stream<List<DietFood>> _availableStream;
+  late final Stream<List<DietFood>> _consumedStream;
 
 
 
@@ -46,6 +74,20 @@ class _DietPageState extends State<DietPage> {
   void initState() {
     super.initState();
     initFoodStatsStream();
+
+    // 1) Get your base merged stream...
+    final merged = FoodManager.instance.watchMergedFoodList();
+
+    // 2) Multicast it so multiple listeners can subscribe
+    _sharedMerged = merged.shareReplay(maxSize: 1);
+
+    // 3) Filter once for each view
+    _availableStream = _sharedMerged.map(
+          (list) => list.where((f) => f.count == 0).toList(),
+    );
+    _consumedStream = _sharedMerged.map(
+          (list) => list.where((f) => f.count > 0).toList(),
+    );
   }
 
 
@@ -151,10 +193,16 @@ class _DietPageState extends State<DietPage> {
                 Expanded(
                   child: PageView(
                     controller: _pageController,
-                    onPageChanged: (index) => setState(() => _currentIndex = index),
+                    onPageChanged: (i) => setState(() => _currentIndex = i),
                     children: [
-                      _buildListView(FoodManager.instance.watchAvailableFood(), false),
-                      _buildListView(FoodManager.instance.watchConsumedFood(), true),
+                      KeyedSubtree(
+                        key: ValueKey('available'),
+                        child: _buildListView(_availableStream, false),
+                      ),
+                      KeyedSubtree(
+                        key: ValueKey('consumed'),
+                        child: _buildListView(_consumedStream, true),
+                      ),
                     ],
                   ),
                 ),
@@ -207,6 +255,12 @@ class _DietPageState extends State<DietPage> {
 
 
 
+  //
+  // Stream<List<DietFood>> _watchFilteredFoodList(bool isEaten) {
+  //   return FoodManager.instance.watchMergedFoodList().map((list) {
+  //     return list.where((item) => isEaten ? item.count > 0 : item.count == 0).toList();
+  //   });
+  // }
 
   Widget _buildListView(Stream<List<DietFood>> stream, bool isEaten) {
     return StreamBuilder<List<DietFood>>(
@@ -220,60 +274,41 @@ class _DietPageState extends State<DietPage> {
           return Center(child: Text("No items yet"));
         }
 
-        final list = snapshot.data!;
+        final filteredList = snapshot.data!;
+
+        if (filteredList.isEmpty) {
+          return Center(child: Text("No items found"));
+        }
+
         return ListView.builder(
-          itemCount: list.length,
+          itemCount: filteredList.length,
           itemBuilder: (context, index) {
-            final DietFood dietFood = list[index];
+            final dietFood = filteredList[index];
+            final timeStr = "${dietFood.time.hour}:${dietFood.time.minute.toString().padLeft(2, '0')}";
+
+
+
+
             return Card(
+              key: ValueKey(dietFood.id),
               margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: ListTile(
                 title: Text(dietFood.name),
                 subtitle: Text(
-                  "${dietFood.foodStats.calories} kcal • ${dietFood.quantity}g • ${dietFood.time.hour}:${dietFood.time.minute.toString().padLeft(2, '0')}",
+                  "${dietFood.foodStats.calories} kcal • ${dietFood.count}g • $timeStr",
                 ),
+                trailing: IconButton(
+                  icon: Icon(isEaten ? Icons.delete : Icons.add),
+                  onPressed: () {
+                    final foodStats = _latestFoodStatsData ?? FoodStats.empty();
 
-                  trailing: isEaten
-                      ? IconButton(icon: Icon(Icons.delete),
-                      onPressed: (){
-
-                        final foodStats = _latestFoodStatsData ?? FoodStats(
-                          proteins: 0,
-                          carbohydrates: 0,
-                          fats: 0,
-                          vitamins: 0,
-                          minerals: 0,
-                          calories: 0,
-                        );
-
-                        FoodManager.instance.removeFromConsumedFood(foodStats, dietFood);
-
-
-                      },)
-                      : IconButton(icon: Icon(Icons.add),
-                      onPressed: (){
-
-
-                        final foodStats = _latestFoodStatsData ?? FoodStats(
-                          proteins: 0,
-                          carbohydrates: 0,
-                          fats: 0,
-                          vitamins: 0,
-                          minerals: 0,
-                          calories: 0,
-                        );
-
-                        FoodManager.instance.addToConsumedFood(foodStats, dietFood);
-
-
-
-                      }
-
-                  )
-
-                // trailing: isEaten
-                //     ? Icon(Icons.check_circle, color: Colors.green)
-                //     : Icon(Icons.fastfood, color: Colors.orange),
+                    if (isEaten) {
+                      FoodManager.instance.removeFromConsumedFood(foodStats, dietFood);
+                    } else {
+                      FoodManager.instance.addToConsumedFood(foodStats, dietFood);
+                    }
+                  },
+                ),
               ),
             );
           },
@@ -281,6 +316,7 @@ class _DietPageState extends State<DietPage> {
       },
     );
   }
+
 
   void _showAddDietFoodDialog() {
     final formKey = GlobalKey<FormState>();
@@ -395,7 +431,7 @@ class _DietPageState extends State<DietPage> {
                   final newDietFood = DietFood(
                     id: generateReadableTimestamp(),
                     name: name,
-                    quantity: int.parse(quantity),
+                    count: int.parse(quantity),
                     time: DateTime.now(),
                     foodStats: FoodStats(
                       proteins: int.parse(proteins),

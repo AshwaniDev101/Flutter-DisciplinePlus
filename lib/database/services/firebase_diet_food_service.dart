@@ -22,7 +22,7 @@ class FirebaseDietFoodService {
         .map((snapshot) => snapshot.docs.map((doc) {
       final data = doc.data();
       data['id'] = doc.id;
-      return DietFood.fromMap(data);
+      return DietFood.fromAvailableMap(data);
     }).toList());
   }
 
@@ -44,7 +44,7 @@ class FirebaseDietFoodService {
       data['id'] = doc.id;
 
       print("Printing doc ${data}");
-      return DietFood.fromMap(data);
+      return DietFood.fromConsumedMap(data);
     }).toList());
   }
 
@@ -78,12 +78,12 @@ class FirebaseDietFoodService {
         .doc(userId)
         .collection('food_list')
         .doc(food.id);
-    final map = food.toMap()..remove('id');
+    final map = food.toAvailableMap()..remove('id');
     return ref.set(map);
   }
 
   /// Add food to consumed list
-  Future<void> addConsumedFood(FoodStats latestFoodStatsData, DietFood food, DateTime date) {
+  Future<void> addConsumedFood(FoodStats latestFoodStatsData, DietFood food, DateTime date) async {
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -93,12 +93,46 @@ class FirebaseDietFoodService {
         .doc('${date.day}')
         .collection('food_consumed_list')
         .doc(food.id);
-    final map = food.toMap()..remove('id');
 
-    // add data to calories counter
-    _updateConsumedFoodStats(isSum:true,latestFoodStatsData, food.foodStats, date);
-    return ref.set(map);
+    final map = food.toConsumedMap()..remove('id');
+
+    final snapshot = await ref.get();
+
+    if (snapshot.exists) {
+      final existingData = snapshot.data()!;
+      final existingCount = existingData['count'] ?? 0;
+
+      await ref.update({
+        ...map,
+        'count': existingCount + 1,
+      });
+    } else {
+      await ref.set({
+        ...map,
+        'count': 1,
+      });
+    }
+
+    // update daily stats
+    _updateConsumedFoodStats(isSum: true, latestFoodStatsData, food.foodStats, date);
   }
+
+  // Future<void> addConsumedFood(FoodStats latestFoodStatsData, DietFood food, DateTime date) {
+  //   final ref = _db
+  //       .collection('users')
+  //       .doc(userId)
+  //       .collection('history')
+  //       .doc('${date.year}')
+  //       .collection('${date.month}')
+  //       .doc('${date.day}')
+  //       .collection('food_consumed_list')
+  //       .doc(food.id);
+  //   final map = food.toMap()..remove('id');
+  //
+  //   // add data to calories counter
+  //   _updateConsumedFoodStats(isSum:true,latestFoodStatsData, food.foodStats, date);
+  //   return ref.set(map);
+  // }
 
   /// Delete food from available list
   Future<void> deleteAvailableFood(String id) {
@@ -133,7 +167,7 @@ class FirebaseDietFoodService {
         .doc(userId)
         .collection('food_list')
         .doc(id);
-    final map = food.toMap()..remove('id');
+    final map = food.toAvailableMap()..remove('id');
     return ref.update(map);
   }
 
@@ -148,7 +182,7 @@ class FirebaseDietFoodService {
         .doc('${date.day}')
         .collection('food_consumed_list')
         .doc(id);
-    final map = food.toMap()..remove('id');
+    final map = food.toConsumedMap()..remove('id');
     return ref.update(map);
   }
 
