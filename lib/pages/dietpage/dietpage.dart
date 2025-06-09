@@ -237,9 +237,16 @@ class _DietPageState extends State<DietPage> {
                       ? IconButton(icon: Icon(Icons.delete),
                       onPressed: (){
 
-                        if (_latestFoodStatsData!=null){
-                          FoodManager.instance.removeFromConsumedFood(_latestFoodStatsData!, dietFood);
-                        }
+                        final foodStats = _latestFoodStatsData ?? FoodStats(
+                          proteins: 0,
+                          carbohydrates: 0,
+                          fats: 0,
+                          vitamins: 0,
+                          minerals: 0,
+                          calories: 0,
+                        );
+
+                        FoodManager.instance.removeFromConsumedFood(foodStats, dietFood);
 
 
                       },)
@@ -247,9 +254,16 @@ class _DietPageState extends State<DietPage> {
                       onPressed: (){
 
 
-                        if (_latestFoodStatsData!=null){
-                          FoodManager.instance.addToConsumedFood(_latestFoodStatsData!, dietFood);
-                        }
+                        final foodStats = _latestFoodStatsData ?? FoodStats(
+                          proteins: 0,
+                          carbohydrates: 0,
+                          fats: 0,
+                          vitamins: 0,
+                          minerals: 0,
+                          calories: 0,
+                        );
+
+                        FoodManager.instance.addToConsumedFood(foodStats, dietFood);
 
 
 
