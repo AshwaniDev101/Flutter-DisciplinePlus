@@ -4,6 +4,7 @@ import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:discipline_plus/database/services/firebase_diet_food_service.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
+import 'package:discipline_plus/pages/dietpage/widget/foodlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -23,50 +24,38 @@ class _DietPageState extends State<DietPage> {
   final double _progress = 0;
   final double _maxProgress = 1500;
 
-  // Date and pagination
-  // final DateTime _selectedDate = DateTime.now();
+  late final Stream<List<DietFood>> _sharedMerged;
+  late final Stream<List<DietFood>> _availableStream;
+  late final Stream<List<DietFood>> _consumedStream;
+
   final PageController _pageController = PageController(initialPage: 0);
   int _currentIndex = 0;
 
 
 
   FoodStats? _latestFoodStatsData;
-  StreamSubscription? _foodStatsSubscription;
+
   final foodStatsController = StreamController<FoodStats?>.broadcast();
-
-
-  // void initFoodStatsStream() {
-  //   FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()).listen((data) {
-  //     _latestFoodStatsData = data;
-  //     foodStatsController.add(data);
-  //   });
-  // }
-  Stream<FoodStats?> get foodStatsStream => foodStatsController.stream;
-
-
-
-
   void initFoodStatsStream() {
-    _foodStatsSubscription = FirebaseDietFoodService.instance
-        .watchConsumedFoodStats(DateTime.now())
-        .listen((data) {
+    FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()).listen((data) {
       _latestFoodStatsData = data;
       foodStatsController.add(data);
     });
   }
+  Stream<FoodStats?> get foodStatsStream => foodStatsController.stream;
+
+
 
   @override
   void dispose() {
-    _foodStatsSubscription?.cancel();
+
     foodStatsController.close();
     _pageController.dispose();
     super.dispose();
   }
 
 
-  late final Stream<List<DietFood>> _sharedMerged;
-  late final Stream<List<DietFood>> _availableStream;
-  late final Stream<List<DietFood>> _consumedStream;
+
 
 
 
@@ -101,221 +90,6 @@ class _DietPageState extends State<DietPage> {
 
 
 
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: Column(
-        children: [
-
-          SafeArea(child: Text("")),
-
-          StreamBuilder<FoodStats?>(
-
-            // stream: FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()),
-            stream: foodStatsStream,
-            builder: (context, snapshot) {
-              final stats = snapshot.data;
-
-              final progress = stats?.calories ?? 0;
-              final maxProgress = 2000; // Replace with user goal or app setting
-
-              return Column(
-                children: [
-                  Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          height: 130,
-                          width: 130,
-                          child: CircularProgressIndicator(
-                            value: progress / maxProgress,
-                            strokeWidth: 15,
-                            backgroundColor: Colors.grey.shade200,
-                            valueColor: AlwaysStoppedAnimation(_getProgressColor()),
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '$progress',
-                              style: const TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '/ $maxProgress kcal',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Fat: ${stats?.fats ?? 0}g", style: const TextStyle(fontSize: 12)),
-                        Text("Protein: ${stats?.proteins ?? 0}g", style: const TextStyle(fontSize: 12)),
-                        Text("Carbs: ${stats?.carbohydrates ?? 0}g", style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-
-
-
-
-          Expanded(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildTabButton('Available', 0),
-                    _buildTabButton('Consumed', 1),
-                  ],
-                ),
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    onPageChanged: (i) => setState(() => _currentIndex = i),
-                    children: [
-                      KeyedSubtree(
-                        key: ValueKey('available'),
-                        child: _buildListView(_availableStream, false),
-                      ),
-                      KeyedSubtree(
-                        key: ValueKey('consumed'),
-                        child: _buildListView(_consumedStream, true),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddDietFoodDialog,
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-
-
-  Widget _buildTabButton(String title, int index) {
-    final isSelected = _currentIndex == index;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-          _pageController.animateToPage(
-            index,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.grey[300],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
-
-
-
-  //
-  // Stream<List<DietFood>> _watchFilteredFoodList(bool isEaten) {
-  //   return FoodManager.instance.watchMergedFoodList().map((list) {
-  //     return list.where((item) => isEaten ? item.count > 0 : item.count == 0).toList();
-  //   });
-  // }
-
-  Widget _buildListView(Stream<List<DietFood>> stream, bool isEaten) {
-    return StreamBuilder<List<DietFood>>(
-      stream: stream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text("No items yet"));
-        }
-
-        final filteredList = snapshot.data!;
-
-        if (filteredList.isEmpty) {
-          return Center(child: Text("No items found"));
-        }
-
-        return ListView.builder(
-          itemCount: filteredList.length,
-          itemBuilder: (context, index) {
-            final dietFood = filteredList[index];
-            final timeStr = "${dietFood.time.hour}:${dietFood.time.minute.toString().padLeft(2, '0')}";
-
-
-
-
-            return Card(
-              key: ValueKey(dietFood.id),
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: ListTile(
-                title: Text(dietFood.name),
-                subtitle: Text(
-                  "${dietFood.foodStats.calories} kcal • ${dietFood.count}g • $timeStr",
-                ),
-                trailing: IconButton(
-                  icon: Icon(isEaten ? Icons.delete : Icons.add),
-                  onPressed: () {
-                    final foodStats = _latestFoodStatsData ?? FoodStats.empty();
-
-                    if (isEaten) {
-                      FoodManager.instance.removeFromConsumedFood(foodStats, dietFood);
-                    } else {
-                      FoodManager.instance.addToConsumedFood(foodStats, dietFood);
-                    }
-                  },
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
 
   void _showAddDietFoodDialog() {
@@ -454,6 +228,151 @@ class _DietPageState extends State<DietPage> {
     );
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+
+          const SafeArea(child: SizedBox(height: 16)),
+
+
+          _buildStats(),
+
+
+          Expanded(
+            child: Column(
+              children: [
+                // Tab selector row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildTabButton('Available', 0),
+                    _buildTabButton('Consumed', 1),
+                  ],
+                ),
+
+                // PageView of two FoodListViews
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (i) => setState(() => _currentIndex = i),
+                    children: [
+                      KeyedSubtree(
+                        key: const ValueKey('available'),
+                        child: FoodListView(
+                          stream: _availableStream,
+                          isConsumed: false,
+                          latestStats: _latestFoodStatsData ?? FoodStats.empty(),
+                        ),
+                      ),
+                      KeyedSubtree(
+                        key: const ValueKey('consumed'),
+                        child: FoodListView(
+                          stream: _consumedStream,
+                          isConsumed: true,
+                          latestStats: _latestFoodStatsData ?? FoodStats.empty(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        ],
+      ),
+
+      // Floating add button
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddDietFoodDialog,
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  /// Builds the stats (progress circle + macros) at top
+  Widget _buildStats() {
+    return StreamBuilder<FoodStats?>(
+      stream: FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()),
+      builder: (context, snapshot) {
+        final stats = snapshot.data ?? FoodStats.empty();
+        _latestFoodStatsData = stats;
+
+        final progress = stats.calories;
+        const maxProgress = 2000;
+
+        return Column(
+          children: [
+            Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    height: 130,
+                    width: 130,
+                    child: CircularProgressIndicator(
+                      value: progress / maxProgress,
+                      strokeWidth: 15,
+                      backgroundColor: Colors.grey.shade200,
+                      valueColor: AlwaysStoppedAnimation(_getProgressColor()),
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$progress',
+                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                      ),
+                      const Text('/ 2000 kcal', style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Fat: ${stats.fats}g", style: const TextStyle(fontSize: 12)),
+                  Text("Protein: ${stats.proteins}g", style: const TextStyle(fontSize: 12)),
+                  Text("Carbs: ${stats.carbohydrates}g", style: const TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Simple tab button
+  Widget _buildTabButton(String label, int index) {
+    final isSelected = _currentIndex == index;
+    return GestureDetector(
+      onTap: () {
+        setState(() => _currentIndex = index);
+        _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue : Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(color: isSelected ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
 
 
 }
