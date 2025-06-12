@@ -20,7 +20,6 @@ class DietPage extends StatefulWidget {
 
 class _DietPageState extends State<DietPage> {
   // Progress tracking
-  final double _progress = 0;
   final double _maxProgress = 1500;
 
   late final Stream<List<DietFood>> _sharedMerged;
@@ -51,7 +50,7 @@ class _DietPageState extends State<DietPage> {
   }
 
   Stream<FoodStats?> get foodStatsStream => _statsSubject.stream;
-  FoodStats get latestStats => _statsSubject.value;
+  FoodStats get _latestStats => _statsSubject.value;
 
 
   @override
@@ -82,7 +81,7 @@ class _DietPageState extends State<DietPage> {
 
 
   Color _getProgressColor() {
-    final ratio = _progress / _maxProgress;
+    final ratio = _latestStats.calories / _maxProgress;
     if (ratio < 0.6) return Colors.green;
     if (ratio < 0.9) return Colors.orange;
     return Colors.red;
@@ -326,13 +325,13 @@ class _DietPageState extends State<DietPage> {
                   onPressed: () {
                     if (isConsumed) {
                       FoodManager.instance.removeFromConsumedFood(
-                        latestStats,
+                        _latestStats,
                         food,
                       );
                     } else {
 
                       FoodManager.instance.addToConsumedFood(
-                        latestStats,
+                        _latestStats,
                         food,
                       );
                     }
