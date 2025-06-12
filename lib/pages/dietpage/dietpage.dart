@@ -312,82 +312,121 @@ class _DietPageState extends State<DietPage> {
             final timeStr =
                 '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
 
+            Offset _tapPosition = Offset.zero;
+
+
             return Card(
               key: ValueKey(food.id),
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: InkWell(
-                onLongPress: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (ctx) => Wrap(
-                      children: [
-                        ListTile(
-                          leading: const Icon(Icons.edit),
-                          title: const Text('Edit'),
-                          onTap: () {
-                            Navigator.pop(ctx);
-                            // _showEditDietFoodDialog(food); // You need to define this
-                          },
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.delete),
-                          title: const Text('Delete'),
-                          onTap: () {
-                            Navigator.pop(ctx);
-                            setState(() {
-                              FoodManager.instance.removeFromAvailableFood(food);
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  );
+              child: Listener(
+                onPointerDown: (PointerDownEvent event) {
+                  _tapPosition = event.position;
                 },
-                child: ListTile(
-                  title: Text(food.name),
-                  subtitle: Text('${food.foodStats.calories} kcal • Fat:${food.foodStats.fats} • Protein:${food.foodStats.proteins} • Minerals:${food.foodStats.minerals} • Carbs:${food.foodStats.carbohydrates} • Vitamins:${food.foodStats.vitamins} • $timeStr'),
-                  trailing: IconButton(
-                    icon: Icon(isConsumed ? Icons.delete : Icons.add),
-                    onPressed: () {
-                      if (isConsumed) {
-                        FoodManager.instance.removeFromConsumedFood(_latestStats, food);
-                      } else {
-                        FoodManager.instance.addToConsumedFood(_latestStats, food);
+                child: GestureDetector(
+                  onLongPress: () {
+                    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+                    showMenu(
+                      context: context,
+                      position: RelativeRect.fromLTRB(
+                        _tapPosition.dx,
+                        _tapPosition.dy,
+                        overlay.size.width - _tapPosition.dx,
+                        overlay.size.height - _tapPosition.dy,
+                      ),
+                      items: const [
+                        PopupMenuItem(value: 'edit', child: Text('Edit')),
+                        PopupMenuItem(value: 'delete', child: Text('Delete')),
+                      ],
+                    ).then((value) {
+                      if (value == 'edit') {
+                        // _showEditDietFoodDialog(food);
+                      } else if (value == 'delete') {
+                        FoodManager.instance.removeFromAvailableFood(food);
                       }
-                    },
+                    });
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                food.name,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${food.foodStats.calories} kcal • Fat: ${food.foodStats.fats}g • Protein: ${food.foodStats.proteins}g • Carbs: ${food.foodStats.carbohydrates}g',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[700],
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                              if (food.foodStats.minerals != null || food.foodStats.vitamins != null)
+                                Text(
+                                  'Minerals: ${food.foodStats.minerals ?? 'N/A'} • Vitamins: ${food.foodStats.vitamins ?? 'N/A'}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              Text(
+                                timeStr,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: IconButton(
+                          icon: Icon(
+                            isConsumed ? Icons.delete_forever : Icons.add_circle,
+                            color: isConsumed ? Colors.redAccent : Colors.green,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            if (isConsumed) {
+                              FoodManager.instance.removeFromConsumedFood(_latestStats, food);
+                            } else {
+                              FoodManager.instance.addToConsumedFood(_latestStats, food);
+                            }
+                          },
+                          tooltip: isConsumed ? 'Remove food' : 'Add food',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             );
 
 
-            // return Card(
-            //   key: ValueKey(food.id),
-            //   margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            //   child: ListTile(
-            //     title: Text(food.name),
-            //     subtitle: Text(
-            //       '${food.foodStats.calories} kcal • ${food.count}g • $timeStr',
-            //     ),
-            //     trailing: IconButton(
-            //       icon: Icon(isConsumed ? Icons.delete : Icons.add),
-            //       onPressed: () {
-            //         if (isConsumed) {
-            //           FoodManager.instance.removeFromConsumedFood(
-            //             _latestStats,
-            //             food,
-            //           );
-            //         } else {
-            //
-            //           FoodManager.instance.addToConsumedFood(
-            //             _latestStats,
-            //             food,
-            //           );
-            //         }
-            //       },
-            //     ),
-            //   ),
-            // );
+
+
+
+
+
+
+
           },
         );
       },
@@ -397,7 +436,7 @@ class _DietPageState extends State<DietPage> {
   /// Builds the stats (progress circle + macros) at top
   Widget _buildStats() {
     return StreamBuilder<FoodStats?>(
-      stream: foodStatsStream,//FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()),
+      stream: foodStatsStream,
       initialData: FoodStats.empty(),
       builder: (context, snapshot) {
         final stats = snapshot.data!;
@@ -436,7 +475,7 @@ class _DietPageState extends State<DietPage> {
             ),
             const SizedBox(height: 16),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
