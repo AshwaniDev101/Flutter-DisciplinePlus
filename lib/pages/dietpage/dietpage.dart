@@ -88,103 +88,82 @@ class _DietPageState extends State<DietPage> {
 
 
 
-
-
-
   void _showAddDietFoodDialog() {
     final formKey = GlobalKey<FormState>();
     String name = '', calories = '', quantity = '1';
     String proteins = '0', carbohydrates = '0', fats = '0', vitamins = '0', minerals = '0';
 
+    InputDecoration _buildInputDecoration(String label) {
+      return InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.grey[700], fontSize: 13),
+        filled: true,
+        fillColor: Colors.grey[100],
+        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+      );
+    }
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Add New DietFood'),
-        content: Form(
-          key: formKey,
-          child: SingleChildScrollView(
+        title: const Center(child: Text('Add New DietFood')),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'DietFood Name'),
+                  decoration: _buildInputDecoration('DietFood Name'),
+                  style: const TextStyle(fontSize: 14),
                   validator: (v) => v!.isEmpty ? 'Required' : null,
                   onSaved: (v) => name = v!,
                 ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Calories'),
-                  keyboardType: TextInputType.number,
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
-                  onSaved: (v) => calories = v!,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Quantity'),
-                  keyboardType: TextInputType.number,
-                  initialValue: '1',
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
-                  onSaved: (v) => quantity = v!,
-                ),
                 const SizedBox(height: 12),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        child: TextFormField(
-                          decoration: const InputDecoration(labelText: 'Proteins'),
-                          keyboardType: TextInputType.number,
-                          initialValue: '0',
-                          validator: (v) => v!.isEmpty ? 'Required' : null,
-                          onSaved: (v) => proteins = v!,
-                        ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        decoration: _buildInputDecoration('Calories'),
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(fontSize: 14),
+                        validator: (v) => v!.isEmpty ? 'Required' : null,
+                        onSaved: (v) => calories = v!,
                       ),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        width: 100,
-                        child: TextFormField(
-                          decoration: const InputDecoration(labelText: 'Carbs'),
-                          keyboardType: TextInputType.number,
-                          initialValue: '0',
-                          validator: (v) => v!.isEmpty ? 'Required' : null,
-                          onSaved: (v) => carbohydrates = v!,
-                        ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextFormField(
+                        decoration: _buildInputDecoration('Quantity'),
+                        keyboardType: TextInputType.number,
+                        initialValue: '1',
+                        style: const TextStyle(fontSize: 14),
+                        validator: (v) => v!.isEmpty ? 'Required' : null,
+                        onSaved: (v) => quantity = v!,
                       ),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        width: 100,
-                        child: TextFormField(
-                          decoration: const InputDecoration(labelText: 'Fats'),
-                          keyboardType: TextInputType.number,
-                          initialValue: '0',
-                          validator: (v) => v!.isEmpty ? 'Required' : null,
-                          onSaved: (v) => fats = v!,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        width: 100,
-                        child: TextFormField(
-                          decoration: const InputDecoration(labelText: 'Vitamins'),
-                          keyboardType: TextInputType.number,
-                          initialValue: '0',
-                          validator: (v) => v!.isEmpty ? 'Required' : null,
-                          onSaved: (v) => vitamins = v!,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        width: 100,
-                        child: TextFormField(
-                          decoration: const InputDecoration(labelText: 'Minerals'),
-                          keyboardType: TextInputType.number,
-                          initialValue: '0',
-                          validator: (v) => v!.isEmpty ? 'Required' : null,
-                          onSaved: (v) => minerals = v!,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Nutritional Values (per serving)',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    _buildNutrientField('Proteins', proteins, (v) => proteins = v!),
+                    _buildNutrientField('Carbs', carbohydrates, (v) => carbohydrates = v!),
+                    _buildNutrientField('Fats', fats, (v) => fats = v!),
+                    _buildNutrientField('Vitamins', vitamins, (v) => vitamins = v!),
+                    _buildNutrientField('Minerals', minerals, (v) => minerals = v!),
+                  ],
                 ),
               ],
             ),
@@ -192,15 +171,14 @@ class _DietPageState extends State<DietPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('CANCEL', style: TextStyle(fontSize: 13)),
           ),
           ElevatedButton(
             onPressed: () {
               if (formKey.currentState!.validate()) {
                 formKey.currentState!.save();
                 setState(() {
-
                   final newDietFood = DietFood(
                     id: generateReadableTimestamp(),
                     name: name,
@@ -220,12 +198,35 @@ class _DietPageState extends State<DietPage> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Add'),
+            child: const Text('ADD', style: TextStyle(fontSize: 13)),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildNutrientField(String label, String value, Function(String?) onSaved) {
+    return SizedBox(
+      width: 100,
+      child: TextFormField(
+        initialValue: value,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(fontSize: 11, color: Colors.grey[700]),
+          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        keyboardType: TextInputType.number,
+        style: const TextStyle(fontSize: 12),
+        onSaved: onSaved,
+        validator: (v) => v!.isEmpty ? 'Req' : null,
+      ),
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -314,30 +315,79 @@ class _DietPageState extends State<DietPage> {
             return Card(
               key: ValueKey(food.id),
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: ListTile(
-                title: Text(food.name),
-                subtitle: Text(
-                  '${food.foodStats.calories} kcal • ${food.count}g • $timeStr',
-                ),
-                trailing: IconButton(
-                  icon: Icon(isConsumed ? Icons.delete : Icons.add),
-                  onPressed: () {
-                    if (isConsumed) {
-                      FoodManager.instance.removeFromConsumedFood(
-                        _latestStats,
-                        food,
-                      );
-                    } else {
-
-                      FoodManager.instance.addToConsumedFood(
-                        _latestStats,
-                        food,
-                      );
-                    }
-                  },
+              child: InkWell(
+                onLongPress: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (ctx) => Wrap(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.edit),
+                          title: const Text('Edit'),
+                          onTap: () {
+                            Navigator.pop(ctx);
+                            // _showEditDietFoodDialog(food); // You need to define this
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.delete),
+                          title: const Text('Delete'),
+                          onTap: () {
+                            Navigator.pop(ctx);
+                            setState(() {
+                              FoodManager.instance.removeFromAvailableFood(food);
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: ListTile(
+                  title: Text(food.name),
+                  subtitle: Text('${food.foodStats.calories} kcal • Fat:${food.foodStats.fats} • Protein:${food.foodStats.proteins} • Minerals:${food.foodStats.minerals} • Carbs:${food.foodStats.carbohydrates} • Vitamins:${food.foodStats.vitamins} • $timeStr'),
+                  trailing: IconButton(
+                    icon: Icon(isConsumed ? Icons.delete : Icons.add),
+                    onPressed: () {
+                      if (isConsumed) {
+                        FoodManager.instance.removeFromConsumedFood(_latestStats, food);
+                      } else {
+                        FoodManager.instance.addToConsumedFood(_latestStats, food);
+                      }
+                    },
+                  ),
                 ),
               ),
             );
+
+
+            // return Card(
+            //   key: ValueKey(food.id),
+            //   margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            //   child: ListTile(
+            //     title: Text(food.name),
+            //     subtitle: Text(
+            //       '${food.foodStats.calories} kcal • ${food.count}g • $timeStr',
+            //     ),
+            //     trailing: IconButton(
+            //       icon: Icon(isConsumed ? Icons.delete : Icons.add),
+            //       onPressed: () {
+            //         if (isConsumed) {
+            //           FoodManager.instance.removeFromConsumedFood(
+            //             _latestStats,
+            //             food,
+            //           );
+            //         } else {
+            //
+            //           FoodManager.instance.addToConsumedFood(
+            //             _latestStats,
+            //             food,
+            //           );
+            //         }
+            //       },
+            //     ),
+            //   ),
+            // );
           },
         );
       },
@@ -386,13 +436,15 @@ class _DietPageState extends State<DietPage> {
             ),
             const SizedBox(height: 16),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Fat: ${stats.fats}g", style: const TextStyle(fontSize: 12)),
-                  Text("Protein: ${stats.proteins}g", style: const TextStyle(fontSize: 12)),
-                  Text("Carbs: ${stats.carbohydrates}g", style: const TextStyle(fontSize: 12)),
+                  Text("Fat: ${stats.fats}", style: const TextStyle(fontSize: 12)),
+                  Text("Protein: ${stats.proteins}", style: const TextStyle(fontSize: 12)),
+                  Text("Minerals: ${stats.minerals}", style: const TextStyle(fontSize: 12)),
+                  Text("Carbs: ${stats.carbohydrates}", style: const TextStyle(fontSize: 12)),
+                  Text("Vitamins: ${stats.vitamins}", style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),
