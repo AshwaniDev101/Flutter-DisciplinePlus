@@ -117,22 +117,6 @@ class FirebaseDietFoodService {
     _updateConsumedFoodStats(isSum: true, latestFoodStatsData, food.foodStats, date);
   }
 
-  // Future<void> addConsumedFood(FoodStats latestFoodStatsData, DietFood food, DateTime date) {
-  //   final ref = _db
-  //       .collection('users')
-  //       .doc(userId)
-  //       .collection('history')
-  //       .doc('${date.year}')
-  //       .collection('${date.month}')
-  //       .doc('${date.day}')
-  //       .collection('food_consumed_list')
-  //       .doc(food.id);
-  //   final map = food.toMap()..remove('id');
-  //
-  //   // add data to calories counter
-  //   _updateConsumedFoodStats(isSum:true,latestFoodStatsData, food.foodStats, date);
-  //   return ref.set(map);
-  // }
 
   /// Delete food from available list
   Future<void> deleteAvailableFood(String id) {
@@ -195,7 +179,6 @@ class FirebaseDietFoodService {
         required bool isSum,
       }) async {
 
-    print("  ================== _updateConsumedFoodStats() ===== Sum $isSum =======  ${latestFoodStatsData.calories}, ${newFoodStats.calories} ===================");
 
     FoodStats updatedFoodStats;
 
