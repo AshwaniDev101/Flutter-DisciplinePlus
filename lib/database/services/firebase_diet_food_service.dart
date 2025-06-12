@@ -195,7 +195,7 @@ class FirebaseDietFoodService {
         required bool isSum,
       }) async {
 
-    print("  ==============================  ${latestFoodStatsData.calories}, ${newFoodStats.calories} =====================================");
+    print("  ================== _updateConsumedFoodStats() ===== Sum $isSum =======  ${latestFoodStatsData.calories}, ${newFoodStats.calories} ===================");
 
     FoodStats updatedFoodStats;
 

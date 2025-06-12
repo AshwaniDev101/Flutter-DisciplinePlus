@@ -4,7 +4,6 @@ import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:discipline_plus/database/services/firebase_diet_food_service.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
-import 'package:discipline_plus/pages/dietpage/widget/foodlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -33,50 +32,52 @@ class _DietPageState extends State<DietPage> {
 
 
 
-  FoodStats? _latestFoodStatsData;
+  late final StreamSubscription<FoodStats?> _statsSub;
+  final _statsSubject = BehaviorSubject<FoodStats>.seeded(FoodStats.empty());
 
-  final foodStatsController = StreamController<FoodStats?>.broadcast();
   void initFoodStatsStream() {
-    FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()).listen((data) {
-      _latestFoodStatsData = data;
-      foodStatsController.add(data);
+    _statsSub = FirebaseDietFoodService
+        .instance
+        .watchConsumedFoodStats(DateTime.now())
+        .listen((data) {
+
+          print("FoodState ===============   initFoodStatsStream()  ============== ${data!.calories}");
+      _statsSubject.add(data);
+
+      var fooddata = _statsSubject.valueOrNull;
+
+          print("FoodState ===============   var fooddata = _statsSubject.valueOrNull;  ============== ${fooddata!.calories}");
     });
   }
-  Stream<FoodStats?> get foodStatsStream => foodStatsController.stream;
 
+  Stream<FoodStats?> get foodStatsStream => _statsSubject.stream;
+  FoodStats get latestStats => _statsSubject.value;
 
 
   @override
   void dispose() {
-
-    foodStatsController.close();
+    _statsSub.cancel();
     _pageController.dispose();
     super.dispose();
   }
 
 
 
-
-
-
   @override
   void initState() {
     super.initState();
-    initFoodStatsStream();
 
-    // 1) Get your base merged stream...
     final merged = FoodManager.instance.watchMergedFoodList();
-
-    // 2) Multicast it so multiple listeners can subscribe
     _sharedMerged = merged.shareReplay(maxSize: 1);
 
-    // 3) Filter once for each view
     _availableStream = _sharedMerged.map(
           (list) => list.where((f) => f.count == 0).toList(),
     );
     _consumedStream = _sharedMerged.map(
           (list) => list.where((f) => f.count > 0).toList(),
     );
+
+    initFoodStatsStream();
   }
 
 
@@ -258,21 +259,15 @@ class _DietPageState extends State<DietPage> {
                     controller: _pageController,
                     onPageChanged: (i) => setState(() => _currentIndex = i),
                     children: [
-                      KeyedSubtree(
-                        key: const ValueKey('available'),
-                        child: FoodListView(
-                          stream: _availableStream,
-                          isConsumed: false,
-                          latestStats: _latestFoodStatsData ?? FoodStats.empty(),
-                        ),
+                      _foodListView(
+                        stream: _availableStream,
+                        isConsumed: false,
+
                       ),
-                      KeyedSubtree(
-                        key: const ValueKey('consumed'),
-                        child: FoodListView(
-                          stream: _consumedStream,
-                          isConsumed: true,
-                          latestStats: _latestFoodStatsData ?? FoodStats.empty(),
-                        ),
+                      _foodListView(
+                        stream: _consumedStream,
+                        isConsumed: true,
+
                       ),
                     ],
                   ),
@@ -288,17 +283,76 @@ class _DietPageState extends State<DietPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddDietFoodDialog,
         child: const Icon(Icons.add),
-      ),
+      )
+    );
+  }
+
+
+  Widget _foodListView({required stream, required isConsumed})
+  {
+
+    return StreamBuilder<List<DietFood>>(
+      stream: stream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        final foods = snapshot.data;
+        if (foods == null || foods.isEmpty) {
+          return const Center(child: Text('No items yet'));
+        }
+
+        return ListView.builder(
+          itemCount: foods.length,
+          itemBuilder: (context, index) {
+            final food = foods[index];
+            final time = food.time;
+            final timeStr =
+                '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+
+            return Card(
+              key: ValueKey(food.id),
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: ListTile(
+                title: Text(food.name),
+                subtitle: Text(
+                  '${food.foodStats.calories} kcal • ${food.count}g • $timeStr',
+                ),
+                trailing: IconButton(
+                  icon: Icon(isConsumed ? Icons.delete : Icons.add),
+                  onPressed: () {
+                    if (isConsumed) {
+                      FoodManager.instance.removeFromConsumedFood(
+                        latestStats,
+                        food,
+                      );
+                    } else {
+
+                      FoodManager.instance.addToConsumedFood(
+                        latestStats,
+                        food,
+                      );
+                    }
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
   /// Builds the stats (progress circle + macros) at top
   Widget _buildStats() {
     return StreamBuilder<FoodStats?>(
-      stream: FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()),
+      stream: foodStatsStream,//FirebaseDietFoodService.instance.watchConsumedFoodStats(DateTime.now()),
+      initialData: FoodStats.empty(),
       builder: (context, snapshot) {
-        final stats = snapshot.data ?? FoodStats.empty();
-        _latestFoodStatsData = stats;
+        final stats = snapshot.data!;
 
         final progress = stats.calories;
         const maxProgress = 2000;

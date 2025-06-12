@@ -19,6 +19,8 @@ class FoodListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return StreamBuilder<List<DietFood>>(
       stream: stream,
       builder: (context, snapshot) {
