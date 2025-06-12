@@ -322,8 +322,8 @@ class _DietPageState extends State<DietPage> {
                 onPointerDown: (PointerDownEvent event) {
                   _tapPosition = event.position;
                 },
-                child: GestureDetector(
-                  onLongPress: () {
+                child: InkWell(
+                  onLongPress: isConsumed?(){}:() {
                     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
                     showMenu(
                       context: context,
@@ -364,9 +364,9 @@ class _DietPageState extends State<DietPage> {
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 2),
                               Text(
-                                '${food.foodStats.calories} kcal • Fat: ${food.foodStats.fats}g • Protein: ${food.foodStats.proteins}g • Carbs: ${food.foodStats.carbohydrates}g',
+                                '${food.foodStats.calories} kcal',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.grey[700],
@@ -374,23 +374,16 @@ class _DietPageState extends State<DietPage> {
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                               ),
-                              if (food.foodStats.minerals != null || food.foodStats.vitamins != null)
-                                Text(
-                                  'Minerals: ${food.foodStats.minerals ?? 'N/A'} • Vitamins: ${food.foodStats.vitamins ?? 'N/A'}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              Text(
-                                timeStr,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
+                              //
+                              //   Text(
+                              //     'Minerals: ${food.foodStats.minerals ?? 'N/A'} • Vitamins: ${food.foodStats.vitamins ?? 'N/A'}',
+                              //     style: TextStyle(
+                              //       fontSize: 12,
+                              //       color: Colors.grey[600],
+                              //     ),
+                              //     overflow: TextOverflow.ellipsis,
+                              //     maxLines: 1,
+                              //   ),
                             ],
                           ),
                         ),
@@ -418,6 +411,7 @@ class _DietPageState extends State<DietPage> {
                 ),
               ),
             );
+
 
 
 
