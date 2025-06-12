@@ -43,7 +43,6 @@ class FirebaseDietFoodService {
       final data = doc.data();
       data['id'] = doc.id;
 
-      print("Printing doc ${data}");
       return DietFood.fromConsumedMap(data);
     }).toList());
   }

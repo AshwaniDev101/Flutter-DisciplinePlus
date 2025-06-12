@@ -40,12 +40,11 @@ class _DietPageState extends State<DietPage> {
         .watchConsumedFoodStats(DateTime.now())
         .listen((data) {
 
-          print("FoodState ===============   initFoodStatsStream()  ============== ${data!.calories}");
-      _statsSubject.add(data);
+          if(data!=null)
+            {
+              _statsSubject.add(data);
+            }
 
-      var fooddata = _statsSubject.valueOrNull;
-
-          print("FoodState ===============   var fooddata = _statsSubject.valueOrNull;  ============== ${fooddata!.calories}");
     });
   }
 
