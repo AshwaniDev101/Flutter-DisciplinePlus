@@ -93,7 +93,7 @@ class _DietPageState extends State<DietPage> {
     String name = '', calories = '', quantity = '1';
     String proteins = '0', carbohydrates = '0', fats = '0', vitamins = '0', minerals = '0';
 
-    InputDecoration _buildInputDecoration(String label) {
+    InputDecoration buildInputDecoration(String label) {
       return InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: Colors.grey[700], fontSize: 13),
@@ -118,7 +118,7 @@ class _DietPageState extends State<DietPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
-                  decoration: _buildInputDecoration('DietFood Name'),
+                  decoration: buildInputDecoration('DietFood Name'),
                   style: const TextStyle(fontSize: 14),
                   validator: (v) => v!.isEmpty ? 'Required' : null,
                   onSaved: (v) => name = v!,
@@ -128,7 +128,7 @@ class _DietPageState extends State<DietPage> {
                   children: [
                     Expanded(
                       child: TextFormField(
-                        decoration: _buildInputDecoration('Calories'),
+                        decoration: buildInputDecoration('Calories'),
                         keyboardType: TextInputType.number,
                         style: const TextStyle(fontSize: 14),
                         validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -138,7 +138,7 @@ class _DietPageState extends State<DietPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: TextFormField(
-                        decoration: _buildInputDecoration('Quantity'),
+                        decoration: buildInputDecoration('Quantity'),
                         keyboardType: TextInputType.number,
                         initialValue: '1',
                         style: const TextStyle(fontSize: 14),
@@ -308,11 +308,10 @@ class _DietPageState extends State<DietPage> {
           itemCount: foods.length,
           itemBuilder: (context, index) {
             final food = foods[index];
-            final time = food.time;
-            final timeStr =
-                '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+            // final time = food.time;
+            // final timeStr = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
 
-            Offset _tapPosition = Offset.zero;
+            Offset tapPosition = Offset.zero;
 
 
             return Card(
@@ -320,7 +319,7 @@ class _DietPageState extends State<DietPage> {
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Listener(
                 onPointerDown: (PointerDownEvent event) {
-                  _tapPosition = event.position;
+                  tapPosition = event.position;
                 },
                 child: InkWell(
                   onLongPress: isConsumed?(){}:() {
@@ -328,10 +327,10 @@ class _DietPageState extends State<DietPage> {
                     showMenu(
                       context: context,
                       position: RelativeRect.fromLTRB(
-                        _tapPosition.dx,
-                        _tapPosition.dy,
-                        overlay.size.width - _tapPosition.dx,
-                        overlay.size.height - _tapPosition.dy,
+                        tapPosition.dx,
+                        tapPosition.dy,
+                        overlay.size.width - tapPosition.dx,
+                        overlay.size.height - tapPosition.dy,
                       ),
                       items: const [
                         PopupMenuItem(value: 'edit', child: Text('Edit')),
