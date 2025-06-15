@@ -112,20 +112,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                         onItemEdit: (item) => _showInitiativeDialog(initiative: item),
 
                   ),
-                  // child: IndexedStack(
-                  //   index: CurrentDayManager.getCurrentIndex(),
-                  //   children: List.generate(
-                  //     CurrentDayManager.length(),
-                  //         (i) => DayContent(
-                  //       dayIndex: i,
-                  //       scrollController: _scrollController,
-                  //       refreshController: _refreshControllers[i],
-                  //       onItemSwipe: (dir, item) =>
-                  //           _navigateToTimer(item, dir),
-                  //       onItemEdit: (item) => _showInitiativeDialog(initiative: item),
-                  //     ),
-                  //   ),
-                  // ),
+
                 ),
               ),
             ],
