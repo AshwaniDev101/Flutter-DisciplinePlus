@@ -42,7 +42,8 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
 
   void _save() {
     final init = Initiative(
-
+      // id: widget.existing_initiative?.id ??
+      //     DateTime.now().millisecondsSinceEpoch.toString(),
       index: widget.existing_initiative?.index ??
           TaskManager.instance.getNextIndex(),
       title: _titleCtrl.text,

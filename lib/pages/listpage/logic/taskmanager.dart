@@ -1,5 +1,4 @@
 
-import 'package:discipline_plus/pages/listpage/core/current_day_manager.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../../database/repository/week_repository.dart';
 import '../../../database/services/firebase_week_service.dart';
@@ -63,6 +62,20 @@ class TaskManager {
   }
 
 
+  int getNextIndex() {
+    int listSize = _latestInitiatives.length;
+    if (listSize == 0) {
+      return 0;
+    } else {
+      return listSize;
+    }
+  }
+
+  int getLength() {
+    return _latestInitiatives.length;
+  }
+
+
 
 
 
@@ -100,18 +113,7 @@ class TaskManager {
   //   return null;
   // }
   //
-  // int getNextIndex() {
-  //   int listSize = _initiativesListTaskManager.length;
-  //   if (listSize == 0) {
-  //     return 0;
-  //   } else {
-  //     return listSize;
-  //   }
-  // }
-  //
-  // int getLength() {
-  //   return _initiativesListTaskManager.length;
-  // }
+
 
 
 

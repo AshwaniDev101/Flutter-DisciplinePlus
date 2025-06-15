@@ -5,7 +5,6 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../dietpage/dietpage.dart';
 import '../drawer/drawer.dart';
-import '../listpage/core/refresh_reload_notifier.dart';
 import '../listpage/core/current_day_manager.dart';
 import 'logic/taskmanager.dart';
 import '../timerpage/timer_page.dart';
@@ -33,9 +32,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
     super.initState();
     // one controller per day tab
     _refreshControllers = RefreshController();
-    RefreshReloadNotifier.instance.register(_loadData);
+    // RefreshReloadNotifier.instance.register(_loadData);
 
-    RefreshReloadNotifier.instance.notifyAll();
+    // RefreshReloadNotifier.instance.notifyAll();
+
+    TaskManager.instance.bindToInitiatives(CurrentDayManager.getCurrentDay());
   }
 
   @override
@@ -47,10 +48,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
     super.dispose();
   }
 
-  Future<void> _loadData() async {
-    // await TaskManager.instance.reloadRepository(CurrentDayManager.getCurrentDay());
-    setState(() {});
-  }
+
 
   void _showInitiativeDialog({initiative}) {
     showDialog(

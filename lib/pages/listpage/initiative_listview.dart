@@ -41,7 +41,7 @@ class _InitiativeListviewState extends State<InitiativeListview> {
                 widget.refreshController.refreshCompleted();
               },
               child: StreamBuilder<List<Initiative>>(
-                stream: TaskManager.instance.watchInitiatives(CurrentDayManager.getCurrentDay()),
+                stream: TaskManager.instance.watchInitiatives(),
                 builder: (context, snapshot) {
 
                   //
@@ -64,9 +64,9 @@ class _InitiativeListviewState extends State<InitiativeListview> {
                         setState(() {
                           if (newIndex > oldIndex) newIndex--;
                           final item = initiatives[oldIndex];
-                          TaskManager.instance.removeInitiativeAt(oldIndex);
-                          TaskManager.instance.insertInitiativeAt(newIndex, item);
-                          TaskManager.instance.updateAllOrders();
+                          // TaskManager.instance.removeInitiativeAt(oldIndex);
+                          // TaskManager.instance.insertInitiativeAt(newIndex, item);
+                          // TaskManager.instance.updateAllOrders();
                         });
                       },
                       children: [
