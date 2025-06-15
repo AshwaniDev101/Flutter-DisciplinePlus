@@ -117,7 +117,27 @@ class _InitiativeListviewState extends State<InitiativeListview> {
               whiteCircleSize: 20,
               iconSize: 24,),
           ),
-          title: _buildTitle(init),
+          title: Text(init.title,style: TextStyle(
+            fontSize: 16,
+            color: Colors.indigo[700],
+            fontWeight: FontWeight.w400,
+            // fontWeight: init.isComplete ? FontWeight.w300 : FontWeight.bold,
+          )),
+          subtitle: RichText(
+            text: TextSpan(children: [
+
+              TextSpan(
+                text: init.completionTime.remainingTime(),
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              if (init.studyBreak.completionTime.minute != 0)
+                TextSpan(
+                  text: "   ${init.studyBreak.completionTime.minute}m brk",
+                  style: const TextStyle(fontSize: 12, color: Colors.red),
+                ),
+            ]),
+          ),
+          // trailing: Icon(Icons.square_outlined),
         ),
       ),
     );
@@ -136,34 +156,6 @@ class _InitiativeListviewState extends State<InitiativeListview> {
   //   size: 24,
   // );
 
-  Widget _buildTitle(Initiative init) {
-
-    return RichText(
-      text: TextSpan(children: [
-
-        TextSpan(
-          text: '${init.title} ',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.indigo[700],
-            fontWeight: FontWeight.w400,
-            // fontWeight: init.isComplete ? FontWeight.w300 : FontWeight.bold,
-          ),
-        ),
-        TextSpan(
-          text: init.completionTime.remainingTime(),
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
-        ),
-        if (init.studyBreak.completionTime.minute != 0)
-          TextSpan(
-            text: "   ${init.studyBreak.completionTime.minute}m brk",
-            style: const TextStyle(fontSize: 12, color: Colors.red),
-          ),
-      ]),
-    );
-
-
-  }
 
   void _showMenu(BuildContext context, Offset pos, Initiative item) {
     showMenu(
