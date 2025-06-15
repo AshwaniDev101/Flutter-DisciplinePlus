@@ -25,13 +25,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with RouteAware {
   final ValueNotifier<double> slidingPanelNotifier = ValueNotifier(0.0);
   final ScrollController _scrollController = ScrollController();
-  late final RefreshController _refreshControllers;
+  // late final RefreshController _refreshControllers;
 
   @override
   void initState() {
     super.initState();
     // one controller per day tab
-    _refreshControllers = RefreshController();
+    // _refreshControllers = RefreshController();
     // RefreshReloadNotifier.instance.register(_loadData);
 
     // RefreshReloadNotifier.instance.notifyAll();
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
   void dispose() {
     slidingPanelNotifier.dispose();
     _scrollController.dispose();
-    _refreshControllers.dispose();
+    // _refreshControllers.dispose();
 
     super.dispose();
   }
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   child: InitiativeListview(
                         // dayIndex: 0,
                         scrollController: _scrollController,
-                        refreshController: _refreshControllers,
+                        // refreshController: _refreshControllers,
                         onItemSwipe: (dir, item) =>
                             _navigateToTimer(item, dir),
                         onItemEdit: (item) => _showInitiativeDialog(initiative: item),

@@ -9,7 +9,7 @@ import 'core/current_day_manager.dart';
 class InitiativeListview extends StatefulWidget {
   // final int dayIndex;
   final ScrollController scrollController;
-  final RefreshController refreshController;
+  // final RefreshController refreshController;
   final void Function(DismissDirection, Initiative) onItemSwipe;
   final void Function(Initiative) onItemEdit;
 
@@ -17,7 +17,7 @@ class InitiativeListview extends StatefulWidget {
     super.key,
     // required this.dayIndex,
     required this.scrollController,
-    required this.refreshController,
+    // required this.refreshController,
     required this.onItemSwipe,
     required this.onItemEdit,
   });
@@ -34,64 +34,57 @@ class _InitiativeListviewState extends State<InitiativeListview> {
       return Column(
         children: [
           Expanded(
-            child: SmartRefresher(
-              controller: widget.refreshController,
-              onRefresh: () async {
-                await RefreshReloadNotifier.instance.notifyAll();
-                widget.refreshController.refreshCompleted();
-              },
-              child: StreamBuilder<List<Initiative>>(
-                stream: TaskManager.instance.watchInitiatives(),
-                builder: (context, snapshot) {
+            child: StreamBuilder<List<Initiative>>(
+              stream: TaskManager.instance.watchInitiatives(),
+              builder: (context, snapshot) {
 
-                  //
-                  // if (snapshot.connectionState == ConnectionState.waiting) {
-                  //   return const Center(child: CircularProgressIndicator());
-                  // }
+                //
+                // if (snapshot.connectionState == ConnectionState.waiting) {
+                //   return const Center(child: CircularProgressIndicator());
+                // }
 
-                  if (snapshot.hasError) {
-                    return const Center(child: Text('Something went wrong'));
-                  }
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Something went wrong'));
+                }
 
-                  final initiatives = snapshot.data ?? [];
+                final initiatives = snapshot.data ?? [];
 
-                  return Stack(
-                    children : [
-                      ReorderableListView(
-                      scrollController: widget.scrollController,
-                      padding: const EdgeInsets.all(8),
-                      onReorder: (oldIndex, newIndex) {
-                        setState(() {
-                          if (newIndex > oldIndex) newIndex--;
-                          final item = initiatives[oldIndex];
-                          // TaskManager.instance.removeInitiativeAt(oldIndex);
-                          // TaskManager.instance.insertInitiativeAt(newIndex, item);
-                          // TaskManager.instance.updateAllOrders();
-                        });
-                      },
-                      children: [
-                        for (int i = 0; i < initiatives.length; i++)
-                          _dismissibleItem(context, initiatives[i], i),
-                      ],
-                    ),
+                return Stack(
+                  children : [
+                    ReorderableListView(
+                    scrollController: widget.scrollController,
+                    padding: const EdgeInsets.all(8),
+                    onReorder: (oldIndex, newIndex) {
+                      setState(() {
+                        if (newIndex > oldIndex) newIndex--;
+                        final item = initiatives[oldIndex];
+                        // TaskManager.instance.removeInitiativeAt(oldIndex);
+                        // TaskManager.instance.insertInitiativeAt(newIndex, item);
+                        // TaskManager.instance.updateAllOrders();
+                      });
+                    },
+                    children: [
+                      for (int i = 0; i < initiatives.length; i++)
+                        _dismissibleItem(context, initiatives[i], i),
+                    ],
+                  ),
 
-                      if (snapshot.connectionState == ConnectionState.waiting)
-                        const Positioned.fill(
-                          child: IgnorePointer(
-                            ignoring: true,
-                            child: Center(
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator(strokeWidth: 3),
-                              ),
+                    if (snapshot.connectionState == ConnectionState.waiting)
+                      const Positioned.fill(
+                        child: IgnorePointer(
+                          ignoring: true,
+                          child: Center(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(strokeWidth: 3),
                             ),
                           ),
                         ),
-                    ]
-                  );
-                },
-              ),
+                      ),
+                  ]
+                );
+              },
             ),
           ),
           const SizedBox(height: 100),
