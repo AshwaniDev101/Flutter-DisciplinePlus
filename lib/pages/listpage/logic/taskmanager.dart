@@ -1,7 +1,6 @@
 
+import 'package:discipline_plus/database/repository/initiative_list_repository.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../../database/repository/week_repository.dart';
-import '../../../database/services/firebase_week_service.dart';
 import '../../../models/initiative.dart';
 
 class TaskManager {
@@ -10,25 +9,23 @@ class TaskManager {
   static TaskManager get instance => _instance;
 
 
-  final WeekRepository _weekRepository = WeekRepository(FirebaseWeekService.instance);
+  // final WeekRepository _weekRepository = WeekRepository(FirebaseWeekService.instance);
+  final InitiativeListRepository _initiativeListRepository = InitiativeListRepository();
 
 
   List<Initiative> _latestInitiatives = [];
 
 
 
-  // Stream<List<Initiative>> watchInitiatives(String day) {
-  //   return _weekRepository.watchInitiatives(day);
-  // }
-
   final BehaviorSubject<List<Initiative>> _initiativesSubject = BehaviorSubject();
 
   void bindToInitiatives(String day) {
-    _weekRepository.watchInitiatives(day).listen((list) {
+    _initiativeListRepository.watchAll().listen((list) {
       _initiativesSubject.add(list);
       _latestInitiatives = list;
     });
   }
+
 
   Stream<List<Initiative>> watchInitiatives() => _initiativesSubject.stream;
 
@@ -40,17 +37,17 @@ class TaskManager {
   }
 
 
-  Future<void> addInitiative(String day, Initiative initiative) async {
-    await _weekRepository.addInitiative(day,initiative);
+  Future<void> addInitiative(Initiative initiative) async {
+    await _initiativeListRepository.add(initiative);
   }
 
-  Future<void> removeInitiative(String day, String id) async {
-    await _weekRepository.removeInitiative(day, id);
+  Future<void> removeInitiative(String id) async {
+    await _initiativeListRepository.delete(id);
 
   }
 
-  Future<void> updateInitiative(String day, Initiative updated) async {
-    await _weekRepository.updateInitiative(day, updated.id, updated);
+  Future<void> updateInitiative(Initiative updated) async {
+    await _initiativeListRepository.update(updated.id, updated);
   }
 
   Initiative? getNextInitiative(int currentIndex) {
@@ -60,7 +57,6 @@ class TaskManager {
     }
     return null;
   }
-
 
   int getNextIndex() {
     int listSize = _latestInitiatives.length;

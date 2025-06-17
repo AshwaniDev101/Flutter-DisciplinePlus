@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../models/initiative.dart';
-import '../listpage/core/refresh_reload_notifier.dart';
 import 'logic/taskmanager.dart';
 import '../../core/utils/constants.dart';
 import 'core/current_day_manager.dart';
@@ -168,7 +166,8 @@ class _InitiativeListviewState extends State<InitiativeListview> {
     ).then((value) {
       if (value == 'delete') {
         TaskManager.instance.removeInitiative(
-            CurrentDayManager.getCurrentDay(), item.id);
+            // CurrentDayManager.getCurrentDay(),
+            item.id);
       } else if (value == 'edit') {
         widget.onItemEdit(item);
       }

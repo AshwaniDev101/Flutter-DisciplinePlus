@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../dietpage/dietpage.dart';
@@ -30,11 +29,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
   @override
   void initState() {
     super.initState();
-    // one controller per day tab
-    // _refreshControllers = RefreshController();
-    // RefreshReloadNotifier.instance.register(_loadData);
-
-    // RefreshReloadNotifier.instance.notifyAll();
 
     TaskManager.instance.bindToInitiatives(CurrentDayManager.getCurrentDay());
   }
@@ -59,12 +53,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
           setState(() {
             if (isEdit) {
               TaskManager.instance.updateInitiative(
-                CurrentDayManager.getCurrentDay(),
+                // CurrentDayManager.getCurrentDay(),
                 newInit,
               );
             } else {
               TaskManager.instance.addInitiative(
-                CurrentDayManager.getCurrentDay(),
+                // CurrentDayManager.getCurrentDay(),
                 newInit,
               );
             }
@@ -75,8 +69,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
     );
   }
 
-  // void _goLeft() => setState(() => CurrentDayManager.goLeft());
-  // void _goRight() => setState(() => CurrentDayManager.goRight());
 
   @override
   Widget build(BuildContext context) {

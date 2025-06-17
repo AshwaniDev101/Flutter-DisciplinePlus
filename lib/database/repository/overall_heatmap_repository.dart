@@ -12,12 +12,12 @@ class OverallHeatmapRepository {
   }
 
   // Save or update overall heatmap data for a specific month and year
-  Future<void> addOverallHeatmapData(HeatmapData data) async {
+  Future<void> add(HeatmapData data) async {
     await _service.saveHeatmapData(data);
   }
 
   // Update heatmap data for a specific day of the month
-  Future<void> updateOverallHeatmapDataForDay(int year, int month, int day, int heatLevel) async {
+  Future<void> update(int year, int month, int day, int heatLevel) async {
     await _service.updateDailyHeatLevel(year, month, day, heatLevel);
   }
 

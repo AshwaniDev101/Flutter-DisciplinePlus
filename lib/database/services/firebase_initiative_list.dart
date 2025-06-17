@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/initiative.dart';
+import 'package:flutter/cupertino.dart';
 
 class FirebaseInitiativeService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -30,10 +31,33 @@ class FirebaseInitiativeService {
   }
 
   Future<void> updateInitiative(String id, Initiative initiative) {
+
+    print("====================================== update is called ${initiative.title}");
     final ref = _initiativeCollection.doc(id);
     final map = initiative.toMap()..remove('id');
     return ref.update(map);
   }
+
+  // Future<void> updateInitiative(String id, Initiative initiative) async {
+  //   final ref = _initiativeCollection.doc(id);
+  //   final updateData = initiative.toMap()..remove('id');
+  //
+  //   try {
+  //     await ref.update(updateData);
+  //   } on FirebaseException catch (e) {
+  //     if (e.code == 'not-found') {
+  //       // Log or handle specific case gracefully
+  //       debugPrint('Update failed: Document with ID $id not found.');
+  //     } else {
+  //       debugPrint('Firestore error (${e.code}): ${e.message}');
+  //       rethrow; // Optional: let it bubble up
+  //     }
+  //   } catch (e, stackTrace) {
+  //     debugPrint('Unexpected error during initiative update: $e');
+  //     debugPrint('$stackTrace');
+  //     // Optional: send to logging service like Sentry or Firebase Crashlytics
+  //   }
+  // }
 
   Future<void> deleteInitiative(String id) {
     return _initiativeCollection.doc(id).delete();
