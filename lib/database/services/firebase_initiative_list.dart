@@ -32,7 +32,7 @@ class FirebaseInitiativeService {
 
   Future<void> updateInitiative(String id, Initiative initiative) {
 
-    print("====================================== update is called ${initiative.title}");
+    debugPrint("====================================== update is called ${initiative.title}");
     final ref = _initiativeCollection.doc(id);
     final map = initiative.toMap()..remove('id');
     return ref.update(map);
