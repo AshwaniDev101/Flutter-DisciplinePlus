@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/initiative.dart';
-import 'logic/taskmanager.dart';
+import 'logic/initiative_list_manager.dart';
 import '../../core/utils/constants.dart';
-import 'core/current_day_manager.dart';
 
 class InitiativeListview extends StatefulWidget {
   // final int dayIndex;
@@ -33,7 +32,7 @@ class _InitiativeListviewState extends State<InitiativeListview> {
         children: [
           Expanded(
             child: StreamBuilder<List<Initiative>>(
-              stream: TaskManager.instance.watchInitiatives(),
+              stream: InitiativeListManager.instance.watchInitiatives(),
               builder: (context, snapshot) {
 
                 //
@@ -55,7 +54,7 @@ class _InitiativeListviewState extends State<InitiativeListview> {
                     onReorder: (oldIndex, newIndex) {
                       setState(() {
                         if (newIndex > oldIndex) newIndex--;
-                        final item = initiatives[oldIndex];
+                        // final item = initiatives[oldIndex];
                         // TaskManager.instance.removeInitiativeAt(oldIndex);
                         // TaskManager.instance.insertInitiativeAt(newIndex, item);
                         // TaskManager.instance.updateAllOrders();
@@ -165,7 +164,7 @@ class _InitiativeListviewState extends State<InitiativeListview> {
       ],
     ).then((value) {
       if (value == 'delete') {
-        TaskManager.instance.removeInitiative(
+        InitiativeListManager.instance.removeInitiative(
             // CurrentDayManager.getCurrentDay(),
             item.id);
       } else if (value == 'edit') {

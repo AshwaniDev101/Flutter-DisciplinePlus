@@ -5,8 +5,7 @@ import '../services/firebase_initiative_list.dart';
 class InitiativeListRepository {
   final FirebaseInitiativeService _service;
 
-  InitiativeListRepository({FirebaseInitiativeService? service})
-      : _service = service ?? FirebaseInitiativeService.instance;
+  InitiativeListRepository(this._service);
 
   Stream<List<Initiative>> watchAll() {
     return _service.streamInitiatives();

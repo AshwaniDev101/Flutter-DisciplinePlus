@@ -2,10 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import '../../models/initiative.dart';
 import '../dietpage/dietpage.dart';
 import '../drawer/drawer.dart';
 import '../listpage/core/current_day_manager.dart';
-import 'logic/taskmanager.dart';
+import 'logic/initiative_list_manager.dart';
 import '../timerpage/timer_page.dart';
 import 'heatmap_panel.dart';
 import 'initiative_listview.dart';
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
   void initState() {
     super.initState();
 
-    TaskManager.instance.bindToInitiatives(CurrentDayManager.getCurrentDay());
+    InitiativeListManager.instance.bindToInitiatives(CurrentDayManager.getCurrentDay());
   }
 
   @override
@@ -52,12 +53,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
         onSubmit: (newInit, isEdit) {
           setState(() {
             if (isEdit) {
-              TaskManager.instance.updateInitiative(
+              InitiativeListManager.instance.updateInitiative(
                 // CurrentDayManager.getCurrentDay(),
                 newInit,
               );
             } else {
-              TaskManager.instance.addInitiative(
+              InitiativeListManager.instance.addInitiative(
                 // CurrentDayManager.getCurrentDay(),
                 newInit,
               );
@@ -134,6 +135,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   child: const Icon(Icons.add),
                 ),
 
+                SizedBox(width: 10,),
+                FloatingActionButton(
+                  onPressed: () => showFullScreenDialog(context),
+                  child: const Icon(Icons.list_alt),
+                ),
+
 
               ],
             ),
@@ -162,7 +169,181 @@ class _HomePageState extends State<HomePage> with RouteAware {
       ),
     );
   }
+
+
+
+
+
+  void showFullScreenDialog(BuildContext context) {
+    TextEditingController searchController = TextEditingController();
+    String searchText = "";
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog.fullscreen(
+
+
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text("Add to ${CurrentDayManager.currentWeekDay}"),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                body: Column(
+                  children: [
+                    Expanded(
+                      child: StreamBuilder<List<Initiative>>(
+                        stream: InitiativeListManager.instance.watchInitiatives(),
+                        builder: (context, snapshot) {
+                          final initiatives = snapshot.data ?? [];
+
+                          return Stack(
+                            children: [
+                              ReorderableListView(
+                                onReorder: (oldIndex, newIndex) {
+                                  setState(() {
+                                    if (newIndex > oldIndex) newIndex--;
+                                    final item = initiatives[oldIndex];
+                                    // Implement reorder logic
+                                  });
+                                },
+                                children: [
+                                  for (int i = 0; i < initiatives.length; i++)
+                                    _cardItem(
+                                      context,
+                                      initiatives[i],
+                                      i,
+                                      Key('$i-${initiatives[i].id}'),
+                                    ),
+                                ],
+                              ),
+                              if (snapshot.connectionState == ConnectionState.waiting)
+                                const Positioned.fill(
+                                  child: IgnorePointer(
+                                    child: Center(
+                                      child: SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: CircularProgressIndicator(strokeWidth: 3),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          hintText: "Search...",
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() => searchText = value);
+                        },
+                      ),
+                    )
+
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+
+
+
+  Widget _cardItem(BuildContext context, Initiative init, int index, Key key) {
+    return SizedBox(
+      key: key,
+      width: double.infinity, // forces full width
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+
+
+        child: IntrinsicHeight( // helps with better vertical alignment
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.delete),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        init.title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.indigo[700],
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: init.completionTime.remainingTime(),
+                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
+                            if (init.studyBreak.completionTime.minute != 0)
+                              TextSpan(
+                                text: "   ${init.studyBreak.completionTime.minute}m brk",
+                                style: const TextStyle(fontSize: 12, color: Colors.red),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.add),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
+
+
 }
+
+
 
 // class _DayHeader extends StatelessWidget {
 //   final VoidCallback onLeft, onRight;

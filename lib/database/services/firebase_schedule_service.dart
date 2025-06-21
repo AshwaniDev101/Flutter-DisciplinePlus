@@ -1,31 +1,32 @@
-// firebase_week_service.dart
+// firebase_schedule_service.dart
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/initiative.dart';
 
-class FirebaseWeekService {
+class FirebaseScheduleService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final String _root = 'WeekList';
+  final String _root = 'users';
+  final String _userId = 'user1'; // user 1 can be dynamic
 
   // Singleton
-  FirebaseWeekService._();
-  static final instance = FirebaseWeekService._();
+  FirebaseScheduleService._();
+  static final instance = FirebaseScheduleService._();
+
+
+  CollectionReference get _initiativeCollection =>
+      _db.collection(_root).doc(_userId).collection('schedule');
 
   /// Stream all initiatives for [day] (e.g. "Sunday") ordered by index.
   Stream<List<Initiative>> streamForDay(String day) {
-    return _db
-        .collection(_root)
-        .doc(day)
-        .collection('InitiativeList')
-        .orderBy('index')
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) {
-      final data = doc.data();
-      data['id'] = doc.id;
-      return Initiative.fromMap(data);
-    })
-        .toList());
+
+    return _initiativeCollection.doc(day).collection('initiative_list').orderBy('index').snapshots().map(
+          (snapshot) => snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return Initiative.fromMap(data);
+      }).toList(),
+    );
+
   }
 
   /// Add a new [initiative] under [day].
@@ -66,36 +67,6 @@ class FirebaseWeekService {
     return ref.update(map);
   }
 
-  /// Update an existing [initiative] under [day] by [id].
-  /// Falls back to set(merge: true) if the doc wasn’t found.
-  // Future<void> updateInitiative(
-  //     String day, String id, Initiative initiative) async {
-  //   final ref = _db
-  //       .collection(_root)
-  //       .doc(day)
-  //       .collection('InitiativeList')
-  //       .doc(id);
-  //   final map = initiative.toMap()..remove('id');
-  //
-  //
-  //   print('Map : ${map}');
-  //   try {
-  //     await ref.update(map);
-  //
-  //     print('✅ Successfully updated initiative "$id" on "$day"');
-  //   } on FirebaseException catch (e) {
-  //     if (e.code == 'not-found') {
-  //       print(
-  //           '⚠️ Initiative "$id" not found on "$day" — creating via merge...');
-  //       await ref.set(map, SetOptions(merge: true));
-  //       print('🔄 Created/merged initiative "$id" on "$day"');
-  //     } else {
-  //       // rethrow or handle other errors as needed
-  //       print('❌ Failed to update initiative "$id": ${e.message}');
-  //       rethrow;
-  //     }
-  //   }
-  // }
 
   /// Reorder the list by writing each initiative's index in a batch.
   Future<void> reorderDayList(String day, List<Initiative> list) async {

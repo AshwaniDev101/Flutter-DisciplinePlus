@@ -3,7 +3,7 @@ import '../../models/initiative.dart';
 import '../../models/app_time.dart';
 import '../../models/study_break.dart';
 import '../listpage/widget/quantity_selector.dart';
-import 'logic/taskmanager.dart';
+import 'logic/initiative_list_manager.dart';
 
 class InitiativeDialog extends StatefulWidget {
   final Initiative? existing_initiative;
@@ -47,7 +47,7 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
 
       id: widget.existing_initiative?.id,
       index: widget.existing_initiative?.index ??
-          TaskManager.instance.getNextIndex(),
+          InitiativeListManager.instance.getNextIndex(),
       title: _titleCtrl.text,
       completionTime: AppTime(0, _duration),
       studyBreak: StudyBreak(

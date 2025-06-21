@@ -1,11 +1,11 @@
-// lib/repositories/week_repository.dart
+// lib/repositories/schedule_repository.dart
 
 import '../../models/initiative.dart';
-import '../services/firebase_week_service.dart';
+import '../services/firebase_schedule_service.dart';
 
 
 class ScheduleRepository {
-  final FirebaseWeekService _service;
+  final FirebaseScheduleService _service;
 
   ScheduleRepository(this._service);
 
@@ -25,7 +25,7 @@ class ScheduleRepository {
   }
 
   /// Delete initiative by [id] from [day]
-  Future<void> remove(String day, String id) {
+  Future<void> delete(String day, String id) {
     return _service.deleteInitiative(day, id);
   }
 

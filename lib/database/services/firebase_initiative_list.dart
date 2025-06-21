@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/initiative.dart';
-import 'package:flutter/cupertino.dart';
 
 class FirebaseInitiativeService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String _root = 'users';
-  final String _userId = 'user1'; // you can make this dynamic
+  final String _userId = 'user1'; // user 1 can be dynamic
 
   // Singleton
   FirebaseInitiativeService._();
@@ -32,7 +31,6 @@ class FirebaseInitiativeService {
 
   Future<void> updateInitiative(String id, Initiative initiative) {
 
-    debugPrint("====================================== update is called ${initiative.title}");
     final ref = _initiativeCollection.doc(id);
     final map = initiative.toMap()..remove('id');
     return ref.update(map);

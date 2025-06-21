@@ -1,16 +1,17 @@
 
 import 'package:discipline_plus/database/repository/initiative_list_repository.dart';
+import 'package:discipline_plus/database/services/firebase_initiative_list.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../../models/initiative.dart';
 
-class TaskManager {
-  TaskManager._internal();
-  static final TaskManager _instance = TaskManager._internal();
-  static TaskManager get instance => _instance;
+class InitiativeListManager {
+  InitiativeListManager._internal();
+  static final InitiativeListManager _instance = InitiativeListManager._internal();
+  static InitiativeListManager get instance => _instance;
 
 
   // final WeekRepository _weekRepository = WeekRepository(FirebaseWeekService.instance);
-  final InitiativeListRepository _initiativeListRepository = InitiativeListRepository();
+  final InitiativeListRepository _initiativeListRepository = InitiativeListRepository(FirebaseInitiativeService.instance);
 
 
   List<Initiative> _latestInitiatives = [];
