@@ -1,4 +1,5 @@
 
+import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -31,7 +32,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
   void initState() {
     super.initState();
 
-    InitiativeListManager.instance.bindToInitiatives(CurrentDayManager.getCurrentDay());
+    InitiativeListManager.instance.bindToInitiatives();
+
+    ScheduleManager.instance.bindToSchedule(CurrentDayManager.currentWeekDay);
+
+
   }
 
   @override
@@ -53,13 +58,13 @@ class _HomePageState extends State<HomePage> with RouteAware {
         onSubmit: (newInit, isEdit) {
           setState(() {
             if (isEdit) {
-              InitiativeListManager.instance.updateInitiative(
-                // CurrentDayManager.getCurrentDay(),
+              ScheduleManager.instance.updateInitiativeIn(
+                CurrentDayManager.getCurrentDay(),
                 newInit,
               );
             } else {
-              InitiativeListManager.instance.addInitiative(
-                // CurrentDayManager.getCurrentDay(),
+              ScheduleManager.instance.addInitiativeIn(
+                CurrentDayManager.getCurrentDay(),
                 newInit,
               );
             }
@@ -204,42 +209,42 @@ class _HomePageState extends State<HomePage> with RouteAware {
                       child: StreamBuilder<List<Initiative>>(
                         stream: InitiativeListManager.instance.watch(),
                         builder: (context, snapshot) {
+
+
+
+                          if (snapshot.hasError) {
+                            return const Center(child: Text('Something went wrong'));
+                          }
+
                           final initiatives = snapshot.data ?? [];
 
-                          return Stack(
+                          if (snapshot.connectionState == ConnectionState.waiting && initiatives.isEmpty) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+
+                          if (initiatives.isEmpty) {
+                            return const Center(child: Text('No data available'));
+                          }
+
+                          return  ReorderableListView(
+                            onReorder: (oldIndex, newIndex) {
+                              setState(() {
+                                if (newIndex > oldIndex) newIndex--;
+                                final item = initiatives[oldIndex];
+                                // Implement reorder logic
+                              });
+                            },
                             children: [
-                              ReorderableListView(
-                                onReorder: (oldIndex, newIndex) {
-                                  setState(() {
-                                    if (newIndex > oldIndex) newIndex--;
-                                    final item = initiatives[oldIndex];
-                                    // Implement reorder logic
-                                  });
-                                },
-                                children: [
-                                  for (int i = 0; i < initiatives.length; i++)
-                                    _cardItem(
-                                      context,
-                                      initiatives[i],
-                                      i,
-                                      Key('$i-${initiatives[i].id}'),
-                                    ),
-                                ],
-                              ),
-                              if (snapshot.connectionState == ConnectionState.waiting)
-                                const Positioned.fill(
-                                  child: IgnorePointer(
-                                    child: Center(
-                                      child: SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: CircularProgressIndicator(strokeWidth: 3),
-                                      ),
-                                    ),
-                                  ),
+                              for (int i = 0; i < initiatives.length; i++)
+                                _cardItem(
+                                  context,
+                                  initiatives[i],
+                                  i,
+                                  Key('$i-${initiatives[i].id}'),
                                 ),
                             ],
                           );
+
                         },
                       ),
                     ),
@@ -328,7 +333,9 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                   ScheduleManager.instance.addInitiativeIn(CurrentDayManager.currentWeekDay, init);
+                  },
                   icon: Icon(Icons.add),
                 ),
               ],

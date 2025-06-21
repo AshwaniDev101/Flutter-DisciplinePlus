@@ -1,6 +1,7 @@
 import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import '../../models/initiative.dart';
+import 'core/current_day_manager.dart';
 import 'logic/initiative_list_manager.dart';
 import '../../core/utils/constants.dart';
 
@@ -43,7 +44,7 @@ class _InitiativeListviewState extends State<InitiativeListview> {
 
                 final initiatives = snapshot.data ?? [];
 
-                // Show spinner only if waiting *and* no data
+
                 if (snapshot.connectionState == ConnectionState.waiting && initiatives.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -151,13 +152,10 @@ class _InitiativeListviewState extends State<InitiativeListview> {
       ],
     ).then((value) {
       if (value == 'delete') {
-        InitiativeListManager.instance.removeInitiative(
-            // CurrentDayManager.getCurrentDay(),
-            item.id);
+        ScheduleManager.instance.removeInitiativeFrom(CurrentDayManager.getCurrentDay(), item.id);
       } else if (value == 'edit') {
 
 
-        // this is sent back in callback to to open up a widget
         widget.onItemEdit(item);
       }
     });

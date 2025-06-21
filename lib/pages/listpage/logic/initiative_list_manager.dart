@@ -15,7 +15,7 @@ class InitiativeListManager {
 
   Stream<List<Initiative>> watch() => _initiativesSubject.stream;
 
-  void bindToInitiatives(String day) {
+  void bindToInitiatives() {
     _initiativeListRepository.watchAll().listen((list) {
       _initiativesSubject.add(list);
       _latestInitiatives = list;
