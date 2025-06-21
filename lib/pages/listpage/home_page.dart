@@ -130,10 +130,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   child: const Icon(Icons.monitor_weight_outlined),
                 ),
                 SizedBox(width: 10,),
-                FloatingActionButton(
-                  onPressed: () => _showInitiativeDialog(),
-                  child: const Icon(Icons.add),
-                ),
+
 
                 SizedBox(width: 10,),
                 FloatingActionButton(
@@ -189,12 +186,17 @@ class _HomePageState extends State<HomePage> with RouteAware {
               child: Scaffold(
                 appBar: AppBar(
                   title: Text("Add to ${CurrentDayManager.currentWeekDay}"),
+
                   actions: [
                     IconButton(
                       icon: Icon(Icons.close),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
+                ),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () => _showInitiativeDialog(),
+                  child: const Icon(Icons.add),
                 ),
                 body: Column(
                   children: [
