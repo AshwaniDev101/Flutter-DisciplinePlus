@@ -5,14 +5,14 @@ import 'core/current_day_manager.dart';
 import 'logic/initiative_list_manager.dart';
 import '../../core/utils/constants.dart';
 
-class InitiativeListview extends StatefulWidget {
+class ScheduleListview extends StatefulWidget {
   // final int dayIndex;
   final ScrollController scrollController;
   // final RefreshController refreshController;
   final void Function(DismissDirection, Initiative) onItemSwipe;
   final void Function(Initiative) onItemEdit;
 
-  const InitiativeListview({
+  const ScheduleListview({
     super.key,
     // required this.dayIndex,
     required this.scrollController,
@@ -22,10 +22,10 @@ class InitiativeListview extends StatefulWidget {
   });
 
   @override
-  State<InitiativeListview> createState() => _InitiativeListviewState();
+  State<ScheduleListview> createState() => _ScheduleListviewState();
 }
 
-class _InitiativeListviewState extends State<InitiativeListview> {
+class _ScheduleListviewState extends State<ScheduleListview> {
 
 
     @override

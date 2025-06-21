@@ -10,7 +10,7 @@ import '../listpage/core/current_day_manager.dart';
 import 'logic/initiative_list_manager.dart';
 import '../timerpage/timer_page.dart';
 import 'heatmap_panel.dart';
-import 'initiative_listview.dart';
+import 'schedule_listview.dart';
 import 'add_initiative_dialog.dart';
 
 const double _panelMinHeight = 90;
@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                     borderRadius:
                     const BorderRadius.vertical(bottom: Radius.circular(12)),
                   ),
-                  child: InitiativeListview(
+                  child: ScheduleListview(
                         // dayIndex: 0,
                         scrollController: _scrollController,
                         // refreshController: _refreshControllers,
