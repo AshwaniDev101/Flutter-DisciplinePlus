@@ -8,17 +8,12 @@ class InitiativeListManager {
   InitiativeListManager._internal();
   static final InitiativeListManager _instance = InitiativeListManager._internal();
   static InitiativeListManager get instance => _instance;
-
-
-  // final WeekRepository _weekRepository = WeekRepository(FirebaseWeekService.instance);
   final InitiativeListRepository _initiativeListRepository = InitiativeListRepository(FirebaseInitiativeService.instance);
-
-
   List<Initiative> _latestInitiatives = [];
+  final BehaviorSubject<List<Initiative>> _initiativesSubject = BehaviorSubject<List<Initiative>>.seeded(<Initiative>[]);
 
 
-
-  final BehaviorSubject<List<Initiative>> _initiativesSubject = BehaviorSubject();
+  Stream<List<Initiative>> watch() => _initiativesSubject.stream;
 
   void bindToInitiatives(String day) {
     _initiativeListRepository.watchAll().listen((list) {
@@ -26,17 +21,6 @@ class InitiativeListManager {
       _latestInitiatives = list;
     });
   }
-
-
-  Stream<List<Initiative>> watchInitiatives() => _initiativesSubject.stream;
-
-
-  void bindInitiativeStream(Stream<List<Initiative>> stream) {
-    stream.listen((data) {
-      _latestInitiatives = data;
-    });
-  }
-
 
   Future<void> addInitiative(Initiative initiative) async {
     await _initiativeListRepository.add(initiative);

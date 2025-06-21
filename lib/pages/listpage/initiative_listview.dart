@@ -1,3 +1,4 @@
+import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import '../../models/initiative.dart';
 import 'logic/initiative_list_manager.dart';
@@ -32,13 +33,9 @@ class _InitiativeListviewState extends State<InitiativeListview> {
         children: [
           Expanded(
             child: StreamBuilder<List<Initiative>>(
-              stream: InitiativeListManager.instance.watchInitiatives(),
+              stream:ScheduleManager.instance.watch(),
+              initialData: const [],
               builder: (context, snapshot) {
-
-                //
-                // if (snapshot.connectionState == ConnectionState.waiting) {
-                //   return const Center(child: CircularProgressIndicator());
-                // }
 
                 if (snapshot.hasError) {
                   return const Center(child: Text('Something went wrong'));
@@ -46,41 +43,31 @@ class _InitiativeListviewState extends State<InitiativeListview> {
 
                 final initiatives = snapshot.data ?? [];
 
-                return Stack(
-                  children : [
-                    ReorderableListView(
-                    scrollController: widget.scrollController,
-                    padding: const EdgeInsets.all(8),
-                    onReorder: (oldIndex, newIndex) {
-                      setState(() {
-                        if (newIndex > oldIndex) newIndex--;
-                        // final item = initiatives[oldIndex];
-                        // TaskManager.instance.removeInitiativeAt(oldIndex);
-                        // TaskManager.instance.insertInitiativeAt(newIndex, item);
-                        // TaskManager.instance.updateAllOrders();
-                      });
-                    },
-                    children: [
-                      for (int i = 0; i < initiatives.length; i++)
-                        _dismissibleItem(context, initiatives[i], i),
-                    ],
-                  ),
+                // Show spinner only if waiting *and* no data
+                if (snapshot.connectionState == ConnectionState.waiting && initiatives.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                    if (snapshot.connectionState == ConnectionState.waiting)
-                      const Positioned.fill(
-                        child: IgnorePointer(
-                          ignoring: true,
-                          child: Center(
-                            child: SizedBox(
-                              width: 30,
-                              height: 30,
-                              child: CircularProgressIndicator(strokeWidth: 3),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ]
-                );
+                if (initiatives.isEmpty) {
+                  return const Center(child: Text('No data available'));
+                }
+                return ReorderableListView(
+                scrollController: widget.scrollController,
+                padding: const EdgeInsets.all(8),
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    if (newIndex > oldIndex) newIndex--;
+                    // final item = initiatives[oldIndex];
+                    // TaskManager.instance.removeInitiativeAt(oldIndex);
+                    // TaskManager.instance.insertInitiativeAt(newIndex, item);
+                    // TaskManager.instance.updateAllOrders();
+                  });
+                },
+                children: [
+                  for (int i = 0; i < initiatives.length; i++)
+                    _dismissibleItem(context, initiatives[i], i),
+                ],
+                                  );
               },
             ),
           ),

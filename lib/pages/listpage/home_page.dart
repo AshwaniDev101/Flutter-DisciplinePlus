@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   children: [
                     Expanded(
                       child: StreamBuilder<List<Initiative>>(
-                        stream: InitiativeListManager.instance.watchInitiatives(),
+                        stream: InitiativeListManager.instance.watch(),
                         builder: (context, snapshot) {
                           final initiatives = snapshot.data ?? [];
 
