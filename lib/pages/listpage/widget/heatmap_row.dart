@@ -8,8 +8,8 @@ import 'package:intl/intl.dart';
 
 import '../core/refresh_reload_notifier.dart';
 import '../../../core/utils/helper.dart';
-import '../../../database/repository/overall_heatmap_repository.dart';
-import '../../../database/services/firebase_overall_heatmap_service.dart';
+import '../../../database/repository/heatmap_repository.dart';
+import '../../../database/services/firebase_heatmap_service.dart';
 import '../../../models/heatmap_data.dart';
 
 class HeatmapRow extends StatefulWidget {
