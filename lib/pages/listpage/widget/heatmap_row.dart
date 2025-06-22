@@ -2,6 +2,7 @@
 
 import 'package:discipline_plus/pages/listpage/core/current_day_manager.dart';
 import 'package:discipline_plus/pages/listpage/core/snap_scrolling.dart';
+import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -138,6 +139,8 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
     // CurrentDayManager.setIndex(2);
     CurrentDayManager.setWeekday(week);
+
+    ScheduleManager.instance.changeDay(week);
 
     // Reload data from firebase
     // RefreshReloadNotifier.instance.notifyAll();

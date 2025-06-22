@@ -43,7 +43,7 @@ class ScheduleManager {
       .switchMap((day) {
     return _scheduleRepository
         .watchAll(day)
-        .startWith(<Initiative>[]) // immediate empty list
+        // .startWith(<Initiative>[]) // immediate empty list
         .map((list) {
       _latestSchedule = list; // update cache
       return list;

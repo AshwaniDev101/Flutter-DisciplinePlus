@@ -35,19 +35,22 @@ class _ScheduleListviewState extends State<ScheduleListview> {
             child: StreamBuilder<List<Initiative>>(
               // stream:ScheduleManager.instance.watch(),
               stream:ScheduleManager.instance.schedule$,
-              initialData: const [],
+              // initialData: const [],
               builder: (context, snapshot) {
 
                 if (snapshot.hasError) {
                   return const Center(child: Text('Something went wrong'));
                 }
 
-                final initiatives = snapshot.data ?? [];
+                // if (snapshot.connectionState == ConnectionState.waiting && initiatives.isEmpty) {
+                //   return const Center(child: CircularProgressIndicator());
+                // }
 
-
-                if (snapshot.connectionState == ConnectionState.waiting && initiatives.isEmpty) {
+                if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
                 }
+
+                final initiatives = snapshot.data ?? [];
 
                 if (initiatives.isEmpty) {
                   return const Center(child: Text('No data available'));
