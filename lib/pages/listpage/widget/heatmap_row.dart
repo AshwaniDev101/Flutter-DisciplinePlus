@@ -140,7 +140,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
     CurrentDayManager.setWeekday(week);
 
     // Reload data from firebase
-    RefreshReloadNotifier.instance.notifyAll();
+    // RefreshReloadNotifier.instance.notifyAll();
 
     // print("======= ${selectedDate} = ${currentDate.year}, ${currentDate.month}, ${day}, ${week} =================");
 

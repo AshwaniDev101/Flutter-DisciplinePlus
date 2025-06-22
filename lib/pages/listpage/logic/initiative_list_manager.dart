@@ -26,7 +26,7 @@ class InitiativeListManager {
     await _initiativeListRepository.add(initiative);
   }
 
-  Future<void> removeInitiative(String id) async {
+  Future<void> deleteInitiative(String id) async {
     await _initiativeListRepository.delete(id);
 
   }

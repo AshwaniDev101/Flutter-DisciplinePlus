@@ -2,7 +2,6 @@ import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import '../../models/initiative.dart';
 import 'core/current_day_manager.dart';
-import 'logic/initiative_list_manager.dart';
 import '../../core/utils/constants.dart';
 
 class ScheduleListview extends StatefulWidget {
@@ -34,7 +33,8 @@ class _ScheduleListviewState extends State<ScheduleListview> {
         children: [
           Expanded(
             child: StreamBuilder<List<Initiative>>(
-              stream:ScheduleManager.instance.watch(),
+              // stream:ScheduleManager.instance.watch(),
+              stream:ScheduleManager.instance.schedule$,
               initialData: const [],
               builder: (context, snapshot) {
 
@@ -152,7 +152,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
       ],
     ).then((value) {
       if (value == 'delete') {
-        ScheduleManager.instance.removeInitiativeFrom(CurrentDayManager.getCurrentDay(), item.id);
+        ScheduleManager.instance.deleteInitiativeFrom(CurrentDayManager.getCurrentDay(), item.id);
       } else if (value == 'edit') {
 
 

@@ -7,6 +7,7 @@ import '../../models/initiative.dart';
 import '../dietpage/dietpage.dart';
 import '../drawer/drawer.dart';
 import '../listpage/core/current_day_manager.dart';
+import 'core/refresh_reload_notifier.dart';
 import 'logic/initiative_list_manager.dart';
 import '../timerpage/timer_page.dart';
 import 'heatmap_panel.dart';
@@ -26,7 +27,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with RouteAware {
   final ValueNotifier<double> slidingPanelNotifier = ValueNotifier(0.0);
   final ScrollController _scrollController = ScrollController();
-  // late final RefreshController _refreshControllers;
 
   @override
   void initState() {
@@ -34,16 +34,15 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
     InitiativeListManager.instance.bindToInitiatives();
 
-    ScheduleManager.instance.bindToSchedule(CurrentDayManager.currentWeekDay);
-
 
   }
+
+
 
   @override
   void dispose() {
     slidingPanelNotifier.dispose();
     _scrollController.dispose();
-    // _refreshControllers.dispose();
 
     super.dispose();
   }
@@ -58,13 +57,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
         onSubmit: (newInit, isEdit) {
           setState(() {
             if (isEdit) {
-              ScheduleManager.instance.updateInitiativeIn(
-                CurrentDayManager.getCurrentDay(),
+              InitiativeListManager.instance.updateInitiative(
                 newInit,
               );
             } else {
-              ScheduleManager.instance.addInitiativeIn(
-                CurrentDayManager.getCurrentDay(),
+              InitiativeListManager.instance.addInitiative(
                 newInit,
               );
             }
@@ -297,7 +294,9 @@ class _HomePageState extends State<HomePage> with RouteAware {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    InitiativeListManager.instance.deleteInitiative(init.id);
+                  },
                   icon: Icon(Icons.delete),
                 ),
                 Expanded(
