@@ -2,6 +2,7 @@ import 'dart:async';
 
 // import 'package:rxdart/rxdart.dart';
 
+import 'package:discipline_plus/database/repository/diet_food_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../../database/services/firebase_diet_food_service.dart';
@@ -14,7 +15,7 @@ class FoodManager {
   static FoodManager get instance => _instance;
 
 
-  final FirebaseDietFoodService _dietFoodRepository = FirebaseDietFoodService.instance;
+  final DietFoodRepository _dietFoodRepository = DietFoodRepository(FirebaseDietFoodService.instance);
 
 
   Stream<List<DietFood>> watchMergedFoodList() {
@@ -47,26 +48,26 @@ class FoodManager {
 
   // Add to available food list
   void addToAvailableFood(DietFood food) {
-    _dietFoodRepository.addAvailableFood(food);
+    _dietFoodRepository.addAvailable(food);
   }
 
   void addToConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
-    _dietFoodRepository.addConsumedFood(latestFoodStatsData,food, DateTime.now());
+    _dietFoodRepository.addConsumed(latestFoodStatsData,food, DateTime.now());
   }
   // Remove from available food list
   void removeFromAvailableFood(DietFood food) {
-    _dietFoodRepository.deleteAvailableFood(food.id);
+    _dietFoodRepository.deleteAvailable(food.id);
   }
   void removeFromConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
-    _dietFoodRepository.deleteConsumedFood(latestFoodStatsData, food, DateTime.now());
+    _dietFoodRepository.deleteConsumed(latestFoodStatsData, food, DateTime.now());
   }
 
   // Edit available food
   void editAvailableFood(DietFood food) {
-    _dietFoodRepository.updateAvailableFood(food.id, food);
+    _dietFoodRepository.updateAvailable(food.id, food);
   }
   void editConsumedFood(DietFood food) {
-    _dietFoodRepository.updateConsumedFood(food.id, food, DateTime.now());
+    _dietFoodRepository.updateConsumed(food.id, food, DateTime.now());
   }
 
 }
