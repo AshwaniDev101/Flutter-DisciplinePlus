@@ -1,4 +1,6 @@
 
+import 'package:discipline_plus/database/repository/heatmap_repository.dart';
+import 'package:discipline_plus/database/services/firebase_heatmap_service.dart';
 import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -140,6 +142,21 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   child: const Icon(Icons.list_alt),
                 ),
 
+
+                FloatingActionButton(
+                  onPressed: () {
+
+                    HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance('user1'));
+
+                    // _heatmapRepository.updateEntries(activityId: 'diet_heatmap', year: 2025, month: 6, dayHeatLevel: {23:1,24:2,25:3,26:4,27:5,28:6,29:7,});
+                    _heatmapRepository.overwriteHeatmap(activityId: 'diet_heatmap', year: 2025, month: 6, dayHeatLevel: {17:1,18:2,19:3,20:4,21:5,22:6,23:7,});
+
+
+
+
+                  },
+                  child: const Icon(Icons.star),
+                ),
 
               ],
             ),

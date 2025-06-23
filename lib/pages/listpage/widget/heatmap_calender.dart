@@ -21,7 +21,9 @@ class _HeatmapCalenderState extends State<HeatmapCalender> {
   Color currentDateColor = Colors.orange;
   DateTime? selectedDate;
   final Map<String, int> heatLevelMap = {};
-  final OverallHeatmapRepository _heatmapRepository = OverallHeatmapRepository(OverallHeatmapService());
+
+  final HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance('user1'));
+
 
 
   final List<HeatmapData> yourOverallHeatmapDataList = [
@@ -44,21 +46,21 @@ class _HeatmapCalenderState extends State<HeatmapCalender> {
     currentDate = DateTime(today.year, today.month);
     // _updateHeatMap();
 
-    RefreshReloadNotifier.instance.register(loadData);
+    // RefreshReloadNotifier.instance.register(loadData);
 
 
   }
 
 
 
-  void loadData() async {
-    List<HeatmapData> heatmapList = await _heatmapRepository.getOverallHeatmapData(2025, 4);
-    setState(() {
-      yourOverallHeatmapDataList.clear();
-      yourOverallHeatmapDataList.addAll(heatmapList);
-      _updateHeatMap();
-    });
-  }
+  // void loadData() async {
+  //   List<HeatmapData> heatmapList = await _heatmapRepository.getOverallHeatmapData(2025, 4);
+  //   setState(() {
+  //     yourOverallHeatmapDataList.clear();
+  //     yourOverallHeatmapDataList.addAll(heatmapList);
+  //     _updateHeatMap();
+  //   });
+  // }
 
   void _updateHeatMap() {
     heatLevelMap.clear();

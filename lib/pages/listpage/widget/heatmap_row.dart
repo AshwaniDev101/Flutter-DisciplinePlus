@@ -23,24 +23,11 @@ class _HeatmapRowState extends State<HeatmapRow> {
   late DateTime currentDate;
   late DateTime today;
   DateTime? selectedDate;
-  final Map<String, int> heatLevelMap = {};
+
   final ScrollController _scrollController = ScrollController();
 
-  final OverallHeatmapRepository _heatmapRepository = OverallHeatmapRepository(OverallHeatmapService());
+  final HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance('user1'));
 
-
-  final List<HeatmapData> yourOverallHeatmapDataList = [
-    // HeatmapData(year: 2025, month: 4, date: 1, heatLevel: 0),
-    // HeatmapData(year: 2025, month: 4, date: 2, heatLevel: 2),
-    // HeatmapData(year: 2025, month: 4, date: 3, heatLevel: 4),
-    // HeatmapData(year: 2025, month: 4, date: 4, heatLevel: 3),
-    // HeatmapData(year: 2025, month: 4, date: 5, heatLevel: 1),
-    // HeatmapData(year: 2025, month: 4, date: 6, heatLevel: 5),
-    // HeatmapData(year: 2025, month: 4, date: 7, heatLevel: 2),
-    // HeatmapData(year: 2025, month: 4, date: 8, heatLevel: 0),
-    // HeatmapData(year: 2025, month: 4, date: 9, heatLevel: 1),
-    // HeatmapData(year: 2025, month: 4, date: 10, heatLevel: 3),
-  ];
 
   @override
   void initState() {
@@ -48,11 +35,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
     today = DateTime.now();
     currentDate = DateTime(today.year, today.month);
 
-    // uploadDummyData();
-    // Adding function to list of function to refresh them all at once
-    RefreshReloadNotifier.instance.register(loadData);
-    // loadData();
-    moveCursorToCurrent();
+
   }
 
   @override
@@ -62,91 +45,45 @@ class _HeatmapRowState extends State<HeatmapRow> {
   }
 
 
-
-  // void uploadDummyData()
-  // {
-  //
-  //   yourOverallHeatmapDataList.forEach((heatmap_data){
-  //     _heatmapRepository.addOverallHeatmapData(heatmap_data);
-  //   });
-  //
-  // }
-
-  void loadData() async {
-    List<HeatmapData> heatmapList = await _heatmapRepository.getOverallHeatmapData(2025, 4);
-    setState(() {
-      yourOverallHeatmapDataList.clear();
-      yourOverallHeatmapDataList.addAll(heatmapList);
-      _updateHeatMap();
-    });
-  }
-
-  void _updateHeatMap() {
-    heatLevelMap.clear();
-    for (var data in yourOverallHeatmapDataList) {
-      heatLevelMap['${data.year}-${data.month}-${data.date}'] = data.heatLevel;
-    }
-  }
-
-
-  // Color getColorForHeat(int level) {
-  //   switch (level) {
-  //     case 0: return hexToColor("#EBEDF0"); // Grey
-  //     case 1: return hexToColor("#003D28"); // Pale green
-  //     case 2: return hexToColor("#006642"); // Light green
-  //     case 3: return hexToColor("#008F5D"); // Brighter green
-  //     case 4: return hexToColor("#00B877"); // Vivid green
-  //     case 5: return hexToColor("#00FF9C"); // Most intense green
-  //     default: return Colors.grey;
-  //   }
-  // }
-
-
-
   Color getColorForHeat(int level) {
     switch (level) {
-      case 0: return hexToColor("#EBEDF0"); // Grey
-      case 1: return hexToColor("#005232"); // Pale green
-      case 2: return hexToColor("#007E4D"); // Light green
-      case 3: return hexToColor("#00A967"); // Brighter green
-      case 4: return hexToColor("#00E08A"); // Vivid green
-      case 5: return hexToColor("#00FF9C"); // Most intense green
+        case 0: return hexToColorWithOpacity("#EBEDF0", 100);
+      case 1: return hexToColorWithOpacity("#38d9a9", 10);
+      case 2: return hexToColorWithOpacity("#38d9a9", 20);
+      case 3: return hexToColorWithOpacity("#38d9a9", 40);
+      case 4: return hexToColorWithOpacity("#38d9a9", 50);
+      case 5: return hexToColorWithOpacity("#38d9a9", 70);
+      case 6: return hexToColorWithOpacity("#38d9a9", 90);
+      case 7: return hexToColorWithOpacity("#38d9a9", 100);
       default: return Colors.grey;
     }
   }
 
+
+
   void goToPreviousMonth() => setState(() {
     currentDate = DateTime(currentDate.year, currentDate.month - 1);
-    _updateHeatMap();
+
   });
 
   void goToNextMonth() => setState(() {
     currentDate = DateTime(currentDate.year, currentDate.month + 1);
-    _updateHeatMap();
+
   });
 
   void jumpToToday() => setState(() {
     currentDate = DateTime(today.year, today.month);
-    _updateHeatMap();
+
   });
 
   void _onDateTap(int day) => setState(() {
     selectedDate = DateTime(currentDate.year, currentDate.month, day);
 
-
-
     var week = getWeekdayName(selectedDate!);
 
-    // CurrentDayManager.setIndex(2);
     CurrentDayManager.setWeekday(week);
-
+    // Load data for different days
     ScheduleManager.instance.changeDay(week);
-
-    // Reload data from firebase
-    // RefreshReloadNotifier.instance.notifyAll();
-
-    // print("======= ${selectedDate} = ${currentDate.year}, ${currentDate.month}, ${day}, ${week} =================");
-
 
   });
 
@@ -237,81 +174,110 @@ class _HeatmapRowState extends State<HeatmapRow> {
   Widget _buildDaysList(int daysInMonth) {
     return SizedBox(
       height: 80,
-      child: ListView.builder(
-        controller: _scrollController,
-        physics: SnappingScrollPhysics(itemWidth:44.0), // Use 44.0 as the item width + margins (matches your ListView items)
-        scrollDirection: Axis.horizontal,
-        itemCount: daysInMonth,
-        itemBuilder: (context, index) {
-          final day = index + 1;
-          final date = DateTime(currentDate.year, currentDate.month, day);
-          final heatLevel = heatLevelMap['${date.year}-${date.month}-${date.day}'] ?? 0;
-          final isToday = _isToday(day);
-          final isSelected = _isSelected(day);
+      child: StreamBuilder<Map<String, Map<String, dynamic>>>(
+        stream: _heatmapRepository.watchAllHeatmapsInMonth(year: 2025, month: 6,),
+        builder: (context, snapshot) {
 
-          return GestureDetector(
-            onTap: () => _onDateTap(day),
-            child: Container(
-              // width: 35,
-              width: 40,
-              color: Colors.transparent,
-              margin: const EdgeInsets.symmetric(horizontal: 2),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Mon
-                  Text(
-                    DateFormat('EEE').format(date),
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                      color: isToday
-                          ? Colors.orange
-                          : isSelected
-                          ? Colors.blue
-                          : Colors.black,
-                    ),
-                  ),
-                  // 5
-                  Text(
-                    day.toString(),
-                    style: TextStyle(
-                      fontSize: 8,
-                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                      color: isToday
-                          ? Colors.orange
-                          : isSelected
-                          ? Colors.blue
-                          : Colors.black,
-                      // color: isSelected ? Colors.blue : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  // Circle
-                  Container(
-                    width: 18,
-                    height: 18,
-                    decoration: BoxDecoration(
-                      color: getColorForHeat(heatLevel),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isToday
-                            ? Colors.orange
-                            : isSelected
-                            ? Colors.blue
-                            : Colors.transparent,
-                        width: 2,
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+
+          if (snapshot.hasError) {
+            return const Text("Error loading data");
+          }
+
+          final allHeatmaps = snapshot.data ?? {};
+          final specificActivityMap = allHeatmaps['diet_heatmap'] ?? {};
+
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            moveCursorToCurrent();
+          });
+
+
+
+          return ListView.builder(
+            controller: _scrollController,
+            physics: SnappingScrollPhysics(itemWidth:44.0), // Use 44.0 as the item width + margins (matches your ListView items)
+            scrollDirection: Axis.horizontal,
+            itemCount: daysInMonth,
+            itemBuilder: (context, index) {
+              final day = index + 1;
+              final date = DateTime(currentDate.year, currentDate.month, day);
+              // final heatLevel = heatLevelMap['${date.year}-${date.month}-${date.day}'] ?? 0;
+              final isToday = _isToday(day);
+              final isSelected = _isSelected(day);
+
+              return GestureDetector(
+                onTap: () => _onDateTap(day),
+                child: Container(
+                  // width: 35,
+                  width: 40,
+                  color: Colors.transparent,
+                  margin: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // 3 Letter Weekday name example: 'Mon', 'Tue', 'Wed' .... etc
+                      Text(
+                        DateFormat('EEE').format(date),
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                          color: isToday
+                              ? Colors.orange
+                              : isSelected
+                              ? Colors.blue
+                              : Colors.black,
+                        ),
                       ),
-                    ),
+                      // it give date from 1 to 31
+                      Text(
+                        day.toString(),
+                        style: TextStyle(
+                          fontSize: 8,
+                          fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                          color: isToday
+                              ? Colors.orange
+                              : isSelected
+                              ? Colors.blue
+                              : Colors.black,
+                          // color: isSelected ? Colors.blue : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      // Circle
+                      Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          // color: getColorForHeat(specificActivityMap[day.toString()]),
+                          color: getColorForHeat(specificActivityMap[day.toString()] ?? 0),//#38d9a9
+                          // color: hexToColorWithOpacity("#38d9a9", 50),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: _getBorderColor(isToday, isSelected),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
       ),
     );
   }
+
+  Color _getBorderColor(bool isToday, bool isSelected) {
+    if (isToday) return Colors.orange;
+    if (isSelected) return Colors.blue;
+    return Colors.transparent;
+  }
+
 
   Widget _buildHeatLegend() {
     return Padding(

@@ -127,7 +127,7 @@ class FirebaseHeatmapService {
         .set(dayValues, SetOptions(merge: true));
   }
 
-  /// Overwrite the entire heatmap document for an activity
+  /// Overwrite the entire heatmap document for an activity, which mean deleting the old doc all together
   Future<void> overwriteHeatmap({
     required String activityId,
     required int year,

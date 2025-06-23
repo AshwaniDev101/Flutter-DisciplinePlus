@@ -1,12 +1,33 @@
 import '../../models/heatmap_data.dart';
 import '../services/firebase_heatmap_service.dart';
 
-class FirebaseHeatmapRepository {
+class HeatmapRepository {
   final FirebaseHeatmapService _service;
 
-  FirebaseHeatmapRepository(this._service);
+  HeatmapRepository(this._service);
 
-  // Fetch heatmap data for a single activity
+  Stream<Map<String, dynamic>> watchHeatmap({
+    required int year,
+    required int month,
+    required String activityId,
+  }) {
+    return _service.watchHeatmap(
+      year: year,
+      month: month,
+      activityId: activityId,
+    );
+  }
+
+  Stream<Map<String, Map<String, dynamic>>> watchAllHeatmapsInMonth({
+    required int year,
+    required int month,
+  }) {
+    return _service.watchAllHeatmapsInMonth(
+      year: year,
+      month: month,
+    );
+  }
+
   Future<Map<String, dynamic>> getActivityHeatmap({
     required int year,
     required int month,
@@ -19,7 +40,16 @@ class FirebaseHeatmapRepository {
     );
   }
 
-  // Add or update a single day in the heatmap
+  Future<Map<String, Map<String, dynamic>>> getAllInMonth({
+    required int year,
+    required int month,
+  }) async {
+    return await _service.getAllHeatmapsInMonth(
+      year: year,
+      month: month,
+    );
+  }
+
   Future<void> updateEntry({
     required String activityId,
     required int year,
@@ -36,14 +66,13 @@ class FirebaseHeatmapRepository {
     );
   }
 
-  // Update multiple days at once
   Future<void> updateEntries({
     required String activityId,
     required int year,
     required int month,
-    required Map<int, dynamic> dayValues,
+    required Map<int, dynamic> dayHeatLevel,
   }) async {
-    final map = {for (var e in dayValues.entries) e.key.toString(): e.value};
+    final map = {for (var e in dayHeatLevel.entries) e.key.toString(): e.value};
     await _service.updateEntries(
       activityId: activityId,
       year: year,
@@ -52,18 +81,23 @@ class FirebaseHeatmapRepository {
     );
   }
 
-  // Fetch all heatmaps in a month
-  Future<Map<String, Map<String, dynamic>>> getAllInMonth({
+  Future<void> overwriteHeatmap({
+    required String activityId,
     required int year,
     required int month,
+    required Map<int, dynamic> dayHeatLevel,
   }) async {
-    return await _service.getAllHeatmapsInMonth(
+    final data = {
+      for (var entry in dayHeatLevel.entries) entry.key.toString(): entry.value
+    };
+    await _service.overwriteHeatmap(
+      activityId: activityId,
       year: year,
       month: month,
+      fullData: data,
     );
   }
 
-  // Delete one heatmap
   Future<void> delete({
     required String activityId,
     required int year,
@@ -76,7 +110,16 @@ class FirebaseHeatmapRepository {
     );
   }
 
-  // Batch update multiple activities
+  Future<void> deleteAllInMonth({
+    required int year,
+    required int month,
+  }) async {
+    await _service.deleteAllHeatmapsInMonth(
+      year: year,
+      month: month,
+    );
+  }
+
   Future<void> batchUpdateMultiple({
     required int year,
     required int month,
