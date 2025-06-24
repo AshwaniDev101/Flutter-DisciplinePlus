@@ -82,17 +82,23 @@ class _DietPageState extends State<DietPage> {
 
   Color _getProgressColor() {
     final ratio = _latestStats.calories / _maxProgress;
-    if (ratio < 0.6) return Colors.green;
+    if (ratio < 0.6) return Colors.pink.shade300;
     if (ratio < 0.9) return Colors.orange;
     return Colors.red;
   }
 
 
-
-  void _showAddDietFoodDialog() {
+  void _showAddOrEditDietFoodDialog(DietFood? food) {
     final formKey = GlobalKey<FormState>();
-    String name = '', calories = '', quantity = '1';
-    String proteins = '0', carbohydrates = '0', fats = '0', vitamins = '0', minerals = '0';
+    // Pre-fill values if editing
+    String name = food?.name ?? '';
+    String calories = food?.foodStats.calories.toString() ?? '';
+    String quantity = food?.count.toString() ?? '1';
+    String proteins = food?.foodStats.proteins.toString() ?? '0';
+    String carbohydrates = food?.foodStats.carbohydrates.toString() ?? '0';
+    String fats = food?.foodStats.fats.toString() ?? '0';
+    String vitamins = food?.foodStats.vitamins.toString() ?? '0';
+    String minerals = food?.foodStats.minerals.toString() ?? '0';
 
     InputDecoration buildInputDecoration(String label) {
       return InputDecoration(
@@ -111,7 +117,9 @@ class _DietPageState extends State<DietPage> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Center(child: Text('Add New DietFood')),
+        title: Center(
+          child: Text(food == null ? 'Add New DietFood' : 'Edit DietFood'),
+        ),
         content: SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -119,6 +127,7 @@ class _DietPageState extends State<DietPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
+                  initialValue: name,
                   decoration: buildInputDecoration('DietFood Name'),
                   style: const TextStyle(fontSize: 14),
                   validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -129,6 +138,7 @@ class _DietPageState extends State<DietPage> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        initialValue: calories,
                         decoration: buildInputDecoration('Calories'),
                         keyboardType: TextInputType.number,
                         style: const TextStyle(fontSize: 14),
@@ -139,9 +149,9 @@ class _DietPageState extends State<DietPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: TextFormField(
+                        initialValue: quantity,
                         decoration: buildInputDecoration('Quantity'),
                         keyboardType: TextInputType.number,
-                        initialValue: '1',
                         style: const TextStyle(fontSize: 14),
                         validator: (v) => v!.isEmpty ? 'Required' : null,
                         onSaved: (v) => quantity = v!,
@@ -180,8 +190,8 @@ class _DietPageState extends State<DietPage> {
               if (formKey.currentState!.validate()) {
                 formKey.currentState!.save();
                 setState(() {
-                  final newDietFood = DietFood(
-                    id: generateReadableTimestamp(),
+                  final updatedDietFood = DietFood(
+                    id: food?.id ?? generateReadableTimestamp(),
                     name: name,
                     count: int.parse(quantity),
                     time: DateTime.now(),
@@ -194,17 +204,145 @@ class _DietPageState extends State<DietPage> {
                       calories: int.parse(calories),
                     ),
                   );
-                  FoodManager.instance.addToAvailableFood(newDietFood);
+
+                  if (food == null) {
+                    FoodManager.instance.addToAvailableFood(updatedDietFood);
+                  } else {
+                    FoodManager.instance.editAvailableFood(updatedDietFood);
+                  }
                 });
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               }
             },
-            child: const Text('ADD', style: TextStyle(fontSize: 13)),
+            child: Text(
+              food == null ? 'ADD' : 'SAVE',
+              style: const TextStyle(fontSize: 13),
+            ),
           ),
         ],
       ),
     );
   }
+
+
+  //
+  // void _showAddDietFoodDialog(DietFood? food) {
+  //
+  //   final formKey = GlobalKey<FormState>();
+  //   String name = '', calories = '', quantity = '1';
+  //   String proteins = '0', carbohydrates = '0', fats = '0', vitamins = '0', minerals = '0';
+  //
+  //   InputDecoration buildInputDecoration(String label) {
+  //     return InputDecoration(
+  //       labelText: label,
+  //       labelStyle: TextStyle(color: Colors.grey[700], fontSize: 13),
+  //       filled: true,
+  //       fillColor: Colors.grey[100],
+  //       contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(10),
+  //         borderSide: BorderSide.none,
+  //       ),
+  //     );
+  //   }
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (_) => AlertDialog(
+  //       title: const Center(child: Text('Add New DietFood')),
+  //       content: SingleChildScrollView(
+  //         child: Form(
+  //           key: formKey,
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               TextFormField(
+  //                 decoration: buildInputDecoration('DietFood Name'),
+  //                 style: const TextStyle(fontSize: 14),
+  //                 validator: (v) => v!.isEmpty ? 'Required' : null,
+  //                 onSaved: (v) => name = v!,
+  //               ),
+  //               const SizedBox(height: 12),
+  //               Row(
+  //                 children: [
+  //                   Expanded(
+  //                     child: TextFormField(
+  //                       decoration: buildInputDecoration('Calories'),
+  //                       keyboardType: TextInputType.number,
+  //                       style: const TextStyle(fontSize: 14),
+  //                       validator: (v) => v!.isEmpty ? 'Required' : null,
+  //                       onSaved: (v) => calories = v!,
+  //                     ),
+  //                   ),
+  //                   const SizedBox(width: 12),
+  //                   Expanded(
+  //                     child: TextFormField(
+  //                       decoration: buildInputDecoration('Quantity'),
+  //                       keyboardType: TextInputType.number,
+  //                       initialValue: '1',
+  //                       style: const TextStyle(fontSize: 14),
+  //                       validator: (v) => v!.isEmpty ? 'Required' : null,
+  //                       onSaved: (v) => quantity = v!,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               const SizedBox(height: 16),
+  //               const Text(
+  //                 'Nutritional Values (per serving)',
+  //                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+  //               ),
+  //               const SizedBox(height: 8),
+  //               Wrap(
+  //                 spacing: 10,
+  //                 runSpacing: 10,
+  //                 children: [
+  //                   _buildNutrientField('Proteins', proteins, (v) => proteins = v!),
+  //                   _buildNutrientField('Carbs', carbohydrates, (v) => carbohydrates = v!),
+  //                   _buildNutrientField('Fats', fats, (v) => fats = v!),
+  //                   _buildNutrientField('Vitamins', vitamins, (v) => vitamins = v!),
+  //                   _buildNutrientField('Minerals', minerals, (v) => minerals = v!),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.of(context).pop(),
+  //           child: const Text('CANCEL', style: TextStyle(fontSize: 13)),
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () {
+  //             if (formKey.currentState!.validate()) {
+  //               formKey.currentState!.save();
+  //               setState(() {
+  //                 final newDietFood = DietFood(
+  //                   id: generateReadableTimestamp(),
+  //                   name: name,
+  //                   count: int.parse(quantity),
+  //                   time: DateTime.now(),
+  //                   foodStats: FoodStats(
+  //                     proteins: int.parse(proteins),
+  //                     carbohydrates: int.parse(carbohydrates),
+  //                     fats: int.parse(fats),
+  //                     vitamins: int.parse(vitamins),
+  //                     minerals: int.parse(minerals),
+  //                     calories: int.parse(calories),
+  //                   ),
+  //                 );
+  //                 FoodManager.instance.addToAvailableFood(newDietFood);
+  //               });
+  //               Navigator.pop(context);
+  //             }
+  //           },
+  //           child: const Text('ADD', style: TextStyle(fontSize: 13)),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildNutrientField(String label, String value, Function(String?) onSaved) {
     return SizedBox(
@@ -284,10 +422,11 @@ class _DietPageState extends State<DietPage> {
       ),
 
       // Floating add button
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddDietFoodDialog,
-        child: const Icon(Icons.add),
-      )
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: ()=> _showAddOrEditDietFoodDialog(null),
+        icon: const Icon(Icons.add),
+        label: const Text("Add New Item", style: TextStyle(fontSize: 12),),
+      ),
     );
   }
 
@@ -343,116 +482,143 @@ class _DietPageState extends State<DietPage> {
               final Color barColor = colorPalette[index % colorPalette.length];
 
 
-              return Stack(
+              return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: ClipRRect(
+              borderRadius: BorderRadius.circular(16), // Match Card radius
+              child: Stack(
 
-                children: [
+                  children: [
 
-                  Card(
-                    key: ValueKey(food.id),
-                    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    child: Listener(
-                      onPointerDown: (PointerDownEvent event) {
-                        tapPosition = event.position;
-                      },
-                      child: InkWell(
-                        onLongPress: isConsumed?(){}:() {
-                          final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-                          showMenu(
-                            context: context,
-                            position: RelativeRect.fromLTRB(
-                              tapPosition.dx,
-                              tapPosition.dy,
-                              overlay.size.width - tapPosition.dx,
-                              overlay.size.height - tapPosition.dy,
-                            ),
-                            items: const [
-                              PopupMenuItem(value: 'edit', child: Text('Edit')),
-                              PopupMenuItem(value: 'delete', child: Text('Delete')),
-                            ],
-                          ).then((value) {
-                            if (value == 'edit') {
-                              // _showEditDietFoodDialog(food);
-                            } else if (value == 'delete') {
-                              FoodManager.instance.removeFromAvailableFood(food);
-                            }
-                          });
+
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 10,
+                        color: barColor,
+                      ),
+                    ),
+
+
+                    Card(
+                      key: ValueKey(food.id),
+                      margin: EdgeInsets.zero, // Important to remove Card’s default margin
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0), // Already clipped by outer ClipRRect
+                      ),
+
+                      clipBehavior: Clip.antiAlias,
+                      child: Listener(
+                        onPointerDown: (PointerDownEvent event) {
+                          tapPosition = event.position;
                         },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
+                        child: InkWell(
+                          onLongPress: isConsumed?(){}:() {
+                            final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+                            showMenu(
+                              context: context,
+                              position: RelativeRect.fromLTRB(
+                                tapPosition.dx,
+                                tapPosition.dy,
+                                overlay.size.width - tapPosition.dx,
+                                overlay.size.height - tapPosition.dy,
+                              ),
+                              items: const [
+                                PopupMenuItem(value: 'edit', child: Text('Edit')),
+                                PopupMenuItem(value: 'delete', child: Text('Delete')),
+                              ],
+                            ).then((value) {
+                              if (value == 'edit') {
+                                _showAddOrEditDietFoodDialog(food);
+                              } else if (value == 'delete') {
+                                FoodManager.instance.removeFromAvailableFood(food);
+                              }
+                            });
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
 
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      food.name,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        food.name,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      '${food.foodStats.calories} kcal',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[700],
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${food.foodStats.calories} kcal',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[700],
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
 
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: IconButton(
-                                icon: Icon(
-                                  isConsumed ? Icons.delete_forever : Icons.add_circle,
-                                  color: isConsumed ? Colors.redAccent : Colors.teal,
-                                  size: 30,
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: IconButton(
+                                  icon: Icon(
+                                    isConsumed ? Icons.delete_forever : Icons.add_circle,
+                                    color: isConsumed ? Colors.redAccent : Colors.pink.shade200,
+                                    size: 30,
+                                  ),
+                                  onPressed: () {
+                                    if (isConsumed) {
+                                      FoodManager.instance.removeFromConsumedFood(_latestStats, food);
+                                    } else {
+                                      FoodManager.instance.addToConsumedFood(_latestStats, food);
+                                    }
+                                  },
+                                  tooltip: isConsumed ? 'Remove food' : 'Add food',
                                 ),
-                                onPressed: () {
-                                  if (isConsumed) {
-                                    FoodManager.instance.removeFromConsumedFood(_latestStats, food);
-                                  } else {
-                                    FoodManager.instance.addToConsumedFood(_latestStats, food);
-                                  }
-                                },
-                                tooltip: isConsumed ? 'Remove food' : 'Add food',
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
 
-                  // Decorative Color Bar on the Right
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    right: 12, // match Card's horizontal margin
-                    child: Container(
-                      width: 5,
-                      decoration: BoxDecoration(
-                        color: barColor,
-                        borderRadius: BorderRadius.circular(12),
+                    Positioned(
+                      top: 1,
+                      bottom: 1,
+                      left: 0,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          bottomLeft: Radius.circular(12),
+                        ),
+                        child: Container(
+                          width: 10,
+                          color: barColor,
+                        ),
                       ),
                     ),
-                  ),
-                ],
 
-              );
+
+
+                  ],
+
+                ),
+              ));
 
 
 
@@ -565,7 +731,7 @@ class _DietPageState extends State<DietPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.grey.shade300,
+          color: isSelected ? Colors.pink.shade300 : Colors.pink.shade50,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
