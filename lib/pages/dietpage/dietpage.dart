@@ -4,6 +4,7 @@ import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:discipline_plus/database/services/firebase_diet_food_service.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
+import 'package:discipline_plus/pages/dietpage/widget/calorie_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -242,39 +243,43 @@ class _DietPageState extends State<DietPage> {
 
           Expanded(
             child: Column(
-              children: [
-                // Tab selector row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildTabButton('Available', 0),
-                    _buildTabButton('Consumed', 1),
-                  ],
-                ),
+                children: [
+                  // Tab selector row
 
-                // PageView of two FoodListViews
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    onPageChanged: (i) => setState(() => _currentIndex = i),
+                  SizedBox(height: 14,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _foodListView(
-                        stream: _availableStream,
-                        isConsumed: false,
 
-                      ),
-                      _foodListView(
-                        stream: _consumedStream,
-                        isConsumed: true,
-
-                      ),
+                      _buildTabButton('Available', 0),
+                      _buildTabButton('Consumed', 1),
                     ],
                   ),
-                ),
 
-              ],
+
+                  // PageView of two FoodListViews
+                  Expanded(
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (i) => setState(() => _currentIndex = i),
+                      children: [
+                        _foodListView(
+                          stream: _availableStream,
+                          isConsumed: false,
+
+                        ),
+                        _foodListView(
+                          stream: _consumedStream,
+                          isConsumed: true,
+
+                        ),
+                      ],
+                    ),
+                  ),
+
+                ],
+              ),
             ),
-          ),
         ],
       ),
 
@@ -290,6 +295,24 @@ class _DietPageState extends State<DietPage> {
   Widget _foodListView({required stream, required isConsumed})
   {
 
+
+
+
+    final List<Color> colorPalette = [
+      Colors.pink.shade100,
+      Colors.blue.shade100,
+      Colors.green.shade100,
+      Colors.purple.shade100,
+      Colors.teal.shade100,
+      Colors.amber.shade100,
+      Colors.orange.shade100,
+      Colors.indigo.shade100,
+      Colors.cyan.shade100,
+    ];
+
+
+
+
     return StreamBuilder<List<DietFood>>(
       stream: stream,
       builder: (context, snapshot) {
@@ -304,112 +327,132 @@ class _DietPageState extends State<DietPage> {
           return const Center(child: Text('No items yet'));
         }
 
-        return ListView.builder(
-          itemCount: foods.length,
-          itemBuilder: (context, index) {
-            final food = foods[index];
-            // final time = food.time;
-            // final timeStr = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+        return MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
 
-            Offset tapPosition = Offset.zero;
+          child: ListView.builder(
+            itemCount: foods.length,
+            itemBuilder: (context, index) {
+              final food = foods[index];
+              // final time = food.time;
+              // final timeStr = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+
+              Offset tapPosition = Offset.zero;
+
+              final Color barColor = colorPalette[index % colorPalette.length];
 
 
-            return Card(
-              key: ValueKey(food.id),
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Listener(
-                onPointerDown: (PointerDownEvent event) {
-                  tapPosition = event.position;
-                },
-                child: InkWell(
-                  onLongPress: isConsumed?(){}:() {
-                    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-                    showMenu(
-                      context: context,
-                      position: RelativeRect.fromLTRB(
-                        tapPosition.dx,
-                        tapPosition.dy,
-                        overlay.size.width - tapPosition.dx,
-                        overlay.size.height - tapPosition.dy,
-                      ),
-                      items: const [
-                        PopupMenuItem(value: 'edit', child: Text('Edit')),
-                        PopupMenuItem(value: 'delete', child: Text('Delete')),
-                      ],
-                    ).then((value) {
-                      if (value == 'edit') {
-                        // _showEditDietFoodDialog(food);
-                      } else if (value == 'delete') {
-                        FoodManager.instance.removeFromAvailableFood(food);
-                      }
-                    });
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                food.name,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '${food.foodStats.calories} kcal',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[700],
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              //
-                              //   Text(
-                              //     'Minerals: ${food.foodStats.minerals ?? 'N/A'} • Vitamins: ${food.foodStats.vitamins ?? 'N/A'}',
-                              //     style: TextStyle(
-                              //       fontSize: 12,
-                              //       color: Colors.grey[600],
-                              //     ),
-                              //     overflow: TextOverflow.ellipsis,
-                              //     maxLines: 1,
-                              //   ),
+              return Stack(
+
+                children: [
+
+                  Card(
+                    key: ValueKey(food.id),
+                    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: Listener(
+                      onPointerDown: (PointerDownEvent event) {
+                        tapPosition = event.position;
+                      },
+                      child: InkWell(
+                        onLongPress: isConsumed?(){}:() {
+                          final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+                          showMenu(
+                            context: context,
+                            position: RelativeRect.fromLTRB(
+                              tapPosition.dx,
+                              tapPosition.dy,
+                              overlay.size.width - tapPosition.dx,
+                              overlay.size.height - tapPosition.dy,
+                            ),
+                            items: const [
+                              PopupMenuItem(value: 'edit', child: Text('Edit')),
+                              PopupMenuItem(value: 'delete', child: Text('Delete')),
                             ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: IconButton(
-                          icon: Icon(
-                            isConsumed ? Icons.delete_forever : Icons.add_circle,
-                            color: isConsumed ? Colors.redAccent : Colors.green,
-                            size: 30,
-                          ),
-                          onPressed: () {
-                            if (isConsumed) {
-                              FoodManager.instance.removeFromConsumedFood(_latestStats, food);
-                            } else {
-                              FoodManager.instance.addToConsumedFood(_latestStats, food);
+                          ).then((value) {
+                            if (value == 'edit') {
+                              // _showEditDietFoodDialog(food);
+                            } else if (value == 'delete') {
+                              FoodManager.instance.removeFromAvailableFood(food);
                             }
-                          },
-                          tooltip: isConsumed ? 'Remove food' : 'Add food',
+                          });
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      food.name,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${food.foodStats.calories} kcal',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[700],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: IconButton(
+                                icon: Icon(
+                                  isConsumed ? Icons.delete_forever : Icons.add_circle,
+                                  color: isConsumed ? Colors.redAccent : Colors.teal,
+                                  size: 30,
+                                ),
+                                onPressed: () {
+                                  if (isConsumed) {
+                                    FoodManager.instance.removeFromConsumedFood(_latestStats, food);
+                                  } else {
+                                    FoodManager.instance.addToConsumedFood(_latestStats, food);
+                                  }
+                                },
+                                tooltip: isConsumed ? 'Remove food' : 'Add food',
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
+
+
+                  // Decorative Color Bar on the Right
+                  Positioned(
+                    top: 0,
+                    bottom: 0,
+                    right: 12, // match Card's horizontal margin
+                    child: Container(
+                      width: 5,
+                      decoration: BoxDecoration(
+                        color: barColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+
+              );
 
 
 
@@ -420,11 +463,14 @@ class _DietPageState extends State<DietPage> {
 
 
 
-          },
+            },
+          ),
         );
       },
     );
   }
+
+
 
   /// Builds the stats (progress circle + macros) at top
   Widget _buildStats() {
@@ -437,40 +483,44 @@ class _DietPageState extends State<DietPage> {
         final progress = stats.calories;
         const maxProgress = 2000;
 
-        return Column(
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    height: 130,
-                    width: 130,
-                    child: CircularProgressIndicator(
-                      value: progress / maxProgress,
-                      strokeWidth: 15,
-                      backgroundColor: Colors.grey.shade200,
-                      valueColor: AlwaysStoppedAnimation(_getProgressColor()),
-                    ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '$progress',
-                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: CircularProgressIndicator(
+                        value: progress / maxProgress,
+                        strokeWidth: 15,
+                        backgroundColor: Colors.grey.shade200,
+                        valueColor: AlwaysStoppedAnimation(_getProgressColor()),
                       ),
-                      const Text('/ 2000 kcal', style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '$progress',
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const Text('2000 kcal', style: TextStyle(fontSize: 10)),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(width: 20,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Fat: ${stats.fats}", style: const TextStyle(fontSize: 12)),
                   Text("Protein: ${stats.proteins}", style: const TextStyle(fontSize: 12)),
@@ -480,11 +530,27 @@ class _DietPageState extends State<DietPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+
+            ElevatedButton(child: Text(getTodayDateString()),
+                onPressed: (){
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => CalorieHistoryPage()),
+                  );
+                }
+            ),
+
           ],
         );
       },
     );
+  }
+
+  String getTodayDateString() {
+    final now = DateTime.now();
+    final dd = now.day.toString().padLeft(2, '0');
+    final mm = now.month.toString().padLeft(2, '0');
+    final yyyy = now.year.toString();
+    return '$dd/$mm/$yyyy';
   }
 
   /// Simple tab button
