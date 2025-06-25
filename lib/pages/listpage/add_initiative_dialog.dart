@@ -7,12 +7,14 @@ import 'logic/initiative_list_manager.dart';
 
 class InitiativeDialog extends StatefulWidget {
   final Initiative? existing_initiative;
-  final void Function(Initiative newInitiative, bool isEdit) onSubmit;
+  final void Function(Initiative newInitiative) onNewSave;
+  final void Function(Initiative newInitiative) onEditSave;
 
   const InitiativeDialog({
     super.key,
     this.existing_initiative,
-    required this.onSubmit,
+    required this.onNewSave,
+    required this.onEditSave,
   });
 
   @override
@@ -43,6 +45,7 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
   void _save() {
 
 
+
     final init = Initiative(
 
       id: widget.existing_initiative?.id,
@@ -55,7 +58,16 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
         completionTime: AppTime(0, _break),
       ),
     );
-    widget.onSubmit(init, widget.existing_initiative != null);
+
+    final isEdit = widget.existing_initiative != null;
+    if (isEdit)
+      {
+        widget.onNewSave(init);
+      }else
+        {
+          widget.onEditSave(init);
+        }
+
   }
 
   @override

@@ -1,4 +1,3 @@
-
 import 'package:discipline_plus/database/repository/heatmap_repository.dart';
 import 'package:discipline_plus/database/services/firebase_heatmap_service.dart';
 import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
@@ -35,11 +34,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
     super.initState();
 
     InitiativeListManager.instance.bindToInitiatives();
-
-
   }
-
-
 
   @override
   void dispose() {
@@ -49,31 +44,24 @@ class _HomePageState extends State<HomePage> with RouteAware {
     super.dispose();
   }
 
-
-
-  void _showInitiativeDialog({initiative}) {
+  void _showAddUpdateInitiativeDialog({Initiative? initiative}) {
     showDialog(
-      context: context,
-      builder: (_) => InitiativeDialog(
-        existing_initiative: initiative,
-        onSubmit: (newInit, isEdit) {
-          setState(() {
-            if (isEdit) {
-              InitiativeListManager.instance.updateInitiative(
-                newInit,
-              );
-            } else {
+        context: context,
+        builder: (_) => InitiativeDialog(
+            existing_initiative: initiative,
+            onNewSave: (newInitiative) {
               InitiativeListManager.instance.addInitiative(
-                newInit,
+                newInitiative,
               );
-            }
-          });
-          Navigator.of(context).pop();
-        },
-      ),
-    );
+              Navigator.of(context).pop();
+            },
+            onEditSave: (editedInitiative) {
+              InitiativeListManager.instance.updateInitiative(
+                editedInitiative,
+              );
+              Navigator.of(context).pop();
+            }));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -95,19 +83,17 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
-                    borderRadius:
-                    const BorderRadius.vertical(bottom: Radius.circular(12)),
+                    borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(12)),
                   ),
                   child: ScheduleListview(
-                        // dayIndex: 0,
-                        scrollController: _scrollController,
-                        // refreshController: _refreshControllers,
-                        onItemSwipe: (dir, item) =>
-                            _navigateToTimer(item, dir),
-                        onItemEdit: (item) => _showInitiativeDialog(initiative: item),
-
+                    // dayIndex: 0,
+                    scrollController: _scrollController,
+                    // refreshController: _refreshControllers,
+                    onItemSwipe: (swipeDirection, initiative) => _navigateToTimer(initiative, swipeDirection),
+                    onItemEdit: (existingInitiative) =>
+                        _showAddUpdateInitiativeDialog(initiative: existingInitiative),
                   ),
-
                 ),
               ),
             ],
@@ -120,44 +106,47 @@ class _HomePageState extends State<HomePage> with RouteAware {
             right: 16,
             child: Row(
               children: [
-
-
                 FloatingActionButton(
                   onPressed: () {
-
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => DietPage()),
                     );
-
                   },
                   child: const Icon(Icons.monitor_weight_outlined),
                 ),
-                SizedBox(width: 10,),
-
-
-                SizedBox(width: 10,),
+                SizedBox(
+                  width: 10,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
                 FloatingActionButton(
                   onPressed: () => showFullScreenDialog(context),
                   child: const Icon(Icons.list_alt),
                 ),
-
-
                 FloatingActionButton(
                   onPressed: () {
-
-                    HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance('user1'));
+                    HeatmapRepository _heatmapRepository = HeatmapRepository(
+                        FirebaseHeatmapService.instance('user1'));
 
                     // _heatmapRepository.updateEntries(activityId: 'diet_heatmap', year: 2025, month: 6, dayHeatLevel: {23:1,24:2,25:3,26:4,27:5,28:6,29:7,});
-                    _heatmapRepository.overwriteHeatmap(activityId: 'diet_heatmap', year: 2025, month: 6, dayHeatLevel: {17:1,18:2,19:3,20:4,21:5,22:6,23:7,});
-
-
-
-
+                    _heatmapRepository.overwriteHeatmap(
+                        activityId: 'diet_heatmap',
+                        year: 2025,
+                        month: 6,
+                        dayHeatLevel: {
+                          17: 1,
+                          18: 2,
+                          19: 3,
+                          20: 4,
+                          21: 5,
+                          22: 6,
+                          23: 7,
+                        });
                   },
                   child: const Icon(Icons.star),
                 ),
-
               ],
             ),
           ),
@@ -171,8 +160,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (_, __, ___) =>
-            TimerPage(initiative: initiative),
+        pageBuilder: (_, __, ___) => TimerPage(initiative: initiative),
         transitionsBuilder: (c, anim, __, child) {
           final begin = dir == DismissDirection.startToEnd
               ? const Offset(-1, 0)
@@ -186,10 +174,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
     );
   }
 
-
-
-
-
   void showFullScreenDialog(BuildContext context) {
     TextEditingController searchController = TextEditingController();
     String searchText = "";
@@ -200,12 +184,9 @@ class _HomePageState extends State<HomePage> with RouteAware {
         return StatefulBuilder(
           builder: (context, setState) {
             return Dialog.fullscreen(
-
-
               child: Scaffold(
                 appBar: AppBar(
                   title: Text("Add to ${CurrentDayManager.currentWeekDay}"),
-
                   actions: [
                     IconButton(
                       icon: Icon(Icons.close),
@@ -214,7 +195,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
-                  onPressed: () => _showInitiativeDialog(),
+                  onPressed: () => _showAddUpdateInitiativeDialog(),
                   child: const Icon(Icons.add),
                 ),
                 body: Column(
@@ -223,24 +204,26 @@ class _HomePageState extends State<HomePage> with RouteAware {
                       child: StreamBuilder<List<Initiative>>(
                         stream: InitiativeListManager.instance.watch(),
                         builder: (context, snapshot) {
-
-
-
                           if (snapshot.hasError) {
-                            return const Center(child: Text('Something went wrong'));
+                            return const Center(
+                                child: Text('Something went wrong'));
                           }
 
                           final initiatives = snapshot.data ?? [];
 
-                          if (snapshot.connectionState == ConnectionState.waiting && initiatives.isEmpty) {
-                            return const Center(child: CircularProgressIndicator());
+                          if (snapshot.connectionState ==
+                                  ConnectionState.waiting &&
+                              initiatives.isEmpty) {
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
 
                           if (initiatives.isEmpty) {
-                            return const Center(child: Text('No data available'));
+                            return const Center(
+                                child: Text('No data available'));
                           }
 
-                          return  ReorderableListView(
+                          return ReorderableListView(
                             onReorder: (oldIndex, newIndex) {
                               setState(() {
                                 if (newIndex > oldIndex) newIndex--;
@@ -258,7 +241,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
                                 ),
                             ],
                           );
-
                         },
                       ),
                     ),
@@ -271,7 +253,8 @@ class _HomePageState extends State<HomePage> with RouteAware {
                           hintText: "Search...",
                           filled: true,
                           fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             borderSide: BorderSide.none,
@@ -282,7 +265,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
                         },
                       ),
                     )
-
                   ],
                 ),
               ),
@@ -293,18 +275,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
     );
   }
 
-
-
-
   Widget _cardItem(BuildContext context, Initiative init, int index, Key key) {
     return SizedBox(
       key: key,
       width: double.infinity, // forces full width
       child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-
-
-        child: IntrinsicHeight( // helps with better vertical alignment
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        child: IntrinsicHeight(
+          // helps with better vertical alignment
           child: SizedBox(
             height: 60,
             child: Row(
@@ -335,12 +313,15 @@ class _HomePageState extends State<HomePage> with RouteAware {
                           children: [
                             TextSpan(
                               text: init.completionTime.remainingTime(),
-                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.grey),
                             ),
                             if (init.studyBreak.completionTime.minute != 0)
                               TextSpan(
-                                text: "   ${init.studyBreak.completionTime.minute}m brk",
-                                style: const TextStyle(fontSize: 12, color: Colors.red),
+                                text:
+                                    "   ${init.studyBreak.completionTime.minute}m brk",
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.red),
                               ),
                           ],
                         ),
@@ -350,7 +331,8 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 ),
                 IconButton(
                   onPressed: () {
-                   ScheduleManager.instance.addInitiativeIn(CurrentDayManager.currentWeekDay, init);
+                    ScheduleManager.instance.addInitiativeIn(
+                        CurrentDayManager.currentWeekDay, init);
                   },
                   icon: Icon(Icons.add),
                 ),
@@ -361,14 +343,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
       ),
     );
   }
-
-
-
-
-
 }
-
-
 
 // class _DayHeader extends StatelessWidget {
 //   final VoidCallback onLeft, onRight;
@@ -400,4 +375,3 @@ class _HomePageState extends State<HomePage> with RouteAware {
 //     );
 //   }
 // }
-
