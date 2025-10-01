@@ -6,11 +6,13 @@ import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+
 import '../core/refresh_reload_notifier.dart';
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
 import '../../../database/services/firebase_heatmap_service.dart';
 import '../../../models/heatmap_data.dart';
+
 
 class HeatmapRow extends StatefulWidget {
   const HeatmapRow({super.key});
@@ -20,12 +22,12 @@ class HeatmapRow extends StatefulWidget {
 }
 
 class _HeatmapRowState extends State<HeatmapRow> {
+
   late DateTime currentDate;
   late DateTime today;
   DateTime? selectedDate;
 
   final ScrollController _scrollController = ScrollController();
-
   final HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance('user1'));
 
 
@@ -34,8 +36,6 @@ class _HeatmapRowState extends State<HeatmapRow> {
     super.initState();
     today = DateTime.now();
     currentDate = DateTime(today.year, today.month);
-
-
   }
 
   @override
@@ -47,7 +47,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
   Color getColorForHeat(int level) {
     switch (level) {
-        case 0: return hexToColorWithOpacity("#EBEDF0", 100);
+      case 0: return hexToColorWithOpacity("#EBEDF0", 100);
       case 1: return hexToColorWithOpacity("#38d9a9", 10);
       case 2: return hexToColorWithOpacity("#38d9a9", 20);
       case 3: return hexToColorWithOpacity("#38d9a9", 40);
@@ -63,17 +63,14 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
   void goToPreviousMonth() => setState(() {
     currentDate = DateTime(currentDate.year, currentDate.month - 1);
-
   });
 
   void goToNextMonth() => setState(() {
     currentDate = DateTime(currentDate.year, currentDate.month + 1);
-
   });
 
   void jumpToToday() => setState(() {
     currentDate = DateTime(today.year, today.month);
-
   });
 
   void _onDateTap(int day) => setState(() {
@@ -109,11 +106,12 @@ class _HeatmapRowState extends State<HeatmapRow> {
     if (currentDate.year == today.year && currentDate.month == today.month) {
 
 
+      int day_offset = 7;
       int index;
-      if (today.day <= 8) {
+      if (today.day <= day_offset) {
         index = 0; // Show from Day 1
       } else {
-        index = today.day - 8; // Show from Today -7
+        index = today.day - day_offset; // Show from Today -7
       }
 
       double itemWidth = 44;  // your ListView items: 40 + 2 margin left + 2 margin right
@@ -136,10 +134,14 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
     return Column(
       children: [
-        // _buildHeader(),
-        _buildDaysList(daysInMonth),
-        // _buildHeatLegend(),
-        // if (selectedDate != null) _buildSelectedDateInfo(),
+        Row(
+          children: [
+            const SizedBox(width: 12),
+            Icon(Icons.menu, color:Colors.pink.shade100,size: 28), // Hamburger icon
+            // const SizedBox(width: 12),
+            Expanded(child: _buildDaysList(daysInMonth)),
+          ],
+        ),
       ],
     );
   }
@@ -198,7 +200,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
           return ListView.builder(
             controller: _scrollController,
-            physics: SnappingScrollPhysics(itemWidth:44.0), // Use 44.0 as the item width + margins (matches your ListView items)
+            physics: SnappingScrollPhysics(itemWidth:44), // Use 44.0 as the item width + margins (matches your ListView items)
             scrollDirection: Axis.horizontal,
             itemCount: daysInMonth,
             itemBuilder: (context, index) {

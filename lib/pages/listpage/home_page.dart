@@ -63,42 +63,71 @@ class _HomePageState extends State<HomePage> with RouteAware {
             }));
   }
 
+
+
+  final PageController _controller = PageController();
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Initiative List",
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.pink.shade200,
+      ),
       drawer: const CustomDrawer(),
       body: Stack(children: [
-        SlidingUpPanel(
-          minHeight: _panelMinHeight,
-          maxHeight: _panelMaxHeight,
-          onPanelSlide: (v) => slidingPanelNotifier.value = v,
-          panel: const HeatmapPanel(),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 35),
-              // _DayHeader(onLeft: _goLeft, onRight: _goRight),
-              const Divider(height: 1, thickness: 1),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: const BorderRadius.vertical(
-                        bottom: Radius.circular(12)),
-                  ),
-                  child: ScheduleListview(
-                    // dayIndex: 0,
-                    scrollController: _scrollController,
-                    // refreshController: _refreshControllers,
-                    onItemSwipe: (swipeDirection, initiative) => _navigateToTimer(initiative, swipeDirection),
-                    onItemEdit: (existingInitiative) =>
-                        _showAddUpdateInitiativeDialog(initiative: existingInitiative),
-                  ),
+        SafeArea(
+          child: SlidingUpPanel(
+            minHeight: _panelMinHeight,
+            maxHeight: _panelMaxHeight,
+            onPanelSlide: (v) => slidingPanelNotifier.value = v,
+            panel: const HeatmapPanel(),
+            body: PageView(
+          
+              controller: _controller,
+              children: [
+          
+          
+          
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // const SizedBox(height: 35),
+                    // _DayHeader(onLeft: _goLeft, onRight: _goRight),
+                    const Divider(height: 1, thickness: 1),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: const BorderRadius.vertical(
+                              bottom: Radius.circular(12)),
+                        ),
+                        child: ScheduleListview(
+                          // dayIndex: 0,
+                          scrollController: _scrollController,
+                          // refreshController: _refreshControllers,
+                          onItemSwipe: (swipeDirection, initiative) => _navigateToTimer(initiative, swipeDirection),
+                          onItemEdit: (existingInitiative) =>
+                              _showAddUpdateInitiativeDialog(initiative: existingInitiative),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+          
+                DietPage(),
+              ],
+          
+            ),
           ),
         ),
+
+        // Floating action buttons
         ValueListenableBuilder<double>(
           valueListenable: slidingPanelNotifier,
           builder: (_, v, __) => Positioned(
