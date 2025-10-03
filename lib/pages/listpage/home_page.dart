@@ -73,11 +73,51 @@ class _HomePageState extends State<HomePage> with RouteAware {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Initiative List",
+          CurrentDayManager.currentWeekDay,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.pink.shade200,
+
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onSelected: (String value) {
+              // Handle menu item selection
+              if (value == 'Diet-page') {
+                // Navigate to settings page or do something
+              } else if (value == 'Settings') {
+                // Show about dialog
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'Diet-page',
+                child: Row(
+                  children: [
+                    Icon(Icons.monitor_weight_outlined, color: Colors.pink[200]),
+                    const SizedBox(width: 8),
+                    const Text('Diet-page'),
+                    const SizedBox(width: 8),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+
+                value: 'Setting',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings, color: Colors.pink[200]),
+                    const SizedBox(width: 8),
+                    const Text('Settings'),
+                    const SizedBox(width: 8),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+
       ),
       drawer: const CustomDrawer(),
       body: Stack(children: [

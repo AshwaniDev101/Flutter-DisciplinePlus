@@ -134,14 +134,10 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
     return Column(
       children: [
-        Row(
-          children: [
-            const SizedBox(width: 12),
-            Icon(Icons.menu, color:Colors.pink.shade100,size: 28), // Hamburger icon
-            // const SizedBox(width: 12),
-            Expanded(child: _buildDaysList(daysInMonth)),
-          ],
-        ),
+
+        // Icon(Icons.menu, color:Colors.pink.shade100,size: 28), // Hamburger icon
+        // const SizedBox(width: 12),
+        Expanded(child: _buildDaysList(daysInMonth)),
       ],
     );
   }
@@ -227,7 +223,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
                           fontSize: 9,
                           fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                           color: isToday
-                              ? Colors.orange
+                              ? Colors.pink[200]
                               : isSelected
                               ? Colors.blue
                               : Colors.black,
@@ -240,7 +236,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
                           fontSize: 8,
                           fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                           color: isToday
-                              ? Colors.orange
+                              ? Colors.pink[200]
                               : isSelected
                               ? Colors.blue
                               : Colors.black,
@@ -275,7 +271,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
   }
 
   Color _getBorderColor(bool isToday, bool isSelected) {
-    if (isToday) return Colors.orange;
+    if (isToday) return Colors.pink[200]!;
     if (isSelected) return Colors.blue;
     return Colors.transparent;
   }
