@@ -62,10 +62,11 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
     final isEdit = widget.existing_initiative != null;
     if (isEdit)
       {
-        widget.onNewSave(init);
+
+        widget.onEditSave(init);
       }else
         {
-          widget.onEditSave(init);
+          widget.onNewSave(init);
         }
 
   }

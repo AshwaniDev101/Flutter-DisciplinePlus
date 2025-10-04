@@ -85,9 +85,15 @@ class _HomePageState extends State<HomePage> with RouteAware {
             onSelected: (String value) {
               // Handle menu item selection
               if (value == 'Diet-page') {
-                // Navigate to settings page or do something
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DietPage()),
+                );
+
               } else if (value == 'Settings') {
-                // Show about dialog
+
+                showFullScreenDialog(context);
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -175,47 +181,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
             right: 16,
             child: Row(
               children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => DietPage()),
-                    );
-                  },
-                  child: const Icon(Icons.monitor_weight_outlined),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
+
+
                 FloatingActionButton(
                   onPressed: () => showFullScreenDialog(context),
-                  child: const Icon(Icons.list_alt),
+                  child: const Icon(Icons.add),
                 ),
-                FloatingActionButton(
-                  onPressed: () {
-                    HeatmapRepository _heatmapRepository = HeatmapRepository(
-                        FirebaseHeatmapService.instance('user1'));
 
-                    // _heatmapRepository.updateEntries(activityId: 'diet_heatmap', year: 2025, month: 6, dayHeatLevel: {23:1,24:2,25:3,26:4,27:5,28:6,29:7,});
-                    _heatmapRepository.overwriteHeatmap(
-                        activityId: 'diet_heatmap',
-                        year: 2025,
-                        month: 6,
-                        dayHeatLevel: {
-                          17: 1,
-                          18: 2,
-                          19: 3,
-                          20: 4,
-                          21: 5,
-                          22: 6,
-                          23: 7,
-                        });
-                  },
-                  child: const Icon(Icons.star),
-                ),
+
               ],
             ),
           ),
@@ -255,7 +228,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
             return Dialog.fullscreen(
               child: Scaffold(
                 appBar: AppBar(
-                  title: Text("Add to ${CurrentDayManager.currentWeekDay}"),
+                  title: Text("Add tasks to '${CurrentDayManager.currentWeekDay}'"),
                   actions: [
                     IconButton(
                       icon: Icon(Icons.close),
@@ -265,7 +238,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 ),
                 floatingActionButton: FloatingActionButton(
                   onPressed: () => _showAddUpdateInitiativeDialog(),
-                  child: const Icon(Icons.add),
+                  child: Text("new"),
                 ),
                 body: Column(
                   children: [
@@ -398,12 +371,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
                     ],
                   ),
                 ),
-                IconButton(
+                ElevatedButton(
                   onPressed: () {
                     ScheduleManager.instance.addInitiativeIn(
                         CurrentDayManager.currentWeekDay, init);
                   },
-                  icon: Icon(Icons.add),
+                  child: Text("Add"),
                 ),
               ],
             ),
