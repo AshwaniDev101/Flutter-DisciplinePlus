@@ -24,19 +24,6 @@ class ScheduleManager {
   final BehaviorSubject<String> _daySubject =
   BehaviorSubject<String>.seeded(CurrentDayManager.currentWeekDay);
 
-  // Stream<List<Initiative>> watch() => _initiativesSubject.stream;
-
-
-  // void bindToSchedule(String day) {
-  //   _scheduleRepository.watchAll(day).listen((list) {
-  //     _initiativesSubject.add(list);
-  //     _latestSchedule = list;
-  //   });
-  // }
-
-
-
-
 
   late final Stream<List<Initiative>> schedule$ = _daySubject
       .distinct()
@@ -58,6 +45,13 @@ class ScheduleManager {
     }
   }
 
+
+
+
+  Future<void> completedInitiative(String day, Initiative initiative) async {
+    // await _overallhistoryRepository.update(_getCompletedPercentage());
+  }
+
   Future<void> addInitiativeIn(String day, Initiative initiative) async {
     await _scheduleRepository.add(day, initiative);
   }
@@ -71,7 +65,27 @@ class ScheduleManager {
     await _scheduleRepository.update(day, updated.id, updated);
   }
 
-  Initiative? getNextInitiativeFrom(int currentIndex) {
+
+
+  double _getCompletedPercentage()
+  {
+
+    int listSize = _latestSchedule.length;
+    int completed = 0;
+
+    _latestSchedule.forEach((e){
+      if(e.isComplete)
+      {
+        completed+=1;
+      }
+
+    });
+
+    return (completed/listSize)*100;
+  }
+
+
+  Initiative? _getNextInitiativeFrom(int currentIndex) {
     final nextIndex = currentIndex + 1;
     if (nextIndex >= 0 && nextIndex < _latestSchedule.length) {
       return _latestSchedule[nextIndex];
@@ -79,7 +93,7 @@ class ScheduleManager {
     return null;
   }
 
-  int getNextIndex() {
+  int _getNextIndex() {
     int listSize = _latestSchedule.length;
     if (listSize == 0) {
       return 0;
@@ -88,8 +102,13 @@ class ScheduleManager {
     }
   }
 
-  int getLength() {
+  int _getLength() {
     return _latestSchedule.length;
   }
 
+
+
+
+
 }
+

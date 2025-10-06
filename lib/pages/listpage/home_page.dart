@@ -84,30 +84,13 @@ class _HomePageState extends State<HomePage> with RouteAware {
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (String value) {
               // Handle menu item selection
-              if (value == 'Diet-page') {
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DietPage()),
-                );
-
-              } else if (value == 'Settings') {
+               if (value == 'Settings') {
 
                 showFullScreenDialog(context);
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'Diet-page',
-                child: Row(
-                  children: [
-                    Icon(Icons.monitor_weight_outlined, color: Colors.pink[200]),
-                    const SizedBox(width: 8),
-                    const Text('Diet-page'),
-                    const SizedBox(width: 8),
-                  ],
-                ),
-              ),
+
               PopupMenuItem<String>(
 
                 value: 'Setting',

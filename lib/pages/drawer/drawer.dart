@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../dietpage/dietpage.dart';
+
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
 
@@ -18,22 +20,28 @@ class _CustomDrawerState extends State<CustomDrawer> {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Colors.pink[200],
             ),
             child: Text(
-              'Menu',
+              'Ashwani Yadav',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
               ),
             ),
           ),
+
+
+
           ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
+            leading: Icon(Icons.monitor_weight_outlined),
+            title: Text('Diet Page'),
             onTap: () {
-              // Handle Home tap
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DietPage()),
+              );
+
             },
           ),
           ListTile(

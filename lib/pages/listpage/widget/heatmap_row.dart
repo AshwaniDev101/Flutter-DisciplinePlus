@@ -45,19 +45,29 @@ class _HeatmapRowState extends State<HeatmapRow> {
   }
 
 
-  Color getColorForHeat(int level) {
-    switch (level) {
-      case 0: return hexToColorWithOpacity("#EBEDF0", 100);
-      case 1: return hexToColorWithOpacity("#38d9a9", 10);
-      case 2: return hexToColorWithOpacity("#38d9a9", 20);
-      case 3: return hexToColorWithOpacity("#38d9a9", 40);
-      case 4: return hexToColorWithOpacity("#38d9a9", 50);
-      case 5: return hexToColorWithOpacity("#38d9a9", 70);
-      case 6: return hexToColorWithOpacity("#38d9a9", 90);
-      case 7: return hexToColorWithOpacity("#38d9a9", 100);
-      default: return Colors.grey;
+  // Color getColorForHeat(int level) {
+  //   switch (level) {
+  //     case 0: return hexToColorWithOpacity("#EBEDF0", 100);
+  //     case 1: return hexToColorWithOpacity("#38d9a9", 10);
+  //     case 2: return hexToColorWithOpacity("#38d9a9", 20);
+  //     case 3: return hexToColorWithOpacity("#38d9a9", 40);
+  //     case 4: return hexToColorWithOpacity("#38d9a9", 50);
+  //     case 5: return hexToColorWithOpacity("#38d9a9", 70);
+  //     case 6: return hexToColorWithOpacity("#38d9a9", 90);
+  //     case 7: return hexToColorWithOpacity("#38d9a9", 100);
+  //     default: return Colors.grey;
+  //   }
+  // }
+
+  Color getColorForHeat(double percentage) {
+    percentage = percentage.clamp(0, 100);
+    if (percentage == 0) {
+      return hexToColorWithOpacity("#EBEDF0", 100);
+    } else {
+      return hexToColorWithOpacity("#38d9a9", percentage);
     }
   }
+
 
 
 
@@ -177,7 +187,10 @@ class _HeatmapRowState extends State<HeatmapRow> {
         builder: (context, snapshot) {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return SizedBox(
+                height: 30,
+                width: 30,
+                child: const CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -185,7 +198,8 @@ class _HeatmapRowState extends State<HeatmapRow> {
           }
 
           final allHeatmaps = snapshot.data ?? {};
-          final specificActivityMap = allHeatmaps['diet_heatmap'] ?? {};
+          final specificActivityMap = allHeatmaps['overall_heatmap'] ?? {};
+
 
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -225,7 +239,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
                           color: isToday
                               ? Colors.pink[200]
                               : isSelected
-                              ? Colors.blue
+                              ? Colors.pink[800]!
                               : Colors.black,
                         ),
                       ),
@@ -238,7 +252,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
                           color: isToday
                               ? Colors.pink[200]
                               : isSelected
-                              ? Colors.blue
+                              ? Colors.pink[800]!
                               : Colors.black,
                           // color: isSelected ? Colors.blue : Colors.black,
                         ),
@@ -250,7 +264,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
                         height: 18,
                         decoration: BoxDecoration(
                           // color: getColorForHeat(specificActivityMap[day.toString()]),
-                          color: getColorForHeat(specificActivityMap[day.toString()] ?? 0),//#38d9a9
+                          color: getColorForHeat((specificActivityMap[day.toString()] ?? 0).toDouble()),//#38d9a9
                           // color: hexToColorWithOpacity("#38d9a9", 50),
                           shape: BoxShape.circle,
                           border: Border.all(
@@ -272,7 +286,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
   Color _getBorderColor(bool isToday, bool isSelected) {
     if (isToday) return Colors.pink[200]!;
-    if (isSelected) return Colors.blue;
+    if (isSelected) return Colors.pink[800]!;
     return Colors.transparent;
   }
 
@@ -292,7 +306,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
                   width: 18,
                   height: 18,
                   decoration: BoxDecoration(
-                    color: getColorForHeat(level),
+                    color: Colors.amber,
                     shape: BoxShape.circle,
                   ),
                 ),

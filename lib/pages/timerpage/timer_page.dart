@@ -138,8 +138,6 @@ class _TimerPageState extends State<TimerPage> {
 
 
   void moveToNextInitiative() {
-    // 1) mark done
-    currentInitiative!.isComplete = true;
 
     // 2) if break not given, go to break
     if (!onBreak) {
@@ -172,6 +170,7 @@ class _TimerPageState extends State<TimerPage> {
 
   void _onComplete() {
     _playStopSound();
+    currentInitiative!.isComplete = true;
     moveToNextInitiative();
 
     if (!isPaused) {
