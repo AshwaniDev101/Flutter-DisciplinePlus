@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+
+// Was used for managing refreshed before i added the firebase watch functions
 class RefreshReloadNotifier {
   // 1. Private constructor
   RefreshReloadNotifier ._privateConstructor();

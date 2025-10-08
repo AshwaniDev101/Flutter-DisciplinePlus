@@ -4,6 +4,8 @@ import 'package:discipline_plus/database/services/firebase_initiative_list.dart'
 import 'package:rxdart/rxdart.dart';
 import '../../../models/initiative.dart';
 
+
+// This handle a single list in a single page
 class InitiativeListManager {
   InitiativeListManager._internal();
   static final InitiativeListManager _instance = InitiativeListManager._internal();

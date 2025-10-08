@@ -4,8 +4,10 @@ import 'package:discipline_plus/database/services/firebase_schedule_service.dart
 import 'package:rxdart/rxdart.dart';
 import '../../../database/repository/schedule_repository.dart';
 import '../../../models/initiative.dart';
-import '../core/current_day_manager.dart';
+import '../../managers/current_day_manager.dart';
 
+
+// This handles all the initiative Lists of all week days (sun, mon, tue, wed, thu, fri, sat)
 class ScheduleManager {
   ScheduleManager._internal();
   static final ScheduleManager _instance = ScheduleManager._internal();

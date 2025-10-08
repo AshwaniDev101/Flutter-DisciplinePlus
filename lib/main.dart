@@ -1,5 +1,5 @@
 
-import 'package:discipline_plus/resource/audio_manager.dart';
+import 'package:discipline_plus/pages/managers/audio_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';

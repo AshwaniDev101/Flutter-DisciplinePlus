@@ -1,7 +1,7 @@
 
 import 'dart:async';
 import 'dart:math';
-import 'package:discipline_plus/resource/audio_manager.dart';
+import 'package:discipline_plus/pages/managers/audio_manager.dart';
 import 'package:discipline_plus/pages/listpage/logic/initiative_list_manager.dart';
 import 'package:discipline_plus/pages/timerpage/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,9 @@ import '../../models/app_time.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;
-  const TimerPage({super.key, required this.initiative});
+  final Function(bool isManual) onComplete;
+
+  const TimerPage({super.key, required this.initiative, required this.onComplete});
 
   @override
   State<TimerPage> createState() => _TimerPageState();
@@ -170,7 +172,9 @@ class _TimerPageState extends State<TimerPage> {
 
   void _onComplete() {
     _playStopSound();
-    currentInitiative!.isComplete = true;
+    // currentInitiative!.isComplete = true;
+
+    widget.onComplete(false);
     moveToNextInitiative();
 
     if (!isPaused) {
@@ -184,7 +188,8 @@ class _TimerPageState extends State<TimerPage> {
   void _onManualComplete(bool? value) {
     setState(() {
       isChecked = value ?? false;
-      currentInitiative!.isComplete = true;
+      // currentInitiative!.isComplete = true;
+      widget.onComplete(true);
     });
   }
 

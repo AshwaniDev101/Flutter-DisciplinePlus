@@ -1,13 +1,13 @@
 
 
-import 'package:discipline_plus/pages/listpage/core/current_day_manager.dart';
-import 'package:discipline_plus/pages/listpage/core/snap_scrolling.dart';
+import 'package:discipline_plus/pages/managers/current_day_manager.dart';
+import 'package:discipline_plus/pages/heatmap/row/widget/snap_scrolling.dart';
 import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 
-import '../core/refresh_reload_notifier.dart';
+import '../../../_archive/refresh_reload_notifier.dart';
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
 import '../../../database/services/firebase_heatmap_service.dart';

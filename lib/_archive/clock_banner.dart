@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+
+//It create a banner with the current date and time.
+//It is for visual and user experience, decided no to add in the final product because user can already see the time and day on his phone normally
 class ClockBanner extends StatefulWidget {
   const ClockBanner({super.key});
 

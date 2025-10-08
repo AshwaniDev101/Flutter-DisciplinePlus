@@ -7,13 +7,13 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../models/initiative.dart';
 import '../dietpage/dietpage.dart';
 import '../drawer/drawer.dart';
-import '../listpage/core/current_day_manager.dart';
-import 'core/refresh_reload_notifier.dart';
+import '../managers/current_day_manager.dart';
+import '../../_archive/refresh_reload_notifier.dart';
 import 'logic/initiative_list_manager.dart';
 import '../timerpage/timer_page.dart';
-import 'heatmap_panel.dart';
+import '../heatmap/heatmap_panel.dart';
 import 'schedule_listview.dart';
-import 'add_initiative_dialog.dart';
+import 'add_new_initiatives/add_initiative_dialog.dart';
 
 const double _panelMinHeight = 90;
 const double _panelMaxHeight = 550;
@@ -185,19 +185,26 @@ class _HomePageState extends State<HomePage> with RouteAware {
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (_, __, ___) => TimerPage(initiative: initiative),
-        transitionsBuilder: (c, anim, __, child) {
-          final begin = dir == DismissDirection.startToEnd
-              ? const Offset(-1, 0)
-              : const Offset(1, 0);
-          return SlideTransition(
-            position: Tween(begin: begin, end: Offset.zero).animate(anim),
-            child: child,
-          );
-        },
+        pageBuilder: (_, __, ___) => TimerPage(initiative: initiative, onComplete:(isManual){
+          print('Completed ${initiative.title}');
+
+
+
+
+        }),
+        // transitionsBuilder: (c, anim, __, child) {
+        //   final begin = dir == DismissDirection.startToEnd
+        //       ? const Offset(-1, 0)
+        //       : const Offset(1, 0);
+        //   return SlideTransition(
+        //     position: Tween(begin: begin, end: Offset.zero).animate(anim),
+        //     child: child,
+        //   );
+        // },
       ),
     );
   }
+
 
   void showFullScreenDialog(BuildContext context) {
     TextEditingController searchController = TextEditingController();

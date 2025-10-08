@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../models/app_time.dart';
 
+
+// This is a simple Sun rising animation which i created during the development of this app, but decided to discard it ddd
+
+
+
 // Represents a simple time structure with hour and minute.
 // class AppTime {
 //   final int hour;

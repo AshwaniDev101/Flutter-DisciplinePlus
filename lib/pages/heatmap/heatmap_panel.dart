@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../listpage/widget/heatmap_row.dart';
-import '../listpage/widget/heatmap_calender.dart';
+import 'row/heatmap_row.dart';
+import 'calender/heatmap_calender.dart';
 
 class HeatmapPanel extends StatelessWidget {
   const HeatmapPanel({super.key});
