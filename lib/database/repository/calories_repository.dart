@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/firebase_calories_service.dart';
 
 /// Repository for daily calorie totals, using the repository pattern.

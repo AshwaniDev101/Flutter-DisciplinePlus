@@ -7,6 +7,8 @@ import '../../../database/services/firebase_calories_service.dart';
 // import '../services/firebase_calories_service.dart';
 
 class CalorieHistoryPage extends StatefulWidget {
+  const CalorieHistoryPage({super.key});
+
   @override
   _CalorieHistoryPageState createState() => _CalorieHistoryPageState();
 }

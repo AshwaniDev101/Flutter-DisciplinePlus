@@ -2,14 +2,14 @@
 import 'package:discipline_plus/database/repository/initiative_list_repository.dart';
 import 'package:discipline_plus/database/services/firebase_initiative_list.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../../models/initiative.dart';
+import '../../models/initiative.dart';
 
 
 // This handle a single list in a single page
-class InitiativeListManager {
-  InitiativeListManager._internal();
-  static final InitiativeListManager _instance = InitiativeListManager._internal();
-  static InitiativeListManager get instance => _instance;
+class GlobalListManager {
+  GlobalListManager._internal();
+  static final GlobalListManager _instance = GlobalListManager._internal();
+  static GlobalListManager get instance => _instance;
   final InitiativeListRepository _initiativeListRepository = InitiativeListRepository(FirebaseInitiativeService.instance);
   List<Initiative> _latestInitiatives = [];
   final BehaviorSubject<List<Initiative>> _initiativesSubject = BehaviorSubject<List<Initiative>>.seeded(<Initiative>[]);
@@ -57,46 +57,6 @@ class InitiativeListManager {
   int getLength() {
     return _latestInitiatives.length;
   }
-
-
-
-
-
-  // Future<void> updateAllOrders() async {
-  //   final batchUpdates = _initiativesListTaskManager.asMap().entries.map((e) {
-  //     e.value.index = e.key;
-  //     return _weekRepository.updateInitiative(CurrentDayManager.getCurrentDay(),e.value.id,e.value);
-  //   }).toList();
-  //
-  //   await Future.wait(batchUpdates);
-  // }
-
-// ====================== Local management functions ==================================
-
-  // void insertInitiativeAt(int index, Initiative ini) {
-  //   _initiativesListTaskManager.insert(index, ini);
-  // }
-  //
-  // Initiative removeInitiativeAt(int index) {
-  //   final removed = _initiativesListTaskManager[index];
-  //   _initiativesListTaskManager.removeAt(index);
-  //   return removed;
-  // }
-  //
-  // Initiative getInitiativeAt(int index) {
-  //   return _initiativesListTaskManager[index];
-  // }
-  //
-  //
-  // Initiative? getNextInitiative(int currentIndex) {
-  //   final nextIndex = currentIndex + 1;
-  //   if (nextIndex >= 0 && nextIndex < _initiativesListTaskManager.length) {
-  //     return _initiativesListTaskManager[nextIndex];
-  //   }
-  //   return null;
-  // }
-  //
-
 
 
 

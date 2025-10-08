@@ -1,4 +1,3 @@
-import '../../models/heatmap_data.dart';
 import '../services/firebase_heatmap_service.dart';
 
 class HeatmapRepository {

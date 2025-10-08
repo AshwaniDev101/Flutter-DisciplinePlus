@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../models/initiative.dart';
 import '../../../models/app_time.dart';
 import '../../../models/study_break.dart';
+import '../global_list_manager.dart';
 import 'widget/quantity_selector.dart';
-import '../logic/initiative_list_manager.dart';
 
 class InitiativeDialog extends StatefulWidget {
   final Initiative? existing_initiative;
@@ -50,7 +50,7 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
 
       id: widget.existing_initiative?.id,
       index: widget.existing_initiative?.index ??
-          InitiativeListManager.instance.getNextIndex(),
+          GlobalListManager.instance.getNextIndex(),
       title: _titleCtrl.text,
       completionTime: AppTime(0, _duration),
       studyBreak: StudyBreak(

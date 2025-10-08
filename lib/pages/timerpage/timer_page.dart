@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:discipline_plus/pages/managers/audio_manager.dart';
-import 'package:discipline_plus/pages/listpage/logic/initiative_list_manager.dart';
+import 'package:discipline_plus/pages/global_initiative_list/global_list_manager.dart';
 import 'package:discipline_plus/pages/timerpage/widget/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';
@@ -72,7 +72,7 @@ class _TimerPageState extends State<TimerPage> {
       _showErrorDialog("No Current Initiatives");
       return;
     }
-    nextInitiative = InitiativeListManager.instance.getNextInitiative(currentInitiative!.index);
+    nextInitiative = GlobalListManager.instance.getNextInitiative(currentInitiative!.index);
 
     // Calculate total time in seconds
     totalTimeSeconds =
@@ -153,7 +153,7 @@ class _TimerPageState extends State<TimerPage> {
     } else {
       // 3) else go to next real initiative
       currentInitiative = nextInitiative;
-      nextInitiative = InitiativeListManager.instance.getNextInitiative(currentInitiative!.index);
+      nextInitiative = GlobalListManager.instance.getNextInitiative(currentInitiative!.index);
       onBreak = false;
     }
 

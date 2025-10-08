@@ -1,19 +1,18 @@
-import 'package:discipline_plus/database/repository/heatmap_repository.dart';
-import 'package:discipline_plus/database/services/firebase_heatmap_service.dart';
-import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
+
+import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../models/initiative.dart';
 import '../dietpage/dietpage.dart';
 import '../drawer/drawer.dart';
+import '../global_initiative_list/new_initiatives/add_initiative_dialog.dart';
 import '../managers/current_day_manager.dart';
-import '../../_archive/refresh_reload_notifier.dart';
-import 'logic/initiative_list_manager.dart';
+import '../global_initiative_list/global_list_manager.dart';
 import '../timerpage/timer_page.dart';
 import '../heatmap/heatmap_panel.dart';
-import 'schedule_listview.dart';
-import 'add_new_initiatives/add_initiative_dialog.dart';
+import 'widget/schedule_listview.dart';
+
 
 const double _panelMinHeight = 90;
 const double _panelMaxHeight = 550;
@@ -33,7 +32,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
   void initState() {
     super.initState();
 
-    InitiativeListManager.instance.bindToInitiatives();
+    GlobalListManager.instance.bindToInitiatives();
   }
 
   @override
@@ -50,13 +49,13 @@ class _HomePageState extends State<HomePage> with RouteAware {
         builder: (_) => InitiativeDialog(
             existing_initiative: initiative,
             onNewSave: (newInitiative) {
-              InitiativeListManager.instance.addInitiative(
+              GlobalListManager.instance.addInitiative(
                 newInitiative,
               );
               Navigator.of(context).pop();
             },
             onEditSave: (editedInitiative) {
-              InitiativeListManager.instance.updateInitiative(
+              GlobalListManager.instance.updateInitiative(
                 editedInitiative,
               );
               Navigator.of(context).pop();
@@ -66,7 +65,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
 
   final PageController _controller = PageController();
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +233,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                   children: [
                     Expanded(
                       child: StreamBuilder<List<Initiative>>(
-                        stream: InitiativeListManager.instance.watch(),
+                        stream: GlobalListManager.instance.watch(),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
                             return const Center(
@@ -322,7 +321,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
               children: [
                 IconButton(
                   onPressed: () {
-                    InitiativeListManager.instance.deleteInitiative(init.id);
+                    GlobalListManager.instance.deleteInitiative(init.id);
                   },
                   icon: Icon(Icons.delete),
                 ),

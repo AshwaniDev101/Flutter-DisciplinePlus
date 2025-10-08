@@ -2,16 +2,14 @@
 
 import 'package:discipline_plus/pages/managers/current_day_manager.dart';
 import 'package:discipline_plus/pages/heatmap/row/widget/snap_scrolling.dart';
-import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
+import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 
-import '../../../_archive/refresh_reload_notifier.dart';
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
 import '../../../database/services/firebase_heatmap_service.dart';
-import '../../../models/heatmap_data.dart';
 
 
 class HeatmapRow extends StatefulWidget {
@@ -116,12 +114,12 @@ class _HeatmapRowState extends State<HeatmapRow> {
     if (currentDate.year == today.year && currentDate.month == today.month) {
 
 
-      int day_offset = 7;
+      int dayOffset = 7;
       int index;
-      if (today.day <= day_offset) {
+      if (today.day <= dayOffset) {
         index = 0; // Show from Day 1
       } else {
-        index = today.day - day_offset; // Show from Today -7
+        index = today.day - dayOffset; // Show from Today -7
       }
 
       double itemWidth = 44;  // your ListView items: 40 + 2 margin left + 2 margin right

@@ -21,7 +21,7 @@ class FirebaseScheduleService {
 
     return _initiativeCollection.doc(day).collection(_initiative_list).orderBy('index').snapshots().map(
           (snapshot) => snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         data['id'] = doc.id;
         return Initiative.fromMap(data);
       }).toList(),

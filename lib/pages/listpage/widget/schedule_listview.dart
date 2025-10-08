@@ -1,8 +1,8 @@
-import 'package:discipline_plus/pages/listpage/logic/schedule_manager.dart';
+import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
-import '../../models/initiative.dart';
-import '../managers/current_day_manager.dart';
-import '../../core/utils/constants.dart';
+import '../../../models/initiative.dart';
+import '../../managers/current_day_manager.dart';
+import '../../../core/utils/constants.dart';
 
 class ScheduleListview extends StatefulWidget {
   // final int dayIndex;

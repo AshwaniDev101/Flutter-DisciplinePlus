@@ -1,7 +1,6 @@
 import 'package:discipline_plus/models/diet_food.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import '../services/firebase_diet_food_service.dart';
-import '../services/firebase_initiative_list.dart';
 
 class DietFoodRepository {
 
