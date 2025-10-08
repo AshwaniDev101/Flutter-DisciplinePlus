@@ -1,7 +1,7 @@
 
 import 'package:rxdart/rxdart.dart';
+import '../../../managers/current_day_manager.dart';
 
-import '../../managers/current_day_manager.dart';
 
 class ScheduleDayController {
   final BehaviorSubject<String> _daySubject =

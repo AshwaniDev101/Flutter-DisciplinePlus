@@ -1,10 +1,10 @@
 
-import 'package:discipline_plus/pages/managers/audio_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'core/utils/constants.dart';
 import 'firebase_options.dart';
+import 'managers/audio_manager.dart';
 import 'pages/listpage/home_page.dart';
 
 Future<void> main() async {
@@ -38,7 +38,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  // This widgets is the root of your application.
   @override
   Widget build(BuildContext context) {
 

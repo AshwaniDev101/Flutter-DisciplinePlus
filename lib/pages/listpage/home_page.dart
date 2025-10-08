@@ -3,15 +3,16 @@ import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import '../../managers/current_day_manager.dart';
 import '../../models/initiative.dart';
 import '../dietpage/dietpage.dart';
 import '../drawer/drawer.dart';
 import '../global_initiative_list/new_initiatives/add_initiative_dialog.dart';
-import '../managers/current_day_manager.dart';
+
 import '../global_initiative_list/global_list_manager.dart';
 import '../timerpage/timer_page.dart';
 import '../heatmap/heatmap_panel.dart';
-import 'widget/schedule_listview.dart';
+import 'widgets/schedule_listview.dart';
 
 
 const double _panelMinHeight = 90;
