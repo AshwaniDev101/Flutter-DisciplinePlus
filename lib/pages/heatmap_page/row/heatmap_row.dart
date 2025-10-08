@@ -1,6 +1,6 @@
 
 
-import 'package:discipline_plus/pages/heatmap/row/widgets/snap_scrolling.dart';
+import 'package:discipline_plus/pages/heatmap_page/row/widgets/snap_scrolling.dart';
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

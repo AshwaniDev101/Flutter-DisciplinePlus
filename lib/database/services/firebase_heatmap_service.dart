@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// A unified service to manage dynamic heatmaps (e.g., diet, workout, mood)
-/// stored under: users/{userId}/heatmap/{year}/{month}/{activityId}
+/// stored under: users/{userId}/heatmap_page/{year}/{month}/{activityId}
 class FirebaseHeatmapService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String _root = 'users';
@@ -13,7 +13,7 @@ class FirebaseHeatmapService {
   /// Get an instance scoped to a specific user
   static FirebaseHeatmapService instance(String userId) => FirebaseHeatmapService._(userId);
 
-  /// Reference to a single activity's heatmap document
+  /// Reference to a single activity's heatmap_page document
   DocumentReference<Map<String, dynamic>> _heatmapDoc({
     required int year,
     required int month,
@@ -22,7 +22,7 @@ class FirebaseHeatmapService {
     return _db
         .collection(_root)
         .doc(userId)
-        .collection('heatmap')
+        .collection('heatmap_page')
         .doc('$year')
         .collection('$month')
         .doc(activityId);
@@ -36,7 +36,7 @@ class FirebaseHeatmapService {
     return _db
         .collection(_root)
         .doc(userId)
-        .collection('heatmap')
+        .collection('heatmap_page')
         .doc('$year')
         .collection('$month');
   }
@@ -45,7 +45,7 @@ class FirebaseHeatmapService {
   /// WATCHERS
   /// ----------------------------------------------------------------------
 
-  /// Stream a single activity's heatmap (day->value map)
+  /// Stream a single activity's heatmap_page (day->value map)
   Stream<Map<String, dynamic>> watchHeatmap({
     required int year,
     required int month,
@@ -77,7 +77,7 @@ class FirebaseHeatmapService {
   /// GETTERS
   /// ----------------------------------------------------------------------
 
-  /// Fetch a single heatmap once
+  /// Fetch a single heatmap_page once
   Future<Map<String, dynamic>> getHeatmap({
     required int year,
     required int month,
@@ -104,7 +104,7 @@ class FirebaseHeatmapService {
   /// UPDATES
   /// ----------------------------------------------------------------------
 
-  /// Update or insert a single day entry in an activity heatmap
+  /// Update or insert a single day entry in an activity heatmap_page
   Future<void> updateEntry({
     required String activityId,
     required int year,
@@ -127,7 +127,7 @@ class FirebaseHeatmapService {
         .set(dayValues, SetOptions(merge: true));
   }
 
-  /// Overwrite the entire heatmap document for an activity, which mean deleting the old doc all together
+  /// Overwrite the entire heatmap_page document for an activity, which mean deleting the old doc all together
   Future<void> overwriteHeatmap({
     required String activityId,
     required int year,
@@ -142,7 +142,7 @@ class FirebaseHeatmapService {
   /// DELETIONS
   /// ----------------------------------------------------------------------
 
-  /// Delete a single activity heatmap
+  /// Delete a single activity heatmap_page
   Future<void> deleteHeatmap({
     required String activityId,
     required int year,

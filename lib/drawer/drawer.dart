@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../dietpage/dietpage.dart';
+import '../pages/dietpage/dietpage.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});

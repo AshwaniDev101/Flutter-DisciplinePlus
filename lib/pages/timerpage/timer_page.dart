@@ -1,7 +1,6 @@
 
 import 'dart:async';
 import 'dart:math';
-import 'package:discipline_plus/pages/global_initiative_list/global_list_manager.dart';
 import 'package:discipline_plus/pages/timerpage/widgets/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';
@@ -9,6 +8,7 @@ import 'package:discipline_plus/models/initiative.dart';
 import '../../core/utils/constants.dart';
 import '../../managers/audio_manager.dart';
 import '../../models/app_time.dart';
+import '../global_initiative_page/global_list_manager.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;
