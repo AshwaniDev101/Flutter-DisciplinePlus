@@ -4,11 +4,10 @@ import 'dart:math';
 import 'package:discipline_plus/pages/timerpage/widgets/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';
-
 import '../../core/utils/constants.dart';
 import '../../managers/audio_manager.dart';
 import '../../models/app_time.dart';
-import '../global_initiative_page/global_list_manager.dart';
+import '../listpage/schedule_handler/schedule_manager.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;
@@ -72,7 +71,7 @@ class _TimerPageState extends State<TimerPage> {
       _showErrorDialog("No Current Initiatives");
       return;
     }
-    nextInitiative = GlobalListManager.instance.getNextInitiative(currentInitiative!.index);
+    nextInitiative = ScheduleManager.instance.getNext(currentInitiative!.index);
 
     // Calculate total time in seconds
     totalTimeSeconds =
@@ -153,7 +152,7 @@ class _TimerPageState extends State<TimerPage> {
     } else {
       // 3) else go to next real initiative
       currentInitiative = nextInitiative;
-      nextInitiative = GlobalListManager.instance.getNextInitiative(currentInitiative!.index);
+      nextInitiative = ScheduleManager.instance.getNext(currentInitiative!.index);
       onBreak = false;
     }
 

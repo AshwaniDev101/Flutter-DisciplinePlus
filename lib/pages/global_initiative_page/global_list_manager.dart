@@ -37,26 +37,26 @@ class GlobalListManager {
     await _initiativeListRepository.update(updated.id, updated);
   }
 
-  Initiative? getNextInitiative(int currentIndex) {
-    final nextIndex = currentIndex + 1;
-    if (nextIndex >= 0 && nextIndex < _latestInitiatives.length) {
-      return _latestInitiatives[nextIndex];
-    }
-    return null;
-  }
-
-  int getNextIndex() {
-    int listSize = _latestInitiatives.length;
-    if (listSize == 0) {
-      return 0;
-    } else {
-      return listSize;
-    }
-  }
-
-  int getLength() {
-    return _latestInitiatives.length;
-  }
+  // Initiative? getNextInitiative(int currentIndex) {
+  //   final nextIndex = currentIndex + 1;
+  //   if (nextIndex >= 0 && nextIndex < _latestInitiatives.length) {
+  //     return _latestInitiatives[nextIndex];
+  //   }
+  //   return null;
+  // }
+  //
+  // int getNextIndex() {
+  //   int listSize = _latestInitiatives.length;
+  //   if (listSize == 0) {
+  //     return 0;
+  //   } else {
+  //     return listSize;
+  //   }
+  // }
+  //
+  // int getLength() {
+  //   return _latestInitiatives.length;
+  // }
 
 
 

@@ -49,8 +49,7 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
     final init = Initiative(
 
       id: widget.existing_initiative?.id,
-      index: widget.existing_initiative?.index ??
-          GlobalListManager.instance.getNextIndex(),
+      index: widget.existing_initiative!.index,
       title: _titleCtrl.text,
       completionTime: AppTime(0, _duration),
       studyBreak: StudyBreak(

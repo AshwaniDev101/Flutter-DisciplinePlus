@@ -1,5 +1,4 @@
 
-
 import 'package:discipline_plus/database/services/firebase_schedule_service.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../../database/repository/schedule_repository.dart';
