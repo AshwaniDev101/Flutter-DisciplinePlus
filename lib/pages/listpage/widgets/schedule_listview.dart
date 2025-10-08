@@ -99,7 +99,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
           dense: true,
           leading: ReorderableDragStartListener(
             index: index,
-            // child: _buildIcon(init.isComplete),
+
             child: _buildLeadingIcon(
               isComplete: init.isComplete,
               whiteCircleSize: 20,
@@ -184,9 +184,9 @@ class _ScheduleListviewState extends State<ScheduleListview> {
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
           ),
           Icon(
-            isComplete ? Icons.circle_rounded : Icons.circle_outlined,
+            isComplete ? Icons.check_circle : Icons.circle_outlined,
             size: iconSize,
-            color: Colors.grey,
+            color:  isComplete? Colors.blue:Colors.grey,
           ),
         ],
       ),

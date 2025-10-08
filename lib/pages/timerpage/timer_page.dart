@@ -140,9 +140,9 @@ class _TimerPageState extends State<TimerPage> {
 
   void moveToNextInitiative() {
 
-    // 2) if break not given, go to break
+
     if (!onBreak) {
-      // final studyBreak = currentInitiative!.studyBreak;
+
       currentInitiative = Initiative(
         index: -1,
         title: currentInitiative!.studyBreak.title,
@@ -150,13 +150,12 @@ class _TimerPageState extends State<TimerPage> {
       );
       onBreak = true;
     } else {
-      // 3) else go to next real initiative
+
       currentInitiative = nextInitiative;
       nextInitiative = ScheduleManager.instance.getNext(currentInitiative!.index);
       onBreak = false;
     }
 
-    // 4) reset timer state
     setState(() {
       totalTimeSeconds =
           (currentInitiative!.completionTime.hour * 60
@@ -165,13 +164,10 @@ class _TimerPageState extends State<TimerPage> {
       isChecked = false;
     });
 
-    // 5) optionally auto‑start if you want:
-    // if (!isPaused) _startTimer();
   }
 
   void _onComplete() {
     _playStopSound();
-    // currentInitiative!.isComplete = true;
 
     widget.onComplete(false);
     moveToNextInitiative();
@@ -187,7 +183,6 @@ class _TimerPageState extends State<TimerPage> {
   void _onManualComplete(bool? value) {
     setState(() {
       isChecked = value ?? false;
-      // currentInitiative!.isComplete = true;
       widget.onComplete(true);
     });
   }

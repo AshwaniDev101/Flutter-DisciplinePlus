@@ -186,7 +186,16 @@ class _HomePageState extends State<HomePage> with RouteAware {
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (_, __, ___) => TimerPage(initiative: initiative, onComplete:(isManual){
-          print('Completed ${initiative.title}');
+
+
+
+
+          setState(() {
+            initiative.isComplete = true;
+          });
+          print('Completed  =================================================== ${initiative.title}');
+
+
 
 
 
