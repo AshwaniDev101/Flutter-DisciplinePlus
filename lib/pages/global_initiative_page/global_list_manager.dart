@@ -1,6 +1,6 @@
 
-import 'package:discipline_plus/database/repository/initiative_list_repository.dart';
-import 'package:discipline_plus/database/services/firebase_initiative_list.dart';
+import 'package:discipline_plus/database/repository/global_list_repository.dart';
+import 'package:discipline_plus/database/services/firebase_global_list.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../models/initiative.dart';
 
@@ -10,7 +10,7 @@ class GlobalListManager {
   GlobalListManager._internal();
   static final GlobalListManager _instance = GlobalListManager._internal();
   static GlobalListManager get instance => _instance;
-  final InitiativeListRepository _initiativeListRepository = InitiativeListRepository(FirebaseInitiativeService.instance);
+  final GlobalListRepository _initiativeListRepository = GlobalListRepository(FirebaseInitiativeService.instance);
   List<Initiative> _latestInitiatives = [];
   final BehaviorSubject<List<Initiative>> _initiativesSubject = BehaviorSubject<List<Initiative>>.seeded(<Initiative>[]);
 

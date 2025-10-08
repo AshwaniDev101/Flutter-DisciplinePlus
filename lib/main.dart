@@ -1,4 +1,5 @@
 
+import 'package:discipline_plus/database/services/firebase_heatmap_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -31,6 +32,9 @@ Future<void> main() async {
 
   await AudioManager().init();
   runApp(const MyApp());
+
+
+
 
 
 }

@@ -1,11 +1,8 @@
 
-
 import 'package:discipline_plus/pages/heatmap_page/row/widgets/snap_scrolling.dart';
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
 import '../../../database/services/firebase_heatmap_service.dart';
@@ -197,7 +194,6 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
           final allHeatmaps = snapshot.data ?? {};
           final specificActivityMap = allHeatmaps['overall_heatmap'] ?? {};
-
 
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
