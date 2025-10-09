@@ -1,5 +1,5 @@
 
-import 'package:discipline_plus/pages/heatmap_page/row/widgets/snap_scrolling.dart';
+import 'package:discipline_plus/_archive/row/widgets/snap_scrolling.dart';
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -40,19 +40,6 @@ class _HeatmapRowState extends State<HeatmapRow> {
   }
 
 
-  // Color getColorForHeat(int level) {
-  //   switch (level) {
-  //     case 0: return hexToColorWithOpacity("#EBEDF0", 100);
-  //     case 1: return hexToColorWithOpacity("#38d9a9", 10);
-  //     case 2: return hexToColorWithOpacity("#38d9a9", 20);
-  //     case 3: return hexToColorWithOpacity("#38d9a9", 40);
-  //     case 4: return hexToColorWithOpacity("#38d9a9", 50);
-  //     case 5: return hexToColorWithOpacity("#38d9a9", 70);
-  //     case 6: return hexToColorWithOpacity("#38d9a9", 90);
-  //     case 7: return hexToColorWithOpacity("#38d9a9", 100);
-  //     default: return Colors.grey;
-  //   }
-  // }
 
   Color getColorForHeat(double percentage) {
     percentage = percentage.clamp(0, 100);
@@ -207,6 +194,9 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
           final allHeatmaps = snapshot.data ?? {};
           final specificActivityMap = allHeatmaps['overall_heatmap'] ?? {};
+
+
+
 
 
           WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -15,7 +15,7 @@ import '../timerpage/timer_page.dart';
 import 'widgets/schedule_listview.dart';
 
 
-const double _panelMinHeight = 90;
+const double _panelMinHeight = 60;
 const double _panelMaxHeight = 550;
 
 class HomePage extends StatefulWidget {
@@ -66,7 +66,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
 
   final PageController _controller = PageController();
-  final int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -140,8 +139,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // const SizedBox(height: 35),
-                    // _DayHeader(onLeft: _goLeft, onRight: _goRight),
+
                     const Divider(height: 1, thickness: 1),
                     Expanded(
                       child: Container(
@@ -203,11 +201,9 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
 
 
-
           setState(() {
             initiative.isComplete = true;
           });
-          print('Completed  =================================================== ${initiative.title}');
 
 
 
