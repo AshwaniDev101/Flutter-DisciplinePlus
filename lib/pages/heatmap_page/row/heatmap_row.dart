@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
 import '../../../database/services/firebase_heatmap_service.dart';
-import '../../../managers/current_day_manager.dart';
+import '../../../managers/selected_day_manager.dart';
 
 
 class HeatmapRow extends StatefulWidget {
@@ -83,11 +83,24 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
     var week = getWeekdayName(selectedDate!);
 
-    CurrentDayManager.setWeekday(week);
+    SelectedDayManager.setCurrentSelectedDay(week);
     // Load data for different days
     ScheduleManager.instance.changeDay(week);
 
   });
+
+
+  // void _onDateTap(int day)
+  // {
+  //   selectedDate = DateTime(currentDate.year, currentDate.month, day);
+  //
+  //   var week = getWeekdayName(selectedDate!);
+  //
+  //   CurrentDayManager.setWeekday(week);
+  //   // Load data for different days
+  //   ScheduleManager.instance.changeDay(week);
+  // }
+
 
   String getWeekdayName(DateTime datetime)
   {

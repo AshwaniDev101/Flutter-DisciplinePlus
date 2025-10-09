@@ -1,11 +1,13 @@
 
 import 'package:rxdart/rxdart.dart';
-import '../../../managers/current_day_manager.dart';
+import '../../../managers/selected_day_manager.dart';
 
 
 class ScheduleDayController {
+
+  // Create a stream (_daySubject) that starts with the current weekday string (e.g., "Thursday").
   final BehaviorSubject<String> _daySubject =
-  BehaviorSubject.seeded(CurrentDayManager.currentWeekDay);
+  BehaviorSubject.seeded(SelectedDayManager.currentSelectedWeekDay.value);
 
   Stream<String> get day$ => _daySubject.stream;
   String get currentDay => _daySubject.value;

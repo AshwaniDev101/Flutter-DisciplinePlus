@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../drawer/drawer.dart';
-import '../../managers/current_day_manager.dart';
+import '../../managers/selected_day_manager.dart';
 import '../../models/initiative.dart';
 import '../dietpage/dietpage.dart';
 import '../global_initiative_page/global_list_manager.dart';
@@ -72,14 +72,28 @@ class _HomePageState extends State<HomePage> with RouteAware {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          CurrentDayManager.currentWeekDay,
-          style: TextStyle(color: Colors.white),
+
+        title: ValueListenableBuilder<String>(
+          valueListenable: SelectedDayManager.currentSelectedWeekDay,
+          builder: (context, value, _) => Text(value,style: TextStyle(color: Colors.white),),
         ),
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.pink.shade200,
 
+
         actions: [
+
+          IconButton(onPressed: (){
+            SelectedDayManager.toPreviousDay();
+            ScheduleManager.instance.changeDay(SelectedDayManager.currentSelectedWeekDay.value);
+          } ,
+              icon: Icon(Icons.keyboard_arrow_left_rounded)),
+          IconButton(onPressed: (){
+            SelectedDayManager.toNextDay();
+            ScheduleManager.instance.changeDay(SelectedDayManager.currentSelectedWeekDay.value);
+          },
+              icon: Icon(Icons.keyboard_arrow_right_rounded)),
+
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (String value) {
@@ -227,7 +241,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
             return Dialog.fullscreen(
               child: Scaffold(
                 appBar: AppBar(
-                  title: Text("Add tasks to '${CurrentDayManager.currentWeekDay}'"),
+                  title: Text("Add tasks to '${SelectedDayManager.currentSelectedWeekDay.value}'"),
                   actions: [
                     IconButton(
                       icon: Icon(Icons.close),
@@ -373,7 +387,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 ElevatedButton(
                   onPressed: () {
                     ScheduleManager.instance.addInitiativeIn(
-                        CurrentDayManager.currentWeekDay, init);
+                        SelectedDayManager.currentSelectedWeekDay.value, init);
                   },
                   child: Text("Add"),
                 ),

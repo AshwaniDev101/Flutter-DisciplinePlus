@@ -10,6 +10,7 @@ import 'schedule_helpers.dart';
 /// Keeps the latest data cached for quick access.
 /// This handles all the initiative Lists of all week days (sun, mon, tue, wed, thu, fri, sat)
 /// This manager help in switching between days
+
 class ScheduleManager {
   ScheduleManager._internal();
   static final ScheduleManager _instance = ScheduleManager._internal();

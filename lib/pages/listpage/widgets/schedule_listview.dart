@@ -1,6 +1,6 @@
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
-import '../../../managers/current_day_manager.dart';
+import '../../../managers/selected_day_manager.dart';
 import '../../../models/initiative.dart';
 import '../../../core/utils/constants.dart';
 
@@ -155,7 +155,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
       ],
     ).then((value) {
       if (value == 'delete') {
-        ScheduleManager.instance.deleteInitiativeFrom(CurrentDayManager.getCurrentDay(), item.id);
+        ScheduleManager.instance.deleteInitiativeFrom(SelectedDayManager.currentSelectedWeekDay.value, item.id);
       } else if (value == 'edit') {
 
 
