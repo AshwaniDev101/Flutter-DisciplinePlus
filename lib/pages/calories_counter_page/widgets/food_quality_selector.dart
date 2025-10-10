@@ -2,14 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 class FoodQuantitySelector extends StatefulWidget {
   final double initialValue;
   final double min;
   final double max;
   final double step;
   final int precision;
-  final ValueChanged<double>? onChanged;
+  final void Function(double oldValue, double newValue)? onChanged;
   final double buttonSize;
   final Color? buttonColor;
   final bool enableHoldToRepeat;
@@ -51,7 +50,6 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
   @override
   void didUpdateWidget(covariant FoodQuantitySelector oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // If parent changed initialValue, respect it (optional behavior).
     if (widget.initialValue != oldWidget.initialValue) {
       _setValue(widget.initialValue, notify: false);
     }
@@ -64,13 +62,13 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
   void _setValue(double v, {bool notify = true}) {
     final next = _clamp(v);
     if ((next - _value).abs() > (1e-12)) {
+      final old = _value; // store old value
       setState(() {
         _value = next;
         _controller.text = _format(_value);
       });
-      if (notify) widget.onChanged?.call(_value);
+      if (notify) widget.onChanged?.call(old, next);
     } else {
-      // Even if same numeric, ensure text is formatted (handles user-entered differently)
       _controller.text = _format(_value);
     }
   }
@@ -82,9 +80,7 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
   void _startAutoRepeat(double delta) {
     if (!widget.enableHoldToRepeat) return;
     _autoTimer?.cancel();
-    // immediate
     _changeBy(delta);
-    // then repeat
     _autoTimer = Timer.periodic(const Duration(milliseconds: 150), (_) => _changeBy(delta));
   }
 
@@ -97,7 +93,6 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
     if (!_focusNode.hasFocus) {
       _commitTextField();
     } else {
-      // optionally select all for quick replace
       _controller.selection = TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
     }
   }
@@ -105,16 +100,13 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
   void _commitTextField() {
     final raw = _controller.text.trim();
     if (raw.isEmpty) {
-      // revert to current value
       _controller.text = _format(_value);
       return;
     }
 
-    // accept both comma and dot decimal separators
     final normalized = raw.replaceAll(',', '.');
     final parsed = double.tryParse(normalized);
     if (parsed == null) {
-      // invalid input -> revert
       _controller.text = _format(_value);
       return;
     }
@@ -170,27 +162,21 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-
-
           _buildButton(
             icon: Icons.remove,
             enabled: minusEnabled,
             onTap: () => _changeBy(-widget.step),
             repeatDelta: -widget.step,
           ),
-          SizedBox(width: 10,),
+          const SizedBox(width: 10),
           SizedBox(
             width: 40,
             height: 40,
             child: TextField(
-
-
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 16.0,
-
               ),
-
               controller: _controller,
               focusNode: _focusNode,
               textAlign: TextAlign.center,
@@ -198,22 +184,18 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^[\d\-,.]*$')),
               ],
-
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
-
                 border: OutlineInputBorder(
-
-                  borderSide: BorderSide.none
+                  borderSide: BorderSide.none,
                 ),
                 contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
               ),
-
               onSubmitted: (_) => _commitTextField(),
             ),
           ),
-          SizedBox(width: 10,),
+          const SizedBox(width: 10),
           _buildButton(
             icon: Icons.add,
             enabled: plusEnabled,

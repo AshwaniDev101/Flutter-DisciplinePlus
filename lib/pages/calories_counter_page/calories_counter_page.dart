@@ -1,12 +1,8 @@
 
-
 import 'package:discipline_plus/pages/calories_counter_page/widgets/calorie_progress_bar.dart';
 import 'package:discipline_plus/pages/calories_counter_page/widgets/global_food_listview.dart';
 import 'package:flutter/material.dart';
-
-import '../../core/utils/helper.dart';
 import '../../models/diet_food.dart';
-import '../../models/food_stats.dart';
 import 'add_edit_diet_food_dialog.dart';
 import 'food_manager.dart';
 
@@ -41,7 +37,21 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
             SizedBox(height: 30,),
             CalorieProgressBar(),
             SizedBox(height:30,),
-            GlobalFoodList(stream: FoodManager.instance.watchAvailableFood(),)
+            GlobalFoodList(
+              stream: FoodManager.instance.watchAvailableFood(),
+              onEdit: (DietFood food){
+                FoodManager.instance.editAvailableFood(food);
+              },
+              onDeleted: (DietFood food){
+                FoodManager.instance.removeFromAvailableFood(food);
+              },
+              // onIncrement:(DietFood food){
+              //
+              // },
+              // onDecrement:(DietFood food){
+              //
+              // },
+            )
 
           ],
         ),

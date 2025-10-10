@@ -6,11 +6,14 @@ import '../../../models/food_stats.dart';
 class GlobalFoodList extends StatelessWidget {
 
   final Stream<List<DietFood>> stream;
+  final Function(DietFood food) onEdit;
+  final Function(DietFood food) onDeleted;
+
 
 
   GlobalFoodList({
     Key? key,
-    Stream<List<DietFood>>? stream,
+    Stream<List<DietFood>>? stream, required this.onEdit, required this.onDeleted,
 
   })  : stream = stream ?? _defaultDummyStream,
         super(key: key);
@@ -79,9 +82,10 @@ class GlobalFoodList extends StatelessWidget {
       ],
     ).then((value) {
       if (value == 'edit') {
-        // handle edit
+        onEdit(food);
       } else if (value == 'delete') {
-        // handle delete
+        onDeleted(food);
+
       }
     });
   }
@@ -188,7 +192,10 @@ class _FoodCard extends StatelessWidget {
 
 
 
-                FoodQuantitySelector()
+                FoodQuantitySelector(onChanged: (oldValue,newValue){
+                  print(oldValue);
+                  print(newValue);
+                },)
 
 
               ],
