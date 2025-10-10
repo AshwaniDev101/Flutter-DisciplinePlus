@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:discipline_plus/database/services/firebase_diet_food_service.dart';
 import 'package:discipline_plus/models/food_stats.dart';
-import 'package:discipline_plus/pages/dietpage/core/food_manager.dart';
+import 'package:discipline_plus/pages/calories_counter_page/food_manager.dart';
 import 'package:discipline_plus/pages/dietpage/widgets/calorie_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -66,7 +66,7 @@ class _DietPageState extends State<DietPage> {
   void initState() {
     super.initState();
 
-    final merged = FoodManager.instance.watchMergedFoodList();
+    final merged = FoodManager.instance.watchAvailableFood();
     _sharedMerged = merged.shareReplay(maxSize: 1);
 
     _availableStream = _sharedMerged.map(

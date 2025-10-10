@@ -2,20 +2,16 @@ import 'package:discipline_plus/pages/calories_counter_page/widgets/food_quality
 import 'package:flutter/material.dart';
 import '../../../models/diet_food.dart';
 import '../../../models/food_stats.dart';
-import '../../global_initiative_page/new_initiatives/widget/quantity_selector.dart';
 
 class GlobalFoodList extends StatelessWidget {
 
   final Stream<List<DietFood>> stream;
 
-  /// If this widget is placed inside another scrollable (like Column),
-  /// set [shrinkWrap] to true to avoid layout issues.
-  final bool shrinkWrap;
 
   GlobalFoodList({
     Key? key,
     Stream<List<DietFood>>? stream,
-    this.shrinkWrap = true,
+
   })  : stream = stream ?? _defaultDummyStream,
         super(key: key);
 
@@ -109,24 +105,26 @@ class GlobalFoodList extends StatelessWidget {
         return MediaQuery.removePadding(
           context: context,
           removeTop: true,
-          child: ListView.separated(
-            shrinkWrap: shrinkWrap,
-            physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
-            itemCount: foods.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final food = foods[index];
-              final barColor = _colorPalette[index % _colorPalette.length];
-
-              return _FoodCard(
-                food: food,
-                barColor: barColor,
-                onLongPressStart: (details) => _showItemMenu(context, details.globalPosition, food),
-                onAddPressed: () {
-                  // Implement add-food logic
-                },
-              );
-            },
+          child: Expanded(
+            child: ListView.separated(
+              
+              physics: BouncingScrollPhysics(),
+              itemCount: foods.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final food = foods[index];
+                final barColor = _colorPalette[index % _colorPalette.length];
+            
+                return _FoodCard(
+                  food: food,
+                  barColor: barColor,
+                  onLongPressStart: (details) => _showItemMenu(context, details.globalPosition, food),
+                  onAddPressed: () {
+                    // Implement add-food logic
+                  },
+                );
+              },
+            ),
           ),
         );
       },

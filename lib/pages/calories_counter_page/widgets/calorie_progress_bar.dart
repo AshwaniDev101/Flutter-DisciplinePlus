@@ -2,14 +2,14 @@
 import 'package:flutter/material.dart';
 import '../../../models/food_stats.dart';
 
-class CaloriesStates extends StatefulWidget {
-  const CaloriesStates({super.key});
+class CalorieProgressBar extends StatefulWidget {
+  const CalorieProgressBar({super.key});
 
   @override
-  State<CaloriesStates> createState() => _CaloriesStatesState();
+  State<CalorieProgressBar> createState() => _CalorieProgressBarState();
 }
 
-class _CaloriesStatesState extends State<CaloriesStates> {
+class _CalorieProgressBarState extends State<CalorieProgressBar> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<FoodStats?>(
