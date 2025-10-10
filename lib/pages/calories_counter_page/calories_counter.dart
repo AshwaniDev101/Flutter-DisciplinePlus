@@ -21,7 +21,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
           children: [
             SizedBox(height: 20,),
             CaloriesStates(),
-            SizedBox(height: 10,),
+            SizedBox(height: 20,),
             GlobalFoodList()
 
           ],

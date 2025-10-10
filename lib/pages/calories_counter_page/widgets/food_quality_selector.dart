@@ -184,6 +184,13 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
             height: 40,
             child: TextField(
 
+
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 16.0,
+
+              ),
+
               controller: _controller,
               focusNode: _focusNode,
               textAlign: TextAlign.center,
@@ -195,6 +202,7 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
+
                 border: OutlineInputBorder(
 
                   borderSide: BorderSide.none

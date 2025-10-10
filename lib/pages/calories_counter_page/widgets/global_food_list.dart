@@ -151,7 +151,7 @@ class _FoodCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Card(
@@ -193,16 +193,6 @@ class _FoodCard extends StatelessWidget {
                 FoodQuantitySelector()
 
 
-                // add button
-                // Padding(
-                //   padding: const EdgeInsets.only(right: 8.0),
-                //   child: IconButton(
-                //     iconSize: 30,
-                //     icon: Icon(Icons.add_circle, color: Colors.pink.shade200),
-                //     onPressed: onAddPressed,
-                //     tooltip: 'Add food',
-                //   ),
-                // ),
               ],
             ),
           ),
