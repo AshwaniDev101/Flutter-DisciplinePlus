@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../pages/calories_counter_page/calories_counter.dart';
 import '../pages/dietpage/dietpage.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -39,7 +40,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DietPage()),
+                // MaterialPageRoute(builder: (context) => DietPage()),
+                MaterialPageRoute(builder: (context) => CaloriesCounterPage()),
               );
 
             },

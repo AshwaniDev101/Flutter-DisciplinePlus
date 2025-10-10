@@ -1,5 +1,6 @@
 
 import 'package:discipline_plus/database/services/firebase_heatmap_service.dart';
+import 'package:discipline_plus/pages/calories_counter_page/calories_counter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -53,7 +54,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Constants.background_color),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      // home: HomePage(),
+      home: CaloriesCounterPage()
     );
 
 

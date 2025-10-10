@@ -312,11 +312,8 @@ class _DietPageState extends State<DietPage> {
   }
 
 
-  Widget _foodListView({required stream, required isConsumed})
+  Widget _foodListView({ required Stream<List<DietFood>> stream, required bool isConsumed })
   {
-
-
-
 
     final List<Color> colorPalette = [
       Colors.pink.shade100,
@@ -372,15 +369,6 @@ class _DietPageState extends State<DietPage> {
                   children: [
 
 
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      bottom: 0,
-                      child: Container(
-                        width: 10,
-                        color: barColor,
-                      ),
-                    ),
 
 
                     Card(
