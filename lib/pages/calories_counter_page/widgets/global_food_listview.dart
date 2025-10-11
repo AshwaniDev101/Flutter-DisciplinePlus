@@ -67,29 +67,34 @@ class GlobalFoodList extends StatelessWidget {
   ];
 
 
-  void _showItemMenu(BuildContext context, Offset globalPosition, DietFood food) {
-    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-    final left = globalPosition.dx;
-    final top = globalPosition.dy;
-    final right = overlay.size.width - left;
-    final bottom = overlay.size.height - top;
+  void _showItemMenu(BuildContext buttonContext, DietFood food) {
+    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+    final RenderBox overlay = Overlay.of(buttonContext)!.context.findRenderObject() as RenderBox;
+
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
 
     showMenu<String>(
-      context: context,
-      position: RelativeRect.fromLTRB(left, top, right, bottom),
-      items: const [
-        PopupMenuItem(value: 'edit', child: Text('Edit')),
-        PopupMenuItem(value: 'delete', child: Text('Delete')),
+      context: buttonContext,
+      position: position,
+      items: [
+        const PopupMenuItem(value: 'edit', child: Text('Edit')),
+        const PopupMenuItem(value: 'delete', child: Text('Delete')),
       ],
     ).then((value) {
       if (value == 'edit') {
         onEdit(food);
       } else if (value == 'delete') {
         onDeleted(food);
-
       }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +128,7 @@ class GlobalFoodList extends StatelessWidget {
                 return _FoodCard(
                   food: food,
                   barColor: barColor,
-                  onLongPressStart: (details) => _showItemMenu(context, details.globalPosition, food),
+                  onClickOptionMenu: (context) => _showItemMenu(context, food),
                   onAddPressed: () {
                     // Implement add-food logic
                   },
@@ -140,75 +145,84 @@ class GlobalFoodList extends StatelessWidget {
 class _FoodCard extends StatelessWidget {
   final DietFood food;
   final Color barColor;
-  final void Function(LongPressStartDetails) onLongPressStart;
+  final void Function(BuildContext buttonContext) onClickOptionMenu;
   final VoidCallback? onAddPressed;
 
   const _FoodCard({
     Key? key,
     required this.food,
     required this.barColor,
-    required this.onLongPressStart,
+    required this.onClickOptionMenu,
     this.onAddPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 0.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Card(
           margin: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,
-          child: GestureDetector(
-            onLongPressStart: onLongPressStart,
-            child: Row(
-              children: [
-                // colored bar
-                Container(width: 10, height: 64, color: barColor),
-                // content
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          food.name,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${food.foodStats.calories} kcal',
-                          style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ],
-                    ),
+          color: Colors.white,
+          child: Row(
+            children: [
+              // colored bar
+              Container(width: 10, height: 64, color: barColor),
+              // content
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        food.name,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${food.foodStats.calories} kcal',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
                   ),
                 ),
+              ),
+
+
+              Builder(
+                builder: (buttonContext) {
+                  return IconButton(
+                    onPressed: () {
+                      onClickOptionMenu(buttonContext);
+                    },
+                    icon: Icon(Icons.more_vert_rounded, color: Colors.grey, size: 24),
+                  );
+                },
+              ),
+              FoodQuantitySelector(initialValue:food.count.toDouble(),onChanged: (oldValue,newValue){
 
 
 
-                FoodQuantitySelector(initialValue:food.count.toDouble(),onChanged: (oldValue,newValue){
+                if (newValue > oldValue) {
+                  FoodManager.instance.addToConsumedFood(food.foodStats, food);
+                } else if (newValue < oldValue) {
+                  FoodManager.instance.subtractFromConsumedFood(food.foodStats, food);
+                }
 
 
+              },),
 
-                  if (newValue > oldValue) {
-                    FoodManager.instance.addToConsumedFood(food.foodStats, food);
-                  } else if (newValue < oldValue) {
-                    FoodManager.instance.subtractFromConsumedFood(food.foodStats, food);
-                  }
+              SizedBox(width: 14,),
 
 
-                },)
-
-
-              ],
-            ),
+            ],
           ),
         ),
       ),

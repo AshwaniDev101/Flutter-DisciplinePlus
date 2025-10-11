@@ -57,7 +57,7 @@ class _CalorieProgressBarState extends State<CalorieProgressBar> {
                       children: [
                         Text(
                           '$progress',
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.grey[500]!),
                         ),
                         const Text('2000 kcal', style: TextStyle(fontSize: 10)),
                       ],
@@ -81,7 +81,7 @@ class _CalorieProgressBarState extends State<CalorieProgressBar> {
               ),
             ),
 
-            ElevatedButton(child: Text("Date"),
+            ElevatedButton(child: Text(getCurrentDateFormatted()),
                 onPressed: (){
 
                 }
@@ -109,21 +109,19 @@ class _CalorieProgressBarState extends State<CalorieProgressBar> {
     } else {
 
 
-      return getColorForHeat(calculatePercentage(kcal,1600));
+      return Colors.greenAccent[400]!;
     }
   }
 
-  double calculatePercentage(int current, int total) {
-    if (total == 0) return 0; // avoid division by zero
-    return (current / total) * 100;
+
+  String getCurrentDateFormatted() {
+    final now = DateTime.now(); // Get current date and time
+    final day = now.day.toString().padLeft(2, '0');   // Ensure two digits
+    final month = now.month.toString().padLeft(2, '0'); // Ensure two digits
+    final year = now.year.toString();
+
+    return '$day/$month/$year';
   }
-
-  Color getColorForHeat(double percentage) {
-    percentage = percentage.clamp(0, 100);
-    return hexToColorWithOpacity("#38d9a9", percentage);
-  }
-
-
 
 
 }
