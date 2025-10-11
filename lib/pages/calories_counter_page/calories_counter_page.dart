@@ -35,7 +35,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
         child: Column(
           children: [
             SizedBox(height: 30,),
-            CalorieProgressBar(),
+            CalorieProgressBar(stream: FoodManager.instance.watchConsumedFoodStats(),),
             SizedBox(height:30,),
             GlobalFoodList(
               stream: FoodManager.instance.watchMergedFoodList(),

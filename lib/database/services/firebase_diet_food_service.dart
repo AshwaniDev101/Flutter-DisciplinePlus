@@ -12,7 +12,7 @@ class FirebaseDietFoodService {
   final String userId = 'user1'; // Make dynamic later
 
   /// Watch available food list
-  Stream<List<DietFood>> watchAvailableFood() {
+  Stream<List<DietFood>> watchGlobalFoodList() {
     return _db
         .collection('users')
         .doc(userId)
@@ -48,7 +48,9 @@ class FirebaseDietFoodService {
   }
 
 
-  Stream<FoodStats?> watchConsumedFoodStats(DateTime date) {
+  FoodStats? latestFoodStats; 
+  
+  Stream<FoodStats?> watchDietStatistics(DateTime date) {
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -61,7 +63,8 @@ class FirebaseDietFoodService {
       if (snapshot.exists) {
         final data = snapshot.data();
         if (data != null && data['foodStats'] != null) {
-          return FoodStats.fromMap(Map<String, dynamic>.from(data['foodStats']));
+          latestFoodStats = FoodStats.fromMap(Map<String, dynamic>.from(data['foodStats']));
+          return latestFoodStats;
         }
       }
       return null;
@@ -71,7 +74,7 @@ class FirebaseDietFoodService {
 
 
   /// Add food to available list
-  Future<void> addAvailableFood(DietFood food) {
+  Future<void> addGlobalFoodList(DietFood food) {
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -82,7 +85,7 @@ class FirebaseDietFoodService {
   }
 
   /// Add food to consumed list
-  Future<void> addConsumedFood(FoodStats latestFoodStatsData, DietFood food, DateTime date) async {
+  Future<void> incrementInConsumedFood(DietFood food, DateTime date) async {
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -113,13 +116,13 @@ class FirebaseDietFoodService {
     }
 
     // update daily stats
-    _incrementConsumedFoodStats(latestFoodStatsData, food.foodStats, date);
+    _incrementConsumedFoodStats(food.foodStats, date);
   }
 
 
 
   /// Subtract food to consumed list
-  Future<void> subtractConsumedFood(FoodStats latestFoodStatsData, DietFood food, DateTime date) async {
+  Future<void> subtractConsumedFood( DietFood food, DateTime date) async {
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -150,11 +153,11 @@ class FirebaseDietFoodService {
     }
 
     // update daily stats
-    _decrementConsumedFoodStats(latestFoodStatsData, food.foodStats, date);
+    _decrementConsumedFoodStats(food.foodStats, date);
   }
 
   /// Delete food from available list
-  Future<void> deleteAvailableFood(String id) {
+  Future<void> deleteFromGlobalFoodList(String id) {
     return _db
         .collection('users')
         .doc(userId)
@@ -163,24 +166,24 @@ class FirebaseDietFoodService {
         .delete();
   }
 
-  /// Delete food from consumed list
-  Future<void> deleteConsumedFood(FoodStats latestFoodStatsData, DietFood dietFood, DateTime date) {
-
-    _decrementConsumedFoodStats(latestFoodStatsData, dietFood.foodStats, date);
-    return _db
-        .collection('users')
-        .doc(userId)
-        .collection('history')
-        .doc('${date.year}')
-        .collection('${date.month}')
-        .doc('${date.day}')
-        .collection('food_consumed_list')
-        .doc(dietFood.id)
-        .delete();
-  }
+  // /// Delete food from consumed list
+  // Future<void> deleteConsumedFood(FoodStats latestFoodStatsData, DietFood dietFood, DateTime date) {
+  //
+  //   _decrementConsumedFoodStats(latestFoodStatsData, dietFood.foodStats, date);
+  //   return _db
+  //       .collection('users')
+  //       .doc(userId)
+  //       .collection('history')
+  //       .doc('${date.year}')
+  //       .collection('${date.month}')
+  //       .doc('${date.day}')
+  //       .collection('food_consumed_list')
+  //       .doc(dietFood.id)
+  //       .delete();
+  // }
 
   /// Update food in available list
-  Future<void> updateAvailableFood(String id, DietFood food) {
+  Future<void> updateInGlobalFoodListItem(String id, DietFood food) {
     final ref = _db
         .collection('users')
         .doc(userId)
@@ -190,33 +193,33 @@ class FirebaseDietFoodService {
     return ref.update(map);
   }
 
-  /// Update food in consumed list
-  Future<void> updateConsumedFood(String id, DietFood food, DateTime date) {
-    final ref = _db
-        .collection('users')
-        .doc(userId)
-        .collection('history')
-        .doc('${date.year}')
-        .collection('${date.month}')
-        .doc('${date.day}')
-        .collection('food_consumed_list')
-        .doc(id);
-    final map = food.toConsumedMap()..remove('id');
-    return ref.update(map);
-  }
+  // /// Update food in consumed list
+  // Future<void> updateConsumedFood(String id, DietFood food, DateTime date) {
+  //   final ref = _db
+  //       .collection('users')
+  //       .doc(userId)
+  //       .collection('history')
+  //       .doc('${date.year}')
+  //       .collection('${date.month}')
+  //       .doc('${date.day}')
+  //       .collection('food_consumed_list')
+  //       .doc(id);
+  //   final map = food.toConsumedMap()..remove('id');
+  //   return ref.update(map);
+  // }
 
 
 
-  Future<void> _incrementConsumedFoodStats(FoodStats currentFoodStatsData, FoodStats newFoodStats, DateTime datetime) async
+  Future<void> _incrementConsumedFoodStats(FoodStats newFoodStats, DateTime datetime) async
   {
-    FoodStats updatedFoodStats = currentFoodStatsData.sum(newFoodStats);
+    FoodStats updatedFoodStats = latestFoodStats!.sum(newFoodStats);
 
     _updateConsumedFoodStats(updatedFoodStats,datetime);
   }
 
-  Future<void> _decrementConsumedFoodStats(FoodStats currentFoodStatsData, FoodStats newFoodStats, DateTime datetime) async
+  Future<void> _decrementConsumedFoodStats(FoodStats newFoodStats, DateTime datetime) async
   {
-    FoodStats updatedFoodStats = currentFoodStatsData.subtract(newFoodStats);
+    FoodStats updatedFoodStats = latestFoodStats!.subtract(newFoodStats);
 
     _updateConsumedFoodStats(updatedFoodStats, datetime);
   }

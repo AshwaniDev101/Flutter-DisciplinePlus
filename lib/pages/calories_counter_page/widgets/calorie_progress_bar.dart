@@ -1,25 +1,36 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import '../../../core/utils/helper.dart';
 import '../../../models/food_stats.dart';
 
 class CalorieProgressBar extends StatefulWidget {
-  const CalorieProgressBar({super.key});
+
+
+  final Stream<FoodStats?> stream;
+  const CalorieProgressBar({required this.stream, super.key});
 
   @override
   State<CalorieProgressBar> createState() => _CalorieProgressBarState();
 }
 
 class _CalorieProgressBarState extends State<CalorieProgressBar> {
+
+
+  final atMostProgress = 1600;
+  final max = 2000;
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<FoodStats?>(
-      stream: null,
+      stream: widget.stream,
       initialData: FoodStats.empty(),
       builder: (context, snapshot) {
         final stats = snapshot.data!;
 
         final progress = stats.calories;
-        const maxProgress = 2000;
+
+
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -34,11 +45,11 @@ class _CalorieProgressBarState extends State<CalorieProgressBar> {
                       height: 100,
                       width: 100,
                       child: CircularProgressIndicator(
-                        value: progress / maxProgress,
+                        value: progress / atMostProgress,
                         strokeWidth: 15,
                         backgroundColor: Colors.grey.shade200,
-                        // valueColor: AlwaysStoppedAnimation(_getProgressColor()),
-                        valueColor: AlwaysStoppedAnimation(Colors.blue),
+                        valueColor: AlwaysStoppedAnimation(_getProgressColor(stats)),
+                        // valueColor: AlwaysStoppedAnimation(Colors.blue),
                       ),
                     ),
                     Column(
@@ -84,12 +95,35 @@ class _CalorieProgressBarState extends State<CalorieProgressBar> {
 
 
 
-  // Color _getProgressColor() {
-  //   final ratio = _latestStats.calories / _maxProgress;
-  //   if (ratio < 0.6) return Colors.pink.shade300;
-  //   if (ratio < 0.9) return Colors.orange;
-  //   return Colors.red;
-  // }
+  Color _getProgressColor(FoodStats? latestStats) {
+    if (latestStats == null) {
+      return Colors.grey; // default color when data isn't ready
+    }
+
+    final kcal = latestStats.calories;
+
+    if (kcal > 2000) {
+      return Colors.red;
+    } else if (kcal > 1600) {
+      return Colors.orange;
+    } else {
+
+
+      return getColorForHeat(calculatePercentage(kcal,1600));
+    }
+  }
+
+  double calculatePercentage(int current, int total) {
+    if (total == 0) return 0; // avoid division by zero
+    return (current / total) * 100;
+  }
+
+  Color getColorForHeat(double percentage) {
+    percentage = percentage.clamp(0, 100);
+    return hexToColorWithOpacity("#38d9a9", percentage);
+  }
+
+
 
 
 }

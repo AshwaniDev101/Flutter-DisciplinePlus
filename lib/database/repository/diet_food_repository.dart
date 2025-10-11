@@ -9,7 +9,7 @@ class DietFoodRepository {
   DietFoodRepository(this._service);
 
   Stream<List<DietFood>> watchAvailableFood() {
-    return _service.watchAvailableFood();
+    return _service.watchGlobalFoodList();
   }
 
   Stream<List<DietFood>> watchConsumedFood(DateTime date) {
@@ -17,34 +17,34 @@ class DietFoodRepository {
   }
 
   Stream<FoodStats?> watchConsumedFoodStats(DateTime date) {
-    return _service.watchConsumedFoodStats(date);
+    return _service.watchDietStatistics(date);
   }
 
   Future<void> addAvailable(DietFood food) {
-    return _service.addAvailableFood(food);
+    return _service.addGlobalFoodList(food);
   }
 
   Future<void> deleteAvailable(String id) {
-    return _service.deleteAvailableFood(id);
+    return _service.deleteFromGlobalFoodList(id);
   }
 
   Future<void> updateAvailable(String id, DietFood food) {
-    return _service.updateAvailableFood(id, food);
+    return _service.updateInGlobalFoodListItem(id, food);
   }
 
   Future<void> addConsumed(FoodStats latestStats, DietFood food, DateTime date) {
-    return _service.addConsumedFood(latestStats, food, date);
+    return _service.incrementInConsumedFood(food, date);
   }
 
   Future<void> subtractConsumed(FoodStats latestStats, DietFood food, DateTime date) {
-    return _service.subtractConsumedFood(latestStats, food, date);
+    return _service.subtractConsumedFood(food, date);
   }
 
-  Future<void> deleteConsumed(FoodStats latestStats, DietFood food, DateTime date) {
-    return _service.deleteConsumedFood(latestStats, food, date);
-  }
-
-  Future<void> updateConsumed(String id, DietFood food, DateTime date) {
-    return _service.updateConsumedFood(id, food, date);
-  }
+  // Future<void> deleteConsumed(FoodStats latestStats, DietFood food, DateTime date) {
+  //   return _service.deleteConsumedFood(latestStats, food, date);
+  // }
+  //
+  // Future<void> updateConsumed(String id, DietFood food, DateTime date) {
+  //   return _service.updateConsumedFood(id, food, date);
+  // }
 }

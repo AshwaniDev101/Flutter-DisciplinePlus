@@ -38,7 +38,7 @@ class _DietPageState extends State<DietPage> {
   void initFoodStatsStream() {
     _statsSub = FirebaseDietFoodService
         .instance
-        .watchConsumedFoodStats(DateTime.now())
+        .watchDietStatistics(DateTime.now())
         .listen((data) {
 
           if(data!=null)
@@ -451,9 +451,9 @@ class _DietPageState extends State<DietPage> {
                                   ),
                                   onPressed: () {
                                     if (isConsumed) {
-                                      FoodManager.instance.removeFromConsumedFood(_latestStats, food);
+                                      // FoodManager.instance.removeFromConsumedFood(_latestStats, food);
                                     } else {
-                                      FoodManager.instance.addToConsumedFood(_latestStats, food);
+                                      // FoodManager.instance.addToConsumedFood(_latestStats, food);
                                     }
                                   },
                                   tooltip: isConsumed ? 'Remove food' : 'Add food',
