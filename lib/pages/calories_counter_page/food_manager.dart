@@ -18,39 +18,47 @@ class FoodManager {
   final DietFoodRepository _dietFoodRepository = DietFoodRepository(FirebaseDietFoodService.instance);
 
 
-  // Stream<List<DietFood>> watchMergedFoodList() {
-  //   return Rx.combineLatest2<List<DietFood>, List<DietFood>, List<DietFood>>(
-  //     _watchAvailableFood(),
-  //     _watchConsumedFood(),
-  //         (availableList, consumedList) {
-  //       final consumedMap = {
-  //         for (var food in consumedList) food.id: food.count,
-  //       };
-  //
-  //       return availableList.map((food) {
-  //         final count = consumedMap[food.id] ?? 0;
-  //         return food.copyWith(count: count);
-  //       }).toList();
-  //     },
-  //   );
-  // }
+  /// Watches both available foods and consumed foods,
+  /// and merges them into a single stream where each
+  /// available food also contains its consumed count.
+  Stream<List<DietFood>> watchMergedFoodList() {
+    return Rx.combineLatest2<List<DietFood>, List<DietFood>, List<DietFood>>(
+      _watchAvailableFood(),  // Stream of all available foods
+      _watchConsumedFood(),   // Stream of consumed foods
+          (availableList, consumedList) {
+
+        // Create a quick lookup map of consumed food counts by ID
+        final consumedMap = {
+          for (final food in consumedList) food.id: food.count,
+        };
+
+        // Merge the two lists:
+        // For each available food, check if it exists in consumedMap
+        // If yes, use its consumed count; otherwise, set count to 0
+        return availableList.map((food) {
+          final consumedCount = consumedMap[food.id] ?? 0;
+          return food.copyWith(count: consumedCount);
+        }).toList();
+      },
+    );
+  }
 
 
 
-  // Stream<List<DietFood>> _watchAvailableFood() {
-  //
-  //   return _dietFoodRepository.watchAvailableFood();
-  // }
-  // Stream<List<DietFood>> _watchConsumedFood() {
-  //
-  //   return _dietFoodRepository.watchConsumedFood(DateTime.now());
-  // }
-
-
-  Stream<List<DietFood>> watchAvailableFood() {
+  Stream<List<DietFood>> _watchAvailableFood() {
 
     return _dietFoodRepository.watchAvailableFood();
   }
+  Stream<List<DietFood>> _watchConsumedFood() {
+
+    return _dietFoodRepository.watchConsumedFood(DateTime.now());
+  }
+
+
+  // Stream<List<DietFood>> watchAvailableFood() {
+  //
+  //   return _dietFoodRepository.watchAvailableFood();
+  // }
 
 
   // Add to available food list
@@ -60,6 +68,10 @@ class FoodManager {
 
   void addToConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
     _dietFoodRepository.addConsumed(latestFoodStatsData,food, DateTime.now());
+  }
+
+  void subtractFromConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
+    _dietFoodRepository.subtractConsumed(latestFoodStatsData,food, DateTime.now());
   }
   // Remove from available food list
   void removeFromAvailableFood(DietFood food) {

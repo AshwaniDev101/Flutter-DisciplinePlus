@@ -15,7 +15,7 @@ class FoodQuantitySelector extends StatefulWidget {
 
   const FoodQuantitySelector({
     Key? key,
-    this.initialValue = 0.0,
+    required this.initialValue,
     this.min = 0.0,
     this.max = 100,
     this.step = 1.0,

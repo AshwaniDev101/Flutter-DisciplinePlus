@@ -1,4 +1,5 @@
-import 'package:discipline_plus/pages/calories_counter_page/widgets/food_quality_selector.dart';
+import 'package:discipline_plus/pages/calories_counter_page/food_manager.dart';
+import 'package:discipline_plus/pages/calories_counter_page/widgets/food_quantity_selector.dart';
 import 'package:flutter/material.dart';
 import '../../../models/diet_food.dart';
 import '../../../models/food_stats.dart';
@@ -101,7 +102,7 @@ class GlobalFoodList extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         }
-        final foods = snapshot.data;
+        final List<DietFood>? foods = snapshot.data;
         if (foods == null || foods.isEmpty) {
           return const Center(child: Text('No items yet'));
         }
@@ -192,9 +193,17 @@ class _FoodCard extends StatelessWidget {
 
 
 
-                FoodQuantitySelector(onChanged: (oldValue,newValue){
-                  print(oldValue);
-                  print(newValue);
+                FoodQuantitySelector(initialValue:food.count.toDouble(),onChanged: (oldValue,newValue){
+
+
+
+                  if (newValue > oldValue) {
+                    FoodManager.instance.addToConsumedFood(food.foodStats, food);
+                  } else if (newValue < oldValue) {
+                    FoodManager.instance.subtractFromConsumedFood(food.foodStats, food);
+                  }
+
+
                 },)
 
 

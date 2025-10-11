@@ -113,9 +113,45 @@ class FirebaseDietFoodService {
     }
 
     // update daily stats
-    _updateConsumedFoodStats(isSum: true, latestFoodStatsData, food.foodStats, date);
+    _incrementConsumedFoodStats(latestFoodStatsData, food.foodStats, date);
   }
 
+
+
+  /// Subtract food to consumed list
+  Future<void> subtractConsumedFood(FoodStats latestFoodStatsData, DietFood food, DateTime date) async {
+    final ref = _db
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}')
+        .collection('food_consumed_list')
+        .doc(food.id);
+
+    final map = food.toConsumedMap()..remove('id');
+
+    final snapshot = await ref.get();
+
+    if (snapshot.exists) {
+      final existingData = snapshot.data()!;
+      final existingCount = existingData['count'] ?? 0;
+
+      await ref.update({
+        ...map,
+        'count': existingCount - 1,
+      });
+    } else {
+      await ref.set({
+        ...map,
+        'count': -1,
+      });
+    }
+
+    // update daily stats
+    _decrementConsumedFoodStats(latestFoodStatsData, food.foodStats, date);
+  }
 
   /// Delete food from available list
   Future<void> deleteAvailableFood(String id) {
@@ -130,7 +166,7 @@ class FirebaseDietFoodService {
   /// Delete food from consumed list
   Future<void> deleteConsumedFood(FoodStats latestFoodStatsData, DietFood dietFood, DateTime date) {
 
-    _updateConsumedFoodStats(isSum:false,latestFoodStatsData, dietFood.foodStats, date);
+    _decrementConsumedFoodStats(latestFoodStatsData, dietFood.foodStats, date);
     return _db
         .collection('users')
         .doc(userId)
@@ -171,21 +207,22 @@ class FirebaseDietFoodService {
 
 
 
-  Future<void> _updateConsumedFoodStats(
-      FoodStats latestFoodStatsData,
-      FoodStats newFoodStats,
-      DateTime date, {
-        required bool isSum,
-      }) async {
+  Future<void> _incrementConsumedFoodStats(FoodStats currentFoodStatsData, FoodStats newFoodStats, DateTime datetime) async
+  {
+    FoodStats updatedFoodStats = currentFoodStatsData.sum(newFoodStats);
+
+    _updateConsumedFoodStats(updatedFoodStats,datetime);
+  }
+
+  Future<void> _decrementConsumedFoodStats(FoodStats currentFoodStatsData, FoodStats newFoodStats, DateTime datetime) async
+  {
+    FoodStats updatedFoodStats = currentFoodStatsData.subtract(newFoodStats);
+
+    _updateConsumedFoodStats(updatedFoodStats, datetime);
+  }
 
 
-    FoodStats updatedFoodStats;
-
-    if (isSum) {
-      updatedFoodStats = latestFoodStatsData.sum(newFoodStats);
-    } else {
-      updatedFoodStats = latestFoodStatsData.subtract(newFoodStats);
-    }
+  Future<void> _updateConsumedFoodStats(FoodStats updatedFoodStats, DateTime date) async {
 
     final ref = _db
         .collection('users')
@@ -201,6 +238,40 @@ class FirebaseDietFoodService {
 
     await ref.set(map, SetOptions(merge: true));
   }
+
+
+
+  //
+  // Future<void> _updateConsumedFoodStats(
+  //     FoodStats latestFoodStatsData,
+  //     FoodStats newFoodStats,
+  //     DateTime date, {
+  //       required bool isSum,
+  //     }) async {
+  //
+  //
+  //   FoodStats updatedFoodStats;
+  //
+  //   if (isSum) {
+  //     updatedFoodStats = latestFoodStatsData.sum(newFoodStats);
+  //   } else {
+  //     updatedFoodStats = latestFoodStatsData.subtract(newFoodStats);
+  //   }
+  //
+  //   final ref = _db
+  //       .collection('users')
+  //       .doc(userId)
+  //       .collection('history')
+  //       .doc('${date.year}')
+  //       .collection('${date.month}')
+  //       .doc('${date.day}');
+  //
+  //   final map = {
+  //     'foodStats': updatedFoodStats.toMap(),
+  //   };
+  //
+  //   await ref.set(map, SetOptions(merge: true));
+  // }
 
 
 

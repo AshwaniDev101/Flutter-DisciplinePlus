@@ -66,7 +66,7 @@ class _DietPageState extends State<DietPage> {
   void initState() {
     super.initState();
 
-    final merged = FoodManager.instance.watchAvailableFood();
+    final merged = FoodManager.instance.watchMergedFoodList();
     _sharedMerged = merged.shareReplay(maxSize: 1);
 
     _availableStream = _sharedMerged.map(

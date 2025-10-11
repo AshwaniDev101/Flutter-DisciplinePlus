@@ -36,6 +36,10 @@ class DietFoodRepository {
     return _service.addConsumedFood(latestStats, food, date);
   }
 
+  Future<void> subtractConsumed(FoodStats latestStats, DietFood food, DateTime date) {
+    return _service.subtractConsumedFood(latestStats, food, date);
+  }
+
   Future<void> deleteConsumed(FoodStats latestStats, DietFood food, DateTime date) {
     return _service.deleteConsumedFood(latestStats, food, date);
   }

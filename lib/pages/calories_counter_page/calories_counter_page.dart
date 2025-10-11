@@ -38,7 +38,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
             CalorieProgressBar(),
             SizedBox(height:30,),
             GlobalFoodList(
-              stream: FoodManager.instance.watchAvailableFood(),
+              stream: FoodManager.instance.watchMergedFoodList(),
               onEdit: (DietFood food){
                 FoodManager.instance.editAvailableFood(food);
               },
