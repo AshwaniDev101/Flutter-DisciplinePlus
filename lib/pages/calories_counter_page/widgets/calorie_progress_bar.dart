@@ -26,8 +26,13 @@ class _CalorieProgressBarState extends State<CalorieProgressBar> {
       stream: widget.stream,
       initialData: FoodStats.empty(),
       builder: (context, snapshot) {
-        final stats = snapshot.data!;
 
+        // Safely handle null or loading states
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final stats = snapshot.data ?? FoodStats.empty();
         final progress = stats.calories;
 
 

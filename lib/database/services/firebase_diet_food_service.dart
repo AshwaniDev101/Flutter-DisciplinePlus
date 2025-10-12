@@ -48,7 +48,7 @@ class FirebaseDietFoodService {
   }
 
 
-  FoodStats? latestFoodStats; 
+  FoodStats latestFoodStats = FoodStats.empty();
   
   Stream<FoodStats?> watchDietStatistics(DateTime date) {
     final ref = _db
@@ -212,14 +212,14 @@ class FirebaseDietFoodService {
 
   Future<void> _incrementConsumedFoodStats(FoodStats newFoodStats, DateTime datetime) async
   {
-    FoodStats updatedFoodStats = latestFoodStats!.sum(newFoodStats);
+    FoodStats updatedFoodStats = latestFoodStats.sum(newFoodStats);
 
     _updateConsumedFoodStats(updatedFoodStats,datetime);
   }
 
   Future<void> _decrementConsumedFoodStats(FoodStats newFoodStats, DateTime datetime) async
   {
-    FoodStats updatedFoodStats = latestFoodStats!.subtract(newFoodStats);
+    FoodStats updatedFoodStats = latestFoodStats.subtract(newFoodStats);
 
     _updateConsumedFoodStats(updatedFoodStats, datetime);
   }
