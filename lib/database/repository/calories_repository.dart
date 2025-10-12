@@ -1,38 +1,62 @@
-import '../services/firebase_calories_service.dart';
+import 'package:discipline_plus/models/food_stats.dart';
+import '../../database/services/firebase_calories_service.dart';
 
-/// Repository for daily calorie totals, using the repository pattern.
+/// Repository for calorie data
+/// This abstracts Firebase and provides a single place to get data
 class CaloriesRepository {
-  final FirebaseCaloriesService _service;
+  // Singleton
+  CaloriesRepository._();
+  static final instance = CaloriesRepository._();
 
-  CaloriesRepository(this._service);
+  final _firebaseService = FirebaseCaloriesService.instance;
 
-  /// Stream the map of day→calories for a given [year] and [month].
-  Stream<Map<int, int>> watchMonthly(int year, int month) {
-    return _service.streamMonthlyCalories(year, month);
+  /// Get food stats for a specific month
+  Future<Map<int, FoodStats>> getMonthStats({
+    required int year,
+    required int month,
+  }) async {
+    try {
+      final data = await _firebaseService.getFoodStatsForMonth(
+        year: year,
+        month: month,
+      );
+      return data;
+    } catch (e) {
+      // Handle errors if needed, e.g., logging
+      rethrow;
+    }
   }
 
-  /// Fetch the full year’s data as a map of month→(day→calories).
-  Future<Map<int, Map<int, int>>> fetchYear(int year) {
-    return _service.fetchYearlyCalories(year);
+  /// Get food stats for a full year
+  /// Returns a map of { month : { day : FoodStats } }
+  Future<Map<int, Map<int, FoodStats>>> getYearStats({
+    required int year,
+  }) async {
+    try {
+      final data = await _firebaseService.getFoodStatsForYear(year: year);
+      return data;
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  /// One‐time fetch of a single month’s data.
-  Future<Map<int, int>> fetchMonthly(int year, int month) {
-    return _service.fetchMonthlyCalories(year, month);
-  }
+  // /// Optional: get total calories for a month
+  // Future<int> getTotalCaloriesForMonth({
+  //   required int year,
+  //   required int month,
+  // }) async {
+  //   final monthStats = await getMonthStats(year: year, month: month);
+  //   return monthStats.values.fold(0, (sum, stat) => sum + stat.calories);
+  // }
 
-  /// Set or update the calories for a specific day.
-  Future<void> setDay(
-      int year,
-      int month,
-      int day,
-      int calories,
-      ) {
-    return _service.setDayCalories(year, month, day, calories);
-  }
-
-  /// Delete the calories entry for a specific day.
-  Future<void> deleteDay(int year, int month, int day) {
-    return _service.deleteDayCalories(year, month, day);
-  }
+  // /// Optional: get average calories per day in a month
+  // Future<double> getAverageCaloriesForMonth({
+  //   required int year,
+  //   required int month,
+  // }) async {
+  //   final monthStats = await getMonthStats(year: year, month: month);
+  //   if (monthStats.isEmpty) return 0;
+  //   final total = monthStats.values.fold(0, (sum, stat) => sum + stat.calories);
+  //   return total / monthStats.length;
+  // }
 }
