@@ -6,7 +6,7 @@ class DietFood {
   final String name;
   final DateTime time;
   final FoodStats foodStats;
-  final int count; // for consumed items, default 0 for available
+  final double count;
 
   DietFood({
     required this.id,
@@ -61,7 +61,7 @@ class DietFood {
     String? name,
     DateTime? time,
     FoodStats? foodStats,
-    int? count,
+    double? count,
   }) {
     return DietFood(
       id: id ?? this.id,

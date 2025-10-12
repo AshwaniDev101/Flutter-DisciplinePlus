@@ -121,7 +121,7 @@ class AddEditDietFoodDialog {
                 final updatedDietFood = DietFood(
                   id: food?.id ?? generateReadableTimestamp(),
                   name: name,
-                  count: int.parse(quantity),
+                  count: double.parse(quantity),
                   time: DateTime.now(),
                   foodStats: FoodStats(
                     proteins: int.parse(proteins),

@@ -120,7 +120,7 @@ class GlobalFoodList extends StatelessWidget {
               
               physics: BouncingScrollPhysics(),
               itemCount: foods.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (_, __) => const SizedBox(height: 4),
               itemBuilder: (context, index) {
                 final food = foods[index];
                 final barColor = _colorPalette[index % _colorPalette.length];
@@ -210,11 +210,13 @@ class _FoodCard extends StatelessWidget {
 
 
 
-                if (newValue > oldValue) {
-                  FoodManager.instance.addToConsumedFood(food.foodStats, food);
-                } else if (newValue < oldValue) {
-                  FoodManager.instance.subtractFromConsumedFood(food.foodStats, food);
-                }
+                FoodManager.instance.changeConsumedCount(newValue-oldValue, food);
+
+                // if (newValue > oldValue) {
+                //   FoodManager.instance.addToConsumedFood(food.foodStats, food);
+                // } else if (newValue < oldValue) {
+                //   FoodManager.instance.subtractFromConsumedFood(food.foodStats, food);
+                // }
 
 
               },),

@@ -6,7 +6,6 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../drawer/drawer.dart';
 import '../../managers/selected_day_manager.dart';
 import '../../models/initiative.dart';
-import '../dietpage/dietpage.dart';
 import '../global_initiative_page/global_list_manager.dart';
 import '../global_initiative_page/new_initiatives/add_initiative_dialog.dart';
 import '../heatmap_page/heatmap_panel.dart';
@@ -160,8 +159,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                     ),
                   ],
                 ),
-          
-                DietPage(),
+
               ],
           
             ),

@@ -32,13 +32,19 @@ class DietFoodRepository {
     return _service.updateInGlobalFoodListItem(id, food);
   }
 
-  Future<void> addConsumed(FoodStats latestStats, DietFood food, DateTime date) {
-    return _service.incrementInConsumedFood(food, date);
+
+  Future<void> changeConsumedCount(double count ,DietFood food, DateTime date) {
+    return _service.changeConsumedFoodCount(count,food, date);
   }
 
-  Future<void> subtractConsumed(FoodStats latestStats, DietFood food, DateTime date) {
-    return _service.subtractConsumedFood(food, date);
-  }
+
+  // Future<void> addConsumed(FoodStats latestStats, DietFood food, DateTime date) {
+  //   return _service.incrementInConsumedFood(food, date);
+  // }
+  //
+  // Future<void> subtractConsumed(FoodStats latestStats, DietFood food, DateTime date) {
+  //   return _service.subtractConsumedFood(food, date);
+  // }
 
   // Future<void> deleteConsumed(FoodStats latestStats, DietFood food, DateTime date) {
   //   return _service.deleteConsumedFood(latestStats, food, date);

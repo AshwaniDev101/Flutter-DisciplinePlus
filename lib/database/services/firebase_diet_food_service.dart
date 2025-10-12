@@ -84,15 +84,16 @@ class FirebaseDietFoodService {
     return ref.set(map);
   }
 
+
   /// Add food to consumed list
-  Future<void> incrementInConsumedFood(DietFood food, DateTime date) async {
+  Future<void> changeConsumedFoodCount(double count,DietFood food, DateTime dateTime) async {
     final ref = _db
         .collection('users')
         .doc(userId)
         .collection('history')
-        .doc('${date.year}')
-        .collection('${date.month}')
-        .doc('${date.day}')
+        .doc('${dateTime.year}')
+        .collection('${dateTime.month}')
+        .doc('${dateTime.day}')
         .collection('food_consumed_list')
         .doc(food.id);
 
@@ -106,55 +107,96 @@ class FirebaseDietFoodService {
 
       await ref.update({
         ...map,
-        'count': existingCount + 1,
+        'count': existingCount + count,
       });
     } else {
       await ref.set({
         ...map,
-        'count': 1,
+        'count': count,
       });
     }
 
+    if(count>=0)
+      {
+        _incrementConsumedFoodStats(food.foodStats, dateTime);
+      } else
+        {
+          _decrementConsumedFoodStats(food.foodStats, dateTime);
+        }
     // update daily stats
-    _incrementConsumedFoodStats(food.foodStats, date);
+
   }
 
-
-
-  /// Subtract food to consumed list
-  Future<void> subtractConsumedFood( DietFood food, DateTime date) async {
-    final ref = _db
-        .collection('users')
-        .doc(userId)
-        .collection('history')
-        .doc('${date.year}')
-        .collection('${date.month}')
-        .doc('${date.day}')
-        .collection('food_consumed_list')
-        .doc(food.id);
-
-    final map = food.toConsumedMap()..remove('id');
-
-    final snapshot = await ref.get();
-
-    if (snapshot.exists) {
-      final existingData = snapshot.data()!;
-      final existingCount = existingData['count'] ?? 0;
-
-      await ref.update({
-        ...map,
-        'count': existingCount - 1,
-      });
-    } else {
-      await ref.set({
-        ...map,
-        'count': -1,
-      });
-    }
-
-    // update daily stats
-    _decrementConsumedFoodStats(food.foodStats, date);
-  }
+  // /// Add food to consumed list
+  // Future<void> incrementInConsumedFood(DietFood food, DateTime date) async {
+  //   final ref = _db
+  //       .collection('users')
+  //       .doc(userId)
+  //       .collection('history')
+  //       .doc('${date.year}')
+  //       .collection('${date.month}')
+  //       .doc('${date.day}')
+  //       .collection('food_consumed_list')
+  //       .doc(food.id);
+  //
+  //   final map = food.toConsumedMap()..remove('id');
+  //
+  //   final snapshot = await ref.get();
+  //
+  //   if (snapshot.exists) {
+  //     final existingData = snapshot.data()!;
+  //     final existingCount = existingData['count'] ?? 0;
+  //
+  //     await ref.update({
+  //       ...map,
+  //       'count': existingCount + 1,
+  //     });
+  //   } else {
+  //     await ref.set({
+  //       ...map,
+  //       'count': 1,
+  //     });
+  //   }
+  //
+  //   // update daily stats
+  //   _incrementConsumedFoodStats(food.foodStats, date);
+  // }
+  //
+  //
+  // /// Subtract food to consumed list
+  // Future<void> subtractConsumedFood( DietFood food, DateTime date) async {
+  //   final ref = _db
+  //       .collection('users')
+  //       .doc(userId)
+  //       .collection('history')
+  //       .doc('${date.year}')
+  //       .collection('${date.month}')
+  //       .doc('${date.day}')
+  //       .collection('food_consumed_list')
+  //       .doc(food.id);
+  //
+  //   final map = food.toConsumedMap()..remove('id');
+  //
+  //   final snapshot = await ref.get();
+  //
+  //   if (snapshot.exists) {
+  //     final existingData = snapshot.data()!;
+  //     final existingCount = existingData['count'] ?? 0;
+  //
+  //     await ref.update({
+  //       ...map,
+  //       'count': existingCount - 1,
+  //     });
+  //   } else {
+  //     await ref.set({
+  //       ...map,
+  //       'count': -1,
+  //     });
+  //   }
+  //
+  //   // update daily stats
+  //   _decrementConsumedFoodStats(food.foodStats, date);
+  // }
 
   /// Delete food from available list
   Future<void> deleteFromGlobalFoodList(String id) {

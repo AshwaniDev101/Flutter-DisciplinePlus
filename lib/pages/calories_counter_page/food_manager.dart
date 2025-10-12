@@ -65,13 +65,20 @@ class FoodManager {
     _dietFoodRepository.addAvailable(food);
   }
 
-  void addToConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
-    _dietFoodRepository.addConsumed(latestFoodStatsData,food, DateTime.now());
+
+
+  void changeConsumedCount(double count, DietFood food) {
+    _dietFoodRepository.changeConsumedCount(count,food, DateTime.now());
+
   }
 
-  void subtractFromConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
-    _dietFoodRepository.subtractConsumed(latestFoodStatsData,food, DateTime.now());
-  }
+  // void addToConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
+  //   _dietFoodRepository.addConsumed(latestFoodStatsData,food, DateTime.now());
+  // }
+  //
+  // void subtractFromConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
+  //   _dietFoodRepository.subtractConsumed(latestFoodStatsData,food, DateTime.now());
+  // }
   // Remove from available food list
   void removeFromAvailableFood(DietFood food) {
     _dietFoodRepository.deleteAvailable(food.id);
