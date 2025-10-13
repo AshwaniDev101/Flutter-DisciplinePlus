@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/food_stats.dart';
-import '../../database/repository/calories_repository.dart';
+import '../../../database/repository/calories_repository.dart';
 
 
 class CalorieHistoryPage extends StatefulWidget {
@@ -22,7 +22,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           'Calorie History',
@@ -30,7 +30,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
         ),
         centerTitle: true,
         elevation: 2,
-        backgroundColor: Colors.orangeAccent.shade700,
+        backgroundColor: Colors.pink[300],
       ),
       body: SafeArea(
         child: FutureBuilder<Map<int, FoodStats>>(

@@ -22,7 +22,7 @@ class FoodQuantitySelector extends StatefulWidget {
     this.precision = 1,
     this.onChanged,
     this.buttonSize = 30.0,
-    this.buttonColor,
+    this.buttonColor=Colors.grey,
     this.enableHoldToRepeat = true,
   })  : assert(min <= max),
         assert(precision >= 0),
@@ -141,7 +141,7 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
         height: widget.buttonSize,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: enabled ? color.withOpacity(0.12) : Colors.grey.withOpacity(0.10),
+          color: enabled ? color.withOpacity(0.2) : Colors.grey.withOpacity(0.05),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, size: widget.buttonSize * 0.55, color: enabled ? color : Colors.grey),

@@ -1,20 +1,21 @@
 
+import 'package:discipline_plus/pages/calories_counter_page/calorie_history_page/calorie_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../../../core/utils/helper.dart';
 import '../../../models/food_stats.dart';
 
-class CalorieProgressBar extends StatefulWidget {
+class CalorieProgressBarDashboard extends StatefulWidget {
 
 
   final Stream<FoodStats?> stream;
-  const CalorieProgressBar({required this.stream, super.key});
+  const CalorieProgressBarDashboard({required this.stream, super.key});
 
   @override
-  State<CalorieProgressBar> createState() => _CalorieProgressBarState();
+  State<CalorieProgressBarDashboard> createState() => _CalorieProgressBarDashboardState();
 }
 
-class _CalorieProgressBarState extends State<CalorieProgressBar> {
+class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboard> {
 
 
   final atMostProgress = 1600;
@@ -88,7 +89,12 @@ class _CalorieProgressBarState extends State<CalorieProgressBar> {
 
             ElevatedButton(child: Text(getCurrentDateFormatted()),
                 onPressed: (){
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CalorieHistoryPage()
+                    ),
+                  );
                 }
             ),
 

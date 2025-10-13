@@ -120,7 +120,7 @@ class GlobalFoodList extends StatelessWidget {
               
               physics: BouncingScrollPhysics(),
               itemCount: foods.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 4),
+              separatorBuilder: (_, __) => const SizedBox(height: 6),
               itemBuilder: (context, index) {
                 final food = foods[index];
                 final barColor = _colorPalette[index % _colorPalette.length];
