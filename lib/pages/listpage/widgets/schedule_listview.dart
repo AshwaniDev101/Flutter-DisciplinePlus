@@ -1,3 +1,4 @@
+import 'package:discipline_plus/pages/listpage/schedule_coordinator.dart';
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import '../../../managers/selected_day_manager.dart';
@@ -34,7 +35,8 @@ class _ScheduleListviewState extends State<ScheduleListview> {
           Expanded(
             child: StreamBuilder<List<Initiative>>(
               // stream:ScheduleManager.instance.watch(),
-              stream:ScheduleManager.instance.schedule$,
+              // stream:ScheduleManager.instance.schedule$,
+              stream:ScheduleCoordinator.instance.mergedDayInitiatives,
               // initialData: const [],
               builder: (context, snapshot) {
 

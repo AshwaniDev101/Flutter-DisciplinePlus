@@ -1,19 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/initiative.dart';
 
-class FirebaseGlobalInitiativeService {
+class FirebaseGlobalInitiativeListService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String _root = 'users';
   final String _userId = 'user1'; // user 1 can be dynamic
 
   // Singleton
-  FirebaseGlobalInitiativeService._();
-  static final instance = FirebaseGlobalInitiativeService._();
+  FirebaseGlobalInitiativeListService._();
+  static final instance = FirebaseGlobalInitiativeListService._();
 
   CollectionReference get _initiativeCollection =>
       _db.collection(_root).doc(_userId).collection('initiative_list');
 
-  Stream<List<Initiative>> streamInitiatives() {
+  Stream<List<Initiative>> watchInitiatives() {
     return _initiativeCollection.orderBy('index').snapshots().map(
           (snapshot) => snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;

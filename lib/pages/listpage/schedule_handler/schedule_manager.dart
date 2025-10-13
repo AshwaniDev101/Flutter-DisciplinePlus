@@ -1,4 +1,6 @@
 
+import 'dart:collection';
+
 import 'package:discipline_plus/database/services/firebase_schedule_service.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../../database/repository/schedule_repository.dart';
@@ -30,6 +32,10 @@ class ScheduleManager {
   })
       .shareReplay(maxSize: 1);
 
+  // UnmodifiableListView<Initiative> get cache => UnmodifiableListView(_cache);
+
+
+
   // Switch active day
   void changeDay(String newDay) => _dayController.changeDay(newDay);
 
@@ -38,10 +44,12 @@ class ScheduleManager {
   Future<void> update(String day, Initiative ini) => _repository.update(day, ini.id, ini);
   Future<void> deleteInitiativeFrom(String day, String id) => _repository.delete(day, id);
 
+
   // Utilities (delegated)
   double get completionRate => ScheduleHelpers.calculateCompletion(_cache);
   Initiative? getNext(int index) => ScheduleHelpers.nextInitiative(_cache, index);
   int get length => _cache.length;
+  String get currentDay => _dayController.currentDay;
 }
 
 

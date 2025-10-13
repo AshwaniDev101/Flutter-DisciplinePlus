@@ -48,4 +48,27 @@ class Initiative {
       index: map['index'] as int? ?? 0, // Safely load index or default to 0
     );
   }
+
+
+
+  Initiative copyWith({
+    String? id,
+    String? title,
+    AppTime? completionTime,
+    AppTime? dynamicTime,
+    bool? isComplete,
+    StudyBreak? studyBreak,
+    int? index,
+  }) {
+    return Initiative(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      completionTime: completionTime ?? this.completionTime,
+      dynamicTime: dynamicTime ?? this.dynamicTime,
+      isComplete: isComplete ?? this.isComplete,
+      studyBreak: studyBreak ?? this.studyBreak,
+      index: index ?? this.index,
+    );
+  }
+
 }

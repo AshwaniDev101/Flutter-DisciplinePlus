@@ -18,7 +18,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-
   // initialize Hive for Flutter
   await Hive.initFlutter();
   await Hive.openBox('initiatives');
@@ -31,12 +30,8 @@ Future<void> main() async {
 
   // final repo = InitiativeRepository(service);
 
-
   await AudioManager().init();
   runApp(const MyApp());
-
-
-
 
 
 }

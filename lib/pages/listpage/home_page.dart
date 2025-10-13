@@ -1,4 +1,7 @@
 
+import 'package:discipline_plus/database/services/firebase_initiative_completion_service.dart';
+import 'package:discipline_plus/pages/listpage/schedule_completion_manager.dart';
+import 'package:discipline_plus/pages/listpage/schedule_coordinator.dart';
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -96,16 +99,16 @@ class _HomePageState extends State<HomePage> with RouteAware {
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (String value) {
               // Handle menu item selection
-               if (value == 'Settings') {
+               if (value == 'test1') {
 
-                showFullScreenDialog(context);
+                FirebaseInitiativeCompletionService.instance.setInitiativeCompletion(DateTime.now(), "some initiative id", true);
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
 
               PopupMenuItem<String>(
 
-                value: 'Setting',
+                value: 'test1',
                 child: Row(
                   children: [
                     Icon(Icons.settings, color: Colors.pink[200]),
@@ -166,7 +169,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
 
                 FloatingActionButton(
-                  onPressed: () => showFullScreenDialog(context),
+                  onPressed: () => showFullScreenGlobalInitiativeDialog(context),
                   child: const Icon(Icons.add),
                 ),
 
@@ -188,12 +191,10 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
 
 
-          setState(() {
-            initiative.isComplete = true;
-          });
-
-
-
+          // setState(() {
+          //   initiative.isComplete = true;
+          // });
+          ScheduleCompletionManager.instance.toggleCompletion(initiative.id, true);
 
 
 
@@ -212,7 +213,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
   }
 
 
-  void showFullScreenDialog(BuildContext context) {
+  void showFullScreenGlobalInitiativeDialog(BuildContext context) {
     TextEditingController searchController = TextEditingController();
     String searchText = "";
 

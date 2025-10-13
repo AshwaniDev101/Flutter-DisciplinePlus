@@ -1,14 +1,14 @@
 import 'package:discipline_plus/models/initiative.dart';
 
-import '../services/firebase_global_Initiative_list.dart';
+import '../services/firebase_global_initiative_list_service.dart';
 
 class GlobalInitiativeListRepository {
-  final FirebaseGlobalInitiativeService _service;
+  final FirebaseGlobalInitiativeListService _service;
 
   GlobalInitiativeListRepository(this._service);
 
-  Stream<List<Initiative>> watchAll() {
-    return _service.streamInitiatives();
+  Stream<List<Initiative>> watchInitiatives() {
+    return _service.watchInitiatives();
   }
 
   Future<void> add(Initiative initiative) {

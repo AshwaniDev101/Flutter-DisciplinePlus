@@ -208,22 +208,6 @@ class FirebaseDietFoodService {
         .delete();
   }
 
-  // /// Delete food from consumed list
-  // Future<void> deleteConsumedFood(FoodStats latestFoodStatsData, DietFood dietFood, DateTime date) {
-  //
-  //   _decrementConsumedFoodStats(latestFoodStatsData, dietFood.foodStats, date);
-  //   return _db
-  //       .collection('users')
-  //       .doc(userId)
-  //       .collection('history')
-  //       .doc('${date.year}')
-  //       .collection('${date.month}')
-  //       .doc('${date.day}')
-  //       .collection('food_consumed_list')
-  //       .doc(dietFood.id)
-  //       .delete();
-  // }
-
   /// Update food in available list
   Future<void> updateInGlobalFoodListItem(String id, DietFood food) {
     final ref = _db
@@ -234,21 +218,6 @@ class FirebaseDietFoodService {
     final map = food.toAvailableMap()..remove('id');
     return ref.update(map);
   }
-
-  // /// Update food in consumed list
-  // Future<void> updateConsumedFood(String id, DietFood food, DateTime date) {
-  //   final ref = _db
-  //       .collection('users')
-  //       .doc(userId)
-  //       .collection('history')
-  //       .doc('${date.year}')
-  //       .collection('${date.month}')
-  //       .doc('${date.day}')
-  //       .collection('food_consumed_list')
-  //       .doc(id);
-  //   final map = food.toConsumedMap()..remove('id');
-  //   return ref.update(map);
-  // }
 
 
 
@@ -283,43 +252,6 @@ class FirebaseDietFoodService {
 
     await ref.set(map, SetOptions(merge: true));
   }
-
-
-
-  //
-  // Future<void> _updateConsumedFoodStats(
-  //     FoodStats latestFoodStatsData,
-  //     FoodStats newFoodStats,
-  //     DateTime date, {
-  //       required bool isSum,
-  //     }) async {
-  //
-  //
-  //   FoodStats updatedFoodStats;
-  //
-  //   if (isSum) {
-  //     updatedFoodStats = latestFoodStatsData.sum(newFoodStats);
-  //   } else {
-  //     updatedFoodStats = latestFoodStatsData.subtract(newFoodStats);
-  //   }
-  //
-  //   final ref = _db
-  //       .collection('users')
-  //       .doc(userId)
-  //       .collection('history')
-  //       .doc('${date.year}')
-  //       .collection('${date.month}')
-  //       .doc('${date.day}');
-  //
-  //   final map = {
-  //     'foodStats': updatedFoodStats.toMap(),
-  //   };
-  //
-  //   await ref.set(map, SetOptions(merge: true));
-  // }
-
-
-
 
 
 }
