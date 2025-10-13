@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/initiative.dart';
 
-class FirebaseInitiativeService {
+class FirebaseGlobalInitiativeService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String _root = 'users';
   final String _userId = 'user1'; // user 1 can be dynamic
 
   // Singleton
-  FirebaseInitiativeService._();
-  static final instance = FirebaseInitiativeService._();
+  FirebaseGlobalInitiativeService._();
+  static final instance = FirebaseGlobalInitiativeService._();
 
   CollectionReference get _initiativeCollection =>
       _db.collection(_root).doc(_userId).collection('initiative_list');

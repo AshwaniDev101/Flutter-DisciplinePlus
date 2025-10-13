@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/food_stats.dart';
-import '../../../database/repository/calories_repository.dart';
+import '../../../database/repository/calories_history_repository.dart';
 
 class CalorieHistoryPage extends StatefulWidget {
   const CalorieHistoryPage({super.key});
@@ -15,7 +15,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
   @override
   void initState() {
     super.initState();
-    _future = CaloriesRepository.instance.getMonthStats(year: 2025, month: 10);
+    _future = CaloriesHistoryRepository.instance.getMonthStats(year: 2025, month: 10);
   }
 
   @override
@@ -47,7 +47,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
               return RefreshIndicator(
                 onRefresh: () async {
                   setState(() {
-                    _future = CaloriesRepository.instance
+                    _future = CaloriesHistoryRepository.instance
                         .getMonthStats(year: 2025, month: 10);
                   });
                 },

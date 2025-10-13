@@ -6,10 +6,10 @@ import '../../models/food_stats.dart';
 ///
 /// This service is designed for structured Firestore data:
 /// users/{userId}/history/{year}/{month}/{day}/foodStats
-class FirebaseCaloriesService {
+class FirebaseCaloriesHistoryService {
   // Singleton instance
-  FirebaseCaloriesService._();
-  static final instance = FirebaseCaloriesService._();
+  FirebaseCaloriesHistoryService._();
+  static final instance = FirebaseCaloriesHistoryService._();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 

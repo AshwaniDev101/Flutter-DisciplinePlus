@@ -1,14 +1,14 @@
 import 'package:discipline_plus/models/food_stats.dart';
-import '../../database/services/firebase_calories_service.dart';
+import '../../database/services/firebase_calories_history_service.dart';
 
 /// Repository for calorie data
 /// This abstracts Firebase and provides a single place to get data
-class CaloriesRepository {
+class CaloriesHistoryRepository {
   // Singleton
-  CaloriesRepository._();
-  static final instance = CaloriesRepository._();
+  CaloriesHistoryRepository._();
+  static final instance = CaloriesHistoryRepository._();
 
-  final _firebaseService = FirebaseCaloriesService.instance;
+  final _firebaseService = FirebaseCaloriesHistoryService.instance;
 
   /// Get food stats for a specific month
   Future<Map<int, FoodStats>> getMonthStats({
