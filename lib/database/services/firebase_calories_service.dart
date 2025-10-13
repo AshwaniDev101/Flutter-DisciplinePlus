@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import '../../models/food_stats.dart';
 
 /// A Firebase service for fetching user's calorie history.
@@ -18,6 +19,8 @@ class FirebaseCaloriesService {
   /// Fetches [FoodStats] for all days in a specific [year] and [month].
   ///
   /// Returns a map where the key is the day of the month and the value is [FoodStats].
+
+
   Future<Map<int, FoodStats>> getFoodStatsForMonth({
     required int year,
     required int month,
@@ -41,13 +44,17 @@ class FirebaseCaloriesService {
         try {
           statsMap[day] = FoodStats.fromMap(data['foodStats']);
         } catch (e) {
-          // Optional: log invalid entry if necessary
-          // debugPrint('Invalid foodStats data for day $day: $e');
+
+          debugPrint('Invalid foodStats data for day $day: $e');
         }
       }
     }
 
-    return statsMap;
+    final reversedMap = Map.fromEntries(
+      statsMap.entries.toList()..sort((a, b) => b.key.compareTo(a.key)),
+    );
+
+    return reversedMap;
   }
 
   /// Fetches all [FoodStats] for a given [year].

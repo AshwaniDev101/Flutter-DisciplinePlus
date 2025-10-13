@@ -35,7 +35,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
           ListTile(
             leading: Icon(Icons.monitor_weight_outlined),
-            title: Text('Diet Page'),
+            title: Text('Calories Counter'),
             onTap: () {
               Navigator.push(
                 context,

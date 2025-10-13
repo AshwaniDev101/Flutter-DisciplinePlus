@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import '../../../database/repository/calories_repository.dart';
 
-
 class CalorieHistoryPage extends StatefulWidget {
   const CalorieHistoryPage({super.key});
 
@@ -26,7 +25,8 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
       appBar: AppBar(
         title: const Text(
           'Calorie History',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
         ),
         centerTitle: true,
         elevation: 2,
@@ -38,12 +38,17 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
           future: _future,
           builder: (context, snapshot) => _buildSnapshot(
             snapshot,
-                (stats) {
-              final dayKeys = stats.keys.toList()..sort();
+            (stats) {
+              // Reverse the day keys
+              final dayKeys = stats.keys.toList()
+                ..sort((a, b) => b.compareTo(a));
+
+              // final dayKeys = stats.keys.toList()..sort();
               return RefreshIndicator(
                 onRefresh: () async {
                   setState(() {
-                    _future = CaloriesRepository.instance.getMonthStats(year: 2025, month: 10);
+                    _future = CaloriesRepository.instance
+                        .getMonthStats(year: 2025, month: 10);
                   });
                 },
                 child: ListView.separated(
@@ -76,7 +81,8 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
           style: const TextStyle(color: Colors.redAccent),
         ),
       );
-    } else if (!snapshot.hasData || (snapshot.data is Map && (snapshot.data as Map).isEmpty)) {
+    } else if (!snapshot.hasData ||
+        (snapshot.data is Map && (snapshot.data as Map).isEmpty)) {
       return const Center(
         child: Text(
           'No data found',
@@ -134,7 +140,8 @@ class DayCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.pink.shade200,
                     borderRadius: BorderRadius.circular(8),
@@ -155,8 +162,10 @@ class DayCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNutrientChip('Protein', stat.proteins, Colors.pink.shade300),
-                _buildNutrientChip('Carbs', stat.carbohydrates, Colors.orange.shade300),
+                _buildNutrientChip(
+                    'Protein', stat.proteins, Colors.pink.shade300),
+                _buildNutrientChip(
+                    'Carbs', stat.carbohydrates, Colors.orange.shade300),
                 _buildNutrientChip('Fats', stat.fats, Colors.amber.shade400),
               ],
             ),
@@ -164,8 +173,10 @@ class DayCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNutrientChip('Vitamins', stat.vitamins, Colors.green.shade300),
-                _buildNutrientChip('Minerals', stat.minerals, Colors.blue.shade300),
+                _buildNutrientChip(
+                    'Vitamins', stat.vitamins, Colors.green.shade300),
+                _buildNutrientChip(
+                    'Minerals', stat.minerals, Colors.blue.shade300),
                 const SizedBox(width: 60), // for symmetry
               ],
             ),
@@ -173,7 +184,6 @@ class DayCard extends StatelessWidget {
         ),
       ),
     );
-
 
     // return Card(
     //   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),

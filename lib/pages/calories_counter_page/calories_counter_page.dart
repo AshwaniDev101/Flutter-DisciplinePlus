@@ -23,7 +23,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
           style: TextStyle(
               fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
         ),
-
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.pink[200],
 
         actions: [

@@ -173,6 +173,7 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
             width: 40,
             height: 40,
             child: TextField(
+              enabled: false,// remove this to enable editing
               style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 16.0,

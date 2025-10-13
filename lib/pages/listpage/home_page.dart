@@ -128,40 +128,29 @@ class _HomePageState extends State<HomePage> with RouteAware {
             maxHeight: _panelMaxHeight,
             onPanelSlide: (v) => slidingPanelNotifier.value = v,
             panel: const HeatmapPanel(),
-            body: PageView(
-          
-              controller: _controller,
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-          
-          
-          
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
 
-                    const Divider(height: 1, thickness: 1),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: const BorderRadius.vertical(
-                              bottom: Radius.circular(12)),
-                        ),
-                        child: ScheduleListview(
-                          // dayIndex: 0,
-                          scrollController: _scrollController,
-                          // refreshController: _refreshControllers,
-                          onItemSwipe: (swipeDirection, initiative) => _navigateToTimer(initiative, swipeDirection),
-                          onItemEdit: (existingInitiative) =>
-                              _showAddUpdateInitiativeDialog(initiative: existingInitiative),
-                        ),
-                      ),
+                const Divider(height: 1, thickness: 1),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(12)),
                     ),
-                  ],
+                    child: ScheduleListview(
+                      // dayIndex: 0,
+                      scrollController: _scrollController,
+                      // refreshController: _refreshControllers,
+                      onItemSwipe: (swipeDirection, initiative) => _navigateToTimer(initiative, swipeDirection),
+                      onItemEdit: (existingInitiative) =>
+                          _showAddUpdateInitiativeDialog(initiative: existingInitiative),
+                    ),
+                  ),
                 ),
-
               ],
-          
             ),
           ),
         ),

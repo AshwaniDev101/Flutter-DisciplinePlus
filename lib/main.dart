@@ -55,8 +55,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Constants.background_color),
         useMaterial3: true,
       ),
-      // home: HomePage(),
-      home: CaloriesCounterPage()
+      home: HomePage(),
+      // home: CaloriesCounterPage()
       // home: CalorieHistoryPage()
     );
 
