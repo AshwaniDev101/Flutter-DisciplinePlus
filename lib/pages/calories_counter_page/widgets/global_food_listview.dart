@@ -116,27 +116,36 @@ class GlobalFoodList extends StatelessWidget {
           context: context,
           removeTop: true,
           child: Expanded(
-            child: ListView.separated(
-              
-              physics: BouncingScrollPhysics(),
-              itemCount: foods.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 6),
-              itemBuilder: (context, index) {
-                final food = foods[index];
-                final barColor = _colorPalette[index % _colorPalette.length];
-            
-                return _FoodCard(
-                  food: food,
-                  barColor: barColor,
-                  onClickOptionMenu: (context) => _showItemMenu(context, food),
-                  onAddPressed: () {
-                    // Implement add-food logic
-                  },
-                );
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child,);
               },
+              child: ListView.separated(
+                key: ValueKey(foods.length), // 🔥 This line is the magic
+                physics: const BouncingScrollPhysics(),
+                itemCount: foods.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 6),
+                itemBuilder: (context, index) {
+                  final food = foods[index];
+                  final barColor = _colorPalette[index % _colorPalette.length];
+
+                  return _FoodCard(
+                    key: ValueKey(food.id), // optional: smooth per-item updates
+                    food: food,
+                    barColor: barColor,
+                    onClickOptionMenu: (context) => _showItemMenu(context, food),
+                    onAddPressed: () {
+                      // your add logic
+                    },
+                  );
+                },
+              ),
             ),
           ),
         );
+
       },
     );
   }

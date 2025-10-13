@@ -28,7 +28,12 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
 
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
+                  FoodManager.instance.addToAvailableFood(food);
+                });
+
+              },
               icon: Icon(
                 Icons.add,
                 color: Colors.white,
@@ -36,18 +41,16 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
 
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
-            FoodManager.instance.addToAvailableFood(food);
-          });
-        },
-        backgroundColor: Colors.pink[300],
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //
+      //   },
+      //   backgroundColor: Colors.pink[300],
+      //   child: Icon(
+      //     Icons.add,
+      //     color: Colors.white,
+      //   ),
+      // ),
       body: SafeArea(
         child: Column(
           children: [
@@ -76,7 +79,8 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
               // onDecrement:(DietFood food){
               //
               // },
-            )
+            ),
+
           ],
         ),
       ),

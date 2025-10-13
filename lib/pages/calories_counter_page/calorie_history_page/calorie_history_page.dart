@@ -26,11 +26,12 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
       appBar: AppBar(
         title: const Text(
           'Calorie History',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white),
         ),
         centerTitle: true,
         elevation: 2,
         backgroundColor: Colors.pink[300],
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
         child: FutureBuilder<Map<int, FoodStats>>(
@@ -98,29 +99,118 @@ class DayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.pink.shade50, Colors.white],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.pink.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Day $day',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.orangeAccent.shade700,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Day $day',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.pink.shade400,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.pink.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${stat.calories} kcal',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 6),
-            Text('Calories: ${stat.calories}'),
-            Text('Proteins: ${stat.proteins} | Carbs: ${stat.carbohydrates} | Fats: ${stat.fats}'),
-            Text('Vitamins: ${stat.vitamins} | Minerals: ${stat.minerals}'),
+            const SizedBox(height: 8),
+            Divider(color: Colors.pink.shade100, thickness: 1),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildNutrientChip('Protein', stat.proteins, Colors.pink.shade300),
+                _buildNutrientChip('Carbs', stat.carbohydrates, Colors.orange.shade300),
+                _buildNutrientChip('Fats', stat.fats, Colors.amber.shade400),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildNutrientChip('Vitamins', stat.vitamins, Colors.green.shade300),
+                _buildNutrientChip('Minerals', stat.minerals, Colors.blue.shade300),
+                const SizedBox(width: 60), // for symmetry
+              ],
+            ),
           ],
         ),
       ),
+    );
+
+
+    // return Card(
+    //   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    //   elevation: 2,
+    //   child: Padding(
+    //     padding: const EdgeInsets.all(12),
+    //     child: Column(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: [
+    //         Text(
+    //           'Day $day',
+    //           style: theme.textTheme.titleMedium?.copyWith(
+    //             fontWeight: FontWeight.bold,
+    //             color: Colors.orangeAccent.shade700,
+    //           ),
+    //         ),
+    //         const SizedBox(height: 6),
+    //         Text('Calories: ${stat.calories}'),
+    //         Text('Proteins: ${stat.proteins} | Carbs: ${stat.carbohydrates} | Fats: ${stat.fats}'),
+    //         Text('Vitamins: ${stat.vitamins} | Minerals: ${stat.minerals}'),
+    //       ],
+    //     ),
+    //   ),
+    // );
+  }
+
+  Widget _buildNutrientChip(String label, int value, Color color) {
+    return Row(
+      children: [
+        CircleAvatar(radius: 4, backgroundColor: color),
+        const SizedBox(width: 4),
+        Text(
+          '$label: $value',
+          style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
+        ),
+      ],
     );
   }
 }
