@@ -68,7 +68,9 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
             GlobalFoodList(
               stream: FoodManager.instance.watchMergedFoodList(),
               onEdit: (DietFood food) {
-                FoodManager.instance.editAvailableFood(food);
+                AddEditDietFoodDialog.show(context,food: food, onAdd: (DietFood food) {
+                  FoodManager.instance.updateAvailableFood(food);
+                });
               },
               onDeleted: (DietFood food) {
                 FoodManager.instance.removeFromAvailableFood(food);

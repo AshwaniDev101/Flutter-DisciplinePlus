@@ -88,7 +88,7 @@ class FoodManager {
   // }
 
   // Edit available food
-  void editAvailableFood(DietFood food) {
+  void updateAvailableFood(DietFood food) {
     _dietFoodRepository.updateAvailable(food.id, food);
   }
   // void editConsumedFood(DietFood food) {
