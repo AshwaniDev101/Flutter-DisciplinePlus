@@ -5,13 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirebaseHeatmapService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String _root = 'users';
-  final String userId;
+  final String userId = 'user1';
 
   // Private constructor for instances
-  FirebaseHeatmapService._(this.userId);
+  FirebaseHeatmapService._();
 
   /// Get an instance scoped to a specific user
-  static FirebaseHeatmapService instance(String userId) => FirebaseHeatmapService._(userId);
+  static final instance = FirebaseHeatmapService._();
 
   /// Reference to a single activity's heatmap document
   DocumentReference<Map<String, dynamic>> _heatmapDoc({

@@ -1,9 +1,11 @@
 import 'package:discipline_plus/database/services/firebase_initiative_completion_service.dart';
 import 'package:discipline_plus/pages/listpage/schedule_completion_manager.dart';
+import 'package:discipline_plus/pages/listpage/schedule_coordinator.dart';
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
+import '../../database/repository/heatmap_repository.dart';
+import '../../database/services/firebase_heatmap_service.dart';
 import '../../drawer/drawer.dart';
 import '../../managers/selected_day_manager.dart';
 import '../../models/initiative.dart';
@@ -62,8 +64,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
             }));
   }
 
-  final PageController _controller = PageController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,30 +92,37 @@ class _HomePageState extends State<HomePage> with RouteAware {
                     .changeDay(SelectedDayManager.currentSelectedWeekDay.value);
               },
               icon: Icon(Icons.keyboard_arrow_right_rounded)),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            onSelected: (String value) {
-              // Handle menu item selection
-              if (value == 'test1') {
-                FirebaseInitiativeCompletionService.instance
-                    .setInitiativeCompletion(
-                        DateTime.now(), "some initiative id", true);
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'test1',
-                child: Row(
-                  children: [
-                    Icon(Icons.settings, color: Colors.pink[200]),
-                    const SizedBox(width: 8),
-                    const Text('Settings'),
-                    const SizedBox(width: 8),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          IconButton(
+              onPressed: () {
+                SelectedDayManager.toNextDay();
+                ScheduleManager.instance
+                    .changeDay(SelectedDayManager.currentSelectedWeekDay.value);
+              },
+              icon: Icon(Icons.add)),
+          // PopupMenuButton<String>(
+          //   icon: const Icon(Icons.more_vert, color: Colors.white),
+          //   onSelected: (String value) {
+          //     // Handle menu item selection
+          //     if (value == 'test1') {
+          //       FirebaseInitiativeCompletionService.instance
+          //           .setInitiativeCompletion(
+          //               DateTime.now(), "some initiative id", true);
+          //     }
+          //   },
+          //   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+          //     PopupMenuItem<String>(
+          //       value: 'test1',
+          //       child: Row(
+          //         children: [
+          //           Icon(Icons.settings, color: Colors.pink[200]),
+          //           const SizedBox(width: 8),
+          //           const Text('Settings'),
+          //           const SizedBox(width: 8),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
       drawer: const CustomDrawer(),
@@ -183,8 +190,19 @@ class _HomePageState extends State<HomePage> with RouteAware {
         pageBuilder: (_, __, ___) => TimerPage(
           initiative: initiative,
           onComplete: ({isManual = false, isComplete = false}) {
+
             ScheduleCompletionManager.instance
                 .toggleCompletion(initiative.id, isComplete);
+
+
+            // Updating heatmap
+
+            HeatmapRepository heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance);
+
+            var percentage = ScheduleCoordinator.instance.latestCompletionPercentage;
+            heatmapRepository.updateEntry(activityId: initiative.id, date: DateTime.now(), value: percentage);
+
+
           },
         ),
 

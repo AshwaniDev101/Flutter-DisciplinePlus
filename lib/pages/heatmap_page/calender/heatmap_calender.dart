@@ -21,7 +21,7 @@ class _HeatmapCalenderState extends State<HeatmapCalender> {
   DateTime? selectedDate;
   final Map<String, int> heatLevelMap = {};
 
-  final HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance('user1'));
+  final HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance);
 
 
 

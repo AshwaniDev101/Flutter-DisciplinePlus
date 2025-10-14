@@ -23,7 +23,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
   DateTime? selectedDate;
 
   final ScrollController _scrollController = ScrollController();
-  final HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance('user1'));
+  final HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance);
 
 
   @override

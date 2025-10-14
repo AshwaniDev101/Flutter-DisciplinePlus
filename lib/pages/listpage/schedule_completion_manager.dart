@@ -6,6 +6,37 @@ import 'package:rxdart/rxdart.dart';
 import '../../database/repository/global_initiative_list_repository.dart';
 import '../../database/repository/initiative_completion_repository.dart';
 
+
+/// The [ScheduleCompletionManager] is responsible for tracking and updating
+/// the completion state of initiatives in the app.
+///
+/// It acts as the bridge between the app’s business logic and the underlying
+/// [FirebaseInitiativeCompletionService], providing a reactive interface
+/// for reading and writing completion data.
+///
+/// Key responsibilities:
+/// - Expose a stream of global initiatives merged with their completion state.
+/// - Allow toggling or setting completion for a specific initiative.
+/// - Provide a centralized, testable, and reusable way to interact with
+///   initiative completion data.
+///
+/// Unlike [ScheduleManager], which organizes initiatives by day,
+/// this manager focuses purely on whether an initiative is complete or not,
+/// and can be used for any initiative regardless of the day.
+///
+/// Example usage:
+/// ```dart
+/// ScheduleCompletionManager.instance.watchMergedInitiativeList().listen((initiatives) {
+///   // Each initiative now contains its current completion state.
+/// });
+///
+/// // Mark an initiative as complete
+/// ScheduleCompletionManager.instance.toggleCompletion('initiativeId', true);
+/// ```
+///
+/// Think of this manager as the “source of truth” for initiative completion.
+
+
 class ScheduleCompletionManager {
   ScheduleCompletionManager._internal();
 

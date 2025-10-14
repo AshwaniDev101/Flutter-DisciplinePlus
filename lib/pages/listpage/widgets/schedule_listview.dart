@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../managers/selected_day_manager.dart';
 import '../../../models/initiative.dart';
 import '../../../core/utils/constants.dart';
+import '../schedule_completion_manager.dart';
 
 class ScheduleListview extends StatefulWidget {
   // final int dayIndex;
@@ -30,55 +31,58 @@ class _ScheduleListviewState extends State<ScheduleListview> {
 
     @override
     Widget build(BuildContext context) {
-      return Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<List<Initiative>>(
-              // stream:ScheduleManager.instance.watch(),
-              // stream:ScheduleManager.instance.schedule$,
-              stream:ScheduleCoordinator.instance.mergedDayInitiatives,
-              // initialData: const [],
-              builder: (context, snapshot) {
+      return Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<List<Initiative>>(
+                // stream:ScheduleManager.instance.watch(),
+                // stream:ScheduleManager.instance.schedule$,
+                stream:ScheduleCoordinator.instance.mergedDayInitiatives,
+                // initialData: const [],
+                builder: (context, snapshot) {
 
-                if (snapshot.hasError) {
-                  return const Center(child: Text('Something went wrong'));
-                }
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('Something went wrong'));
+                  }
 
-                // if (snapshot.connectionState == ConnectionState.waiting && initiatives.isEmpty) {
-                //   return const Center(child: CircularProgressIndicator());
-                // }
+                  // if (snapshot.connectionState == ConnectionState.waiting && initiatives.isEmpty) {
+                  //   return const Center(child: CircularProgressIndicator());
+                  // }
 
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                final initiatives = snapshot.data ?? [];
+                  final initiatives = snapshot.data ?? [];
 
-                if (initiatives.isEmpty) {
-                  return const Center(child: Text('No data available'));
-                }
-                return ReorderableListView(
-                scrollController: widget.scrollController,
-                padding: const EdgeInsets.all(8),
-                onReorder: (oldIndex, newIndex) {
-                  setState(() {
-                    if (newIndex > oldIndex) newIndex--;
-                    // final item = initiatives[oldIndex];
-                    // TaskManager.instance.removeInitiativeAt(oldIndex);
-                    // TaskManager.instance.insertInitiativeAt(newIndex, item);
-                    // TaskManager.instance.updateAllOrders();
-                  });
+                  if (initiatives.isEmpty) {
+                    return const Center(child: Text('No data available'));
+                  }
+                  return ReorderableListView(
+                  scrollController: widget.scrollController,
+                  padding: const EdgeInsets.all(8),
+                  onReorder: (oldIndex, newIndex) {
+                    setState(() {
+                      if (newIndex > oldIndex) newIndex--;
+                      // final item = initiatives[oldIndex];
+                      // TaskManager.instance.removeInitiativeAt(oldIndex);
+                      // TaskManager.instance.insertInitiativeAt(newIndex, item);
+                      // TaskManager.instance.updateAllOrders();
+                    });
+                  },
+                  children: [
+                    for (int i = 0; i < initiatives.length; i++)
+                      _dismissibleItem(context, initiatives[i], i),
+                  ],
+                                    );
                 },
-                children: [
-                  for (int i = 0; i < initiatives.length; i++)
-                    _dismissibleItem(context, initiatives[i], i),
-                ],
-                                  );
-              },
+              ),
             ),
-          ),
-          const SizedBox(height: 100),
-        ],
+            const SizedBox(height: 100),
+          ],
+        ),
       );
     }
 
@@ -88,49 +92,173 @@ class _ScheduleListviewState extends State<ScheduleListview> {
       key: ValueKey(init.id),
       direction: DismissDirection.horizontal,
       background: _swipeBg(Icons.timer, Alignment.centerLeft, const EdgeInsets.only(left: 20)),
-      secondaryBackground:
-      _swipeBg(Icons.timer, Alignment.centerRight, const EdgeInsets.only(right: 20)),
+      secondaryBackground: _swipeBg(Icons.timer, Alignment.centerRight, const EdgeInsets.only(right: 20)),
       confirmDismiss: (dir) async {
         widget.onItemSwipe(dir, init);
         return false;
       },
       child: GestureDetector(
-        onLongPressStart: (details) =>
-            _showMenu(context, details.globalPosition, init),
-        child: ListTile(
-          dense: true,
-          leading: ReorderableDragStartListener(
-            index: index,
+        onLongPressStart: (details) => _showMenu(context, details.globalPosition, init),
+        child: Material(
+          color: Colors.transparent, // keep background transparent if needed
+          child: InkWell(
+            onTap: () {
+              // handle normal tap if needed
+              print("Tapped on ${init.title}");
+            },
+            splashColor: Colors.indigo.withOpacity(0.2), // ripple color
+            highlightColor: Colors.indigo.withOpacity(0.1),
 
-            child: _buildLeadingIcon(
-              isComplete: init.isComplete,
-              whiteCircleSize: 20,
-              iconSize: 24,),
-          ),
-          title: Text(init.title,style: TextStyle(
-            fontSize: 16,
-            color: Colors.indigo[700],
-            fontWeight: FontWeight.w400,
-            // fontWeight: init.isComplete ? FontWeight.w300 : FontWeight.bold,
-          )),
-          subtitle: RichText(
-            text: TextSpan(children: [
-
-              TextSpan(
-                text: init.completionTime.remainingTime(),
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+            child: Card(
+              elevation: 0,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              if (init.studyBreak.completionTime.minute != 0)
-                TextSpan(
-                  text: "   ${init.studyBreak.completionTime.minute}m brk",
-                  style: const TextStyle(fontSize: 12, color: Colors.red),
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  // Handle tap if needed
+                  print("Tapped on ${init.title}");
+                },
+                onLongPress: () {
+                  _showMenu(context, Offset(0, 0), init); // pass proper position if needed
+                },
+                child: Row(
+                  // mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ReorderableDragStartListener(
+                      index: index,
+                      child: _buildLeadingIcon(
+                        isComplete: init.isComplete,
+                        whiteCircleSize: 20,
+                        iconSize: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            init.title,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.indigo[700],
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: init.completionTime.remainingTime(),
+                                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                                ),
+                                if (init.studyBreak.completionTime.minute != 0)
+                                  TextSpan(
+                                    text: "   ${init.studyBreak.completionTime.minute}m brk",
+                                    style: const TextStyle(fontSize: 12, color: Colors.red),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Row(
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     InkWell(
+                    //       onTap: () {
+                    //         print("Play tapped");
+                    //         // Add your play action here
+                    //       },
+                    //       borderRadius: BorderRadius.circular(4),
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.all(4.0), // increase tap area
+                    //         child: Icon(Icons.play_arrow_rounded, color: Colors.green),
+                    //       ),
+                    //     ),
+                    //     const SizedBox(width: 8),
+                    //     InkWell(
+                    //       onTap: () {
+                    //         print("More tapped");
+                    //         // Add your menu action here
+                    //       },
+                    //       borderRadius: BorderRadius.circular(4),
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.all(4.0),
+                    //         child: Icon(Icons.more_vert_rounded, color: Colors.grey),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // )
+                    Row(
+                      mainAxisSize: MainAxisSize.min, // shrink-wrap icons
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.play_arrow_rounded, color: Colors.green[300]),
+                          padding: EdgeInsets.zero,
+
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.more_vert_rounded, color: Colors.grey),
+                          padding: EdgeInsets.zero,
+
+                        ),
+                      ],
+                    ),
+
+                  ],
                 ),
-            ]),
+              ),
+            ),
+
+            // child: ListTile(
+            //   dense: true,
+            //   leading: ReorderableDragStartListener(
+            //     index: index,
+            //     child: _buildLeadingIcon(
+            //       isComplete: init.isComplete,
+            //       whiteCircleSize: 20,
+            //       iconSize: 24,
+            //     ),
+            //   ),
+            //   title: Text(
+            //     init.title,
+            //     style: TextStyle(
+            //       fontSize: 16,
+            //       color: Colors.indigo[700],
+            //       fontWeight: FontWeight.w400,
+            //     ),
+            //   ),
+            //   subtitle: RichText(
+            //     text: TextSpan(
+            //       children: [
+            //         TextSpan(
+            //           text: init.completionTime.remainingTime(),
+            //           style: const TextStyle(fontSize: 14, color: Colors.grey),
+            //         ),
+            //         if (init.studyBreak.completionTime.minute != 0)
+            //           TextSpan(
+            //             text: "   ${init.studyBreak.completionTime.minute}m brk",
+            //             style: const TextStyle(fontSize: 12, color: Colors.red),
+            //           ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ),
-          // trailing: Icon(Icons.square_outlined),
         ),
       ),
     );
+
   }
 
   Container _swipeBg(IconData icon, Alignment align, EdgeInsets pad) => Container(
@@ -147,27 +275,75 @@ class _ScheduleListviewState extends State<ScheduleListview> {
   // );
 
 
-  void _showMenu(BuildContext context, Offset pos, Initiative item) {
-    showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(pos.dx, pos.dy, pos.dx, pos.dy),
-      items: [
-        const PopupMenuItem(value: 'edit', child: Text('Edit')),
-        const PopupMenuItem(value: 'delete', child: Text('Delete')),
-      ],
-    ).then((value) {
-      if (value == 'delete') {
-        ScheduleManager.instance.deleteInitiativeFrom(SelectedDayManager.currentSelectedWeekDay.value, item.id);
-      } else if (value == 'edit') {
+  // void _showMenu(BuildContext context, Offset pos, Initiative item) {
+  //   showMenu(
+  //     context: context,
+  //     position: RelativeRect.fromLTRB(pos.dx, pos.dy, pos.dx, pos.dy),
+  //     items: [
+  //       const PopupMenuItem(value: 'edit', child: Text('Edit')),
+  //       const PopupMenuItem(value: 'delete', child: Text('Delete')),
+  //       const PopupMenuItem(value: 'delete', child: Text('Complete')),
+  //     ],
+  //   ).then((value) {
+  //     if (value == 'delete') {
+  //       ScheduleManager.instance.deleteInitiativeFrom(SelectedDayManager.currentSelectedWeekDay.value, item.id);
+  //     } else if (value == 'edit') {
+  //
+  //
+  //       widget.onItemEdit(item);
+  //     }
+  //   });
+  // }
+
+    void _showMenu(BuildContext context, Offset pos, Initiative item) {
+      showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(pos.dx, pos.dy, pos.dx, pos.dy),
+        items: [
+          const PopupMenuItem(value: 'edit', child: Text('Edit')),
+          const PopupMenuItem(value: 'delete', child: Text('Delete')),
+          PopupMenuItem(
+            value: 'complete',
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return Row(
+                  children: [
+                    Checkbox(
+                      value: item.isComplete,
+                      onChanged: (val) {
+                        if (val == null) return;
+                        setState(() {
+                          item.isComplete = val;
+                        });
+                        // Update database immediately
+                        ScheduleCompletionManager.instance
+                            .toggleCompletion(item.id, val);
+                      },
+                    ),
+                    const Text('Complete'),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ).then((value) {
+        if (value == 'delete') {
+          ScheduleManager.instance.deleteInitiativeFrom(
+            SelectedDayManager.currentSelectedWeekDay.value,
+            item.id,
+          );
+        } else if (value == 'edit') {
+          widget.onItemEdit(item);
+        }
+        // No need to handle 'complete' here because the checkbox already updated it
+      });
+    }
 
 
-        widget.onItemEdit(item);
-      }
-    });
-  }
 
 
-  Widget _buildLeadingIcon({
+    Widget _buildLeadingIcon({
     required bool isComplete,
     required double whiteCircleSize,
     required double iconSize,

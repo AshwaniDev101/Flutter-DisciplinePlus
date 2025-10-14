@@ -178,13 +178,25 @@ class _TimerPageState extends State<TimerPage> {
   }
 
 
+  // void _onManualComplete(bool? value) {
+  //   setState(() {
+  //
+  //     widget.initiative.isComplete = value??false;
+  //
+  //   });
+  //   widget.onComplete(isManual: true,isComplete: widget.initiative.isComplete);
+  // }
+
   void _onManualComplete(bool? value) {
+    final newValue = value ?? false;
+
+    // Notify parent / managers first
+    widget.onComplete(isManual: true, isComplete: newValue);
+
+    // Then update local state to rebuild UI
     setState(() {
-
-      widget.initiative.isComplete = value??false;
-
+      widget.initiative.isComplete = newValue;
     });
-    widget.onComplete(isManual: true,isComplete: widget.initiative.isComplete);
   }
 
   void _showErrorDialog(String message) {

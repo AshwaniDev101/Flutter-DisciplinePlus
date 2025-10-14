@@ -51,16 +51,14 @@ class HeatmapRepository {
 
   Future<void> updateEntry({
     required String activityId,
-    required int year,
-    required int month,
-    required int day,
+    required DateTime date,
     required dynamic value,
   }) async {
     await _service.updateEntry(
       activityId: activityId,
-      year: year,
-      month: month,
-      day: day.toString(),
+      year: date.year,
+      month: date.month,
+      day: date.day.toString(),
       value: value,
     );
   }
