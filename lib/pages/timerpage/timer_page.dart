@@ -11,7 +11,7 @@ import '../listpage/schedule_handler/schedule_manager.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;
-  final Function(bool isManual) onComplete;
+  final Function({bool isManual,bool isComplete}) onComplete;
 
   const TimerPage({super.key, required this.initiative, required this.onComplete});
 
@@ -43,7 +43,7 @@ class _TimerPageState extends State<TimerPage> {
   Timer? _timer;
   Timer? _delayedRestart;
   bool isPaused = true;
-  bool isChecked = false;
+
 
   // Initiatives
   Initiative? currentInitiative;
@@ -132,7 +132,6 @@ class _TimerPageState extends State<TimerPage> {
     setState(() {
       elapsedSeconds = 0;
       isPaused = true;
-      isChecked = false;
     });
     _startTimer();
   }
@@ -161,7 +160,6 @@ class _TimerPageState extends State<TimerPage> {
           (currentInitiative!.completionTime.hour * 60
               + currentInitiative!.completionTime.minute) * 60;
       elapsedSeconds = 0;
-      isChecked = false;
     });
 
   }
@@ -169,7 +167,7 @@ class _TimerPageState extends State<TimerPage> {
   void _onComplete() {
     _playStopSound();
 
-    widget.onComplete(false);
+    widget.onComplete(isManual: false,isComplete: widget.initiative.isComplete);
     moveToNextInitiative();
 
     if (!isPaused) {
@@ -182,9 +180,11 @@ class _TimerPageState extends State<TimerPage> {
 
   void _onManualComplete(bool? value) {
     setState(() {
-      isChecked = value ?? false;
-      widget.onComplete(true);
+
+      widget.initiative.isComplete = value??false;
+
     });
+    widget.onComplete(isManual: true,isComplete: widget.initiative.isComplete);
   }
 
   void _showErrorDialog(String message) {
@@ -305,7 +305,7 @@ class _TimerPageState extends State<TimerPage> {
                 children: [
                   const Text('Complete?', style: TextStyle(color: Colors.white)),
                   Checkbox(
-                    value: isChecked,
+                    value: widget.initiative.isComplete,
                     onChanged: _onManualComplete,
                     activeColor: Colors.white,
                     checkColor: Colors.black,

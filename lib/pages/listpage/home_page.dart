@@ -1,7 +1,5 @@
-
 import 'package:discipline_plus/database/services/firebase_initiative_completion_service.dart';
 import 'package:discipline_plus/pages/listpage/schedule_completion_manager.dart';
-import 'package:discipline_plus/pages/listpage/schedule_coordinator.dart';
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -15,7 +13,6 @@ import '../heatmap_page/heatmap_panel.dart';
 import '../timerpage/timer_page.dart';
 
 import 'widgets/schedule_listview.dart';
-
 
 const double _panelMinHeight = 60;
 const double _panelMaxHeight = 550;
@@ -65,49 +62,48 @@ class _HomePageState extends State<HomePage> with RouteAware {
             }));
   }
 
-
-
   final PageController _controller = PageController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: ValueListenableBuilder<String>(
           valueListenable: SelectedDayManager.currentSelectedWeekDay,
-          builder: (context, value, _) => Text(value,style: TextStyle(color: Colors.white),),
+          builder: (context, value, _) => Text(
+            value,
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.pink.shade200,
-
-
         actions: [
-
-          IconButton(onPressed: (){
-            SelectedDayManager.toPreviousDay();
-            ScheduleManager.instance.changeDay(SelectedDayManager.currentSelectedWeekDay.value);
-          } ,
+          IconButton(
+              onPressed: () {
+                SelectedDayManager.toPreviousDay();
+                ScheduleManager.instance
+                    .changeDay(SelectedDayManager.currentSelectedWeekDay.value);
+              },
               icon: Icon(Icons.keyboard_arrow_left_rounded)),
-          IconButton(onPressed: (){
-            SelectedDayManager.toNextDay();
-            ScheduleManager.instance.changeDay(SelectedDayManager.currentSelectedWeekDay.value);
-          },
+          IconButton(
+              onPressed: () {
+                SelectedDayManager.toNextDay();
+                ScheduleManager.instance
+                    .changeDay(SelectedDayManager.currentSelectedWeekDay.value);
+              },
               icon: Icon(Icons.keyboard_arrow_right_rounded)),
-
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (String value) {
               // Handle menu item selection
-               if (value == 'test1') {
-
-                FirebaseInitiativeCompletionService.instance.setInitiativeCompletion(DateTime.now(), "some initiative id", true);
+              if (value == 'test1') {
+                FirebaseInitiativeCompletionService.instance
+                    .setInitiativeCompletion(
+                        DateTime.now(), "some initiative id", true);
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-
               PopupMenuItem<String>(
-
                 value: 'test1',
                 child: Row(
                   children: [
@@ -121,7 +117,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
             ],
           ),
         ],
-
       ),
       drawer: const CustomDrawer(),
       body: Stack(children: [
@@ -134,7 +129,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-
                 const Divider(height: 1, thickness: 1),
                 Expanded(
                   child: Container(
@@ -147,9 +141,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
                       // dayIndex: 0,
                       scrollController: _scrollController,
                       // refreshController: _refreshControllers,
-                      onItemSwipe: (swipeDirection, initiative) => _navigateToTimer(initiative, swipeDirection),
+                      onItemSwipe: (swipeDirection, initiative) =>
+                          _navigateToTimer(initiative, swipeDirection),
                       onItemEdit: (existingInitiative) =>
-                          _showAddUpdateInitiativeDialog(initiative: existingInitiative),
+                          _showAddUpdateInitiativeDialog(
+                              initiative: existingInitiative),
                     ),
                   ),
                 ),
@@ -166,14 +162,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
             right: 16,
             child: Row(
               children: [
-
-
                 FloatingActionButton(
-                  onPressed: () => showFullScreenGlobalInitiativeDialog(context),
+                  onPressed: () =>
+                      showFullScreenGlobalInitiativeDialog(context),
                   child: const Icon(Icons.add),
                 ),
-
-
               ],
             ),
           ),
@@ -187,18 +180,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (_, __, ___) => TimerPage(initiative: initiative, onComplete:(isManual){
+        pageBuilder: (_, __, ___) => TimerPage(
+          initiative: initiative,
+          onComplete: ({isManual = false, isComplete = false}) {
+            ScheduleCompletionManager.instance
+                .toggleCompletion(initiative.id, isComplete);
+          },
+        ),
 
-
-
-          // setState(() {
-          //   initiative.isComplete = true;
-          // });
-          ScheduleCompletionManager.instance.toggleCompletion(initiative.id, true);
-
-
-
-        }),
         // transitionsBuilder: (c, anim, __, child) {
         //   final begin = dir == DismissDirection.startToEnd
         //       ? const Offset(-1, 0)
@@ -212,7 +201,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
     );
   }
 
-
   void showFullScreenGlobalInitiativeDialog(BuildContext context) {
     TextEditingController searchController = TextEditingController();
     String searchText = "";
@@ -225,7 +213,8 @@ class _HomePageState extends State<HomePage> with RouteAware {
             return Dialog.fullscreen(
               child: Scaffold(
                 appBar: AppBar(
-                  title: Text("Add tasks to '${SelectedDayManager.currentSelectedWeekDay.value}'"),
+                  title: Text(
+                      "Add tasks to '${SelectedDayManager.currentSelectedWeekDay.value}'"),
                   actions: [
                     IconButton(
                       icon: Icon(Icons.close),
@@ -384,33 +373,3 @@ class _HomePageState extends State<HomePage> with RouteAware {
   }
 }
 
-// class _DayHeader extends StatelessWidget {
-//   final VoidCallback onLeft, onRight;
-//   const _DayHeader({required this.onLeft, required this.onRight});
-//
-//   @override
-//   Widget build(BuildContext c) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//       decoration: BoxDecoration(
-//         color: Theme.of(c).colorScheme.surfaceVariant,
-//         borderRadius:
-//         const BorderRadius.vertical(top: Radius.circular(12)),
-//       ),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           IconButton(icon: const Icon(Icons.arrow_left), onPressed: onLeft),
-//           Text(
-//             CurrentDayManager.getCurrentDay().toUpperCase(),
-//             style: Theme.of(c)
-//                 .textTheme
-//                 .titleMedium
-//                 ?.copyWith(fontWeight: FontWeight.bold, letterSpacing: 1.5),
-//           ),
-//           IconButton(icon: const Icon(Icons.arrow_right), onPressed: onRight),
-//         ],
-//       ),
-//     );
-//   }
-// }
