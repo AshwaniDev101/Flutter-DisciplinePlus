@@ -1,10 +1,11 @@
-import 'package:discipline_plus/pages/listpage/schedule_coordinator.dart';
+import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_coordinator.dart';
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
-import '../../../managers/selected_day_manager.dart';
-import '../../../models/initiative.dart';
-import '../../../core/utils/constants.dart';
+import '../../../../core/utils/constants.dart';
+import '../../../../managers/selected_day_manager.dart';
+import '../../../../models/initiative.dart';
 import '../schedule_completion_manager.dart';
+
 
 class ScheduleListview extends StatefulWidget {
   // final int dayIndex;

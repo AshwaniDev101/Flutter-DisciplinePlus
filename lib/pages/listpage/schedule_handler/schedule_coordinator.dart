@@ -1,6 +1,6 @@
 import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../../models/initiative.dart';
+import '../../../../models/initiative.dart';
 
 import 'schedule_completion_manager.dart';
 

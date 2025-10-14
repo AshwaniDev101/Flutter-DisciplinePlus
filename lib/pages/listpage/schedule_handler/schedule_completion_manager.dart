@@ -3,8 +3,8 @@ import 'package:discipline_plus/database/services/firebase_initiative_completion
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../database/repository/global_initiative_list_repository.dart';
-import '../../database/repository/initiative_completion_repository.dart';
+import '../../../database/repository/global_initiative_list_repository.dart';
+import '../../../database/repository/initiative_completion_repository.dart';
 
 
 /// The [ScheduleCompletionManager] is responsible for tracking and updating

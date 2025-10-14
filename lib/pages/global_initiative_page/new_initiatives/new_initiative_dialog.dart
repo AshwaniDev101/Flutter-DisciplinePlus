@@ -4,12 +4,12 @@ import '../../../models/app_time.dart';
 import '../../../models/study_break.dart';
 import 'widget/quantity_selector.dart';
 
-class InitiativeDialog extends StatefulWidget {
+class NewInitiativeDialog extends StatefulWidget {
   final Initiative? existing_initiative;
   final void Function(Initiative newInitiative) onNewSave;
   final void Function(Initiative newInitiative) onEditSave;
 
-  const InitiativeDialog({
+  const NewInitiativeDialog({
     super.key,
     this.existing_initiative,
     required this.onNewSave,
@@ -17,10 +17,10 @@ class InitiativeDialog extends StatefulWidget {
   });
 
   @override
-  _InitiativeDialogState createState() => _InitiativeDialogState();
+  _NewInitiativeDialogState createState() => _NewInitiativeDialogState();
 }
 
-class _InitiativeDialogState extends State<InitiativeDialog> {
+class _NewInitiativeDialogState extends State<NewInitiativeDialog> {
   final TextEditingController _titleCtrl = TextEditingController();
   int _duration = 30;
   int _break = 15;
@@ -48,7 +48,7 @@ class _InitiativeDialogState extends State<InitiativeDialog> {
     final init = Initiative(
 
       id: widget.existing_initiative?.id,
-      index: widget.existing_initiative!.index,
+      index: widget.existing_initiative?.index??0,
       title: _titleCtrl.text,
       completionTime: AppTime(0, _duration),
       studyBreak: StudyBreak(
