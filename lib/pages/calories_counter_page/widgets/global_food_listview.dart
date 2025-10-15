@@ -5,26 +5,44 @@ import '../../../models/diet_food.dart';
 import '../../../models/food_stats.dart';
 
 class GlobalFoodList extends StatelessWidget {
-
   final Stream<List<DietFood>> stream;
   final Function(DietFood food) onEdit;
   final Function(DietFood food) onDeleted;
 
-
-
   GlobalFoodList({
     Key? key,
-    Stream<List<DietFood>>? stream, required this.onEdit, required this.onDeleted,
-
+    Stream<List<DietFood>>? stream,
+    required this.onEdit,
+    required this.onDeleted,
   })  : stream = stream ?? _defaultDummyStream,
         super(key: key);
 
   static final Stream<List<DietFood>> _defaultDummyStream = Stream.value([
-    DietFood(id: '1', name: 'Apple', foodStats: FoodStats.empty(), time: DateTime.now()),
-    DietFood(id: '2', name: 'Banana', foodStats: FoodStats.empty(), time: DateTime.now()),
-    DietFood(id: '3', name: 'Boiled Egg', foodStats: FoodStats.empty(), time: DateTime.now()),
-    DietFood(id: '4', name: 'Oats', foodStats: FoodStats.empty(), time: DateTime.now()),
-    DietFood(id: '5', name: 'Milk', foodStats: FoodStats.empty(), time: DateTime.now()),
+    DietFood(
+        id: '1',
+        name: 'Apple',
+        foodStats: FoodStats.empty(),
+        time: DateTime.now()),
+    DietFood(
+        id: '2',
+        name: 'Banana',
+        foodStats: FoodStats.empty(),
+        time: DateTime.now()),
+    DietFood(
+        id: '3',
+        name: 'Boiled Egg',
+        foodStats: FoodStats.empty(),
+        time: DateTime.now()),
+    DietFood(
+        id: '4',
+        name: 'Oats',
+        foodStats: FoodStats.empty(),
+        time: DateTime.now()),
+    DietFood(
+        id: '5',
+        name: 'Milk',
+        foodStats: FoodStats.empty(),
+        time: DateTime.now()),
   ]);
 
   final List<Color> _colorPalette = const [
@@ -66,15 +84,16 @@ class GlobalFoodList extends StatelessWidget {
     Color(0xFFAB47BC),
   ];
 
-
   void _showItemMenu(BuildContext buttonContext, DietFood food) {
     final RenderBox button = buttonContext.findRenderObject() as RenderBox;
-    final RenderBox overlay = Overlay.of(buttonContext)!.context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Overlay.of(buttonContext)!.context.findRenderObject() as RenderBox;
 
     final RelativeRect position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero),
+            ancestor: overlay),
       ),
       Offset.zero & overlay.size,
     );
@@ -94,7 +113,6 @@ class GlobalFoodList extends StatelessWidget {
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -118,12 +136,15 @@ class GlobalFoodList extends StatelessWidget {
           child: Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
-
               transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(opacity: animation, child: child,);
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
               },
               child: ListView.separated(
-                key: ValueKey(foods.length), // 🔥 This line is the magic
+                key: ValueKey(foods.length),
+                // 🔥 This line is the magic
                 physics: const BouncingScrollPhysics(),
                 itemCount: foods.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 6),
@@ -132,10 +153,12 @@ class GlobalFoodList extends StatelessWidget {
                   final barColor = _colorPalette[index % _colorPalette.length];
 
                   return _FoodCard(
-                    key: ValueKey(food.id), // optional: smooth per-item updates
+                    key: ValueKey(food.id),
+                    // optional: smooth per-item updates
                     food: food,
                     barColor: barColor,
-                    onClickOptionMenu: (context) => _showItemMenu(context, food),
+                    onClickOptionMenu: (context) =>
+                        _showItemMenu(context, food),
                     onAddPressed: () {
                       // your add logic
                     },
@@ -145,7 +168,6 @@ class GlobalFoodList extends StatelessWidget {
             ),
           ),
         );
-
       },
     );
   }
@@ -182,28 +204,44 @@ class _FoodCard extends StatelessWidget {
               // content
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         food.name,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        '${food.foodStats.calories} kcal',
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                      Row(
+                        children: [
+                          Text(
+                            '${food.foodStats.calories} kcal',
+                            style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          if( food.count>1)
+                          Text(
+                            ' (total:${(food.foodStats.calories*food.count).toInt()})',
+                            style: TextStyle(fontSize: 13, color: Colors.grey[500]),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+
+                        ],
                       ),
+
                     ],
                   ),
                 ),
               ),
-
 
               Builder(
                 builder: (buttonContext) {
@@ -211,28 +249,22 @@ class _FoodCard extends StatelessWidget {
                     onPressed: () {
                       onClickOptionMenu(buttonContext);
                     },
-                    icon: Icon(Icons.more_vert_rounded, color: Colors.grey, size: 24),
+                    icon: Icon(Icons.more_vert_rounded,
+                        color: Colors.grey, size: 20),
                   );
                 },
               ),
-              FoodQuantitySelector(initialValue:food.count.toDouble(),onChanged: (oldValue,newValue){
+              FoodQuantitySelector(
+                initialValue: food.count.toDouble(),
+                onChanged: (oldValue, newValue) {
+                  FoodManager.instance
+                      .changeConsumedCount(newValue - oldValue, food);
+                },
+              ),
 
-
-
-                FoodManager.instance.changeConsumedCount(newValue-oldValue, food);
-
-                // if (newValue > oldValue) {
-                //   FoodManager.instance.addToConsumedFood(food.foodStats, food);
-                // } else if (newValue < oldValue) {
-                //   FoodManager.instance.subtractFromConsumedFood(food.foodStats, food);
-                // }
-
-
-              },),
-
-              SizedBox(width: 14,),
-
-
+              SizedBox(
+                width: 14,
+              ),
             ],
           ),
         ),

@@ -21,7 +21,7 @@ class FoodQuantitySelector extends StatefulWidget {
     this.step = 1.0,
     this.precision = 1,
     this.onChanged,
-    this.buttonSize = 30.0,
+    this.buttonSize = 24.0,
     this.buttonColor=Colors.grey,
     this.enableHoldToRepeat = true,
   })  : assert(min <= max),
@@ -168,15 +168,15 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
             onTap: () => _changeBy(-widget.step),
             repeatDelta: -widget.step,
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 1),
           SizedBox(
-            width: 40,
-            height: 40,
+            width: 30,
+            height: 30,
             child: TextField(
               enabled: false,// remove this to enable editing
               style: const TextStyle(
                 color: Colors.grey,
-                fontSize: 16.0,
+                fontSize: 14.0,
               ),
               controller: _controller,
               focusNode: _focusNode,
@@ -196,7 +196,7 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
               onSubmitted: (_) => _commitTextField(),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 1),
           _buildButton(
             icon: Icons.add,
             enabled: plusEnabled,
