@@ -19,7 +19,7 @@ class FoodQuantitySelector extends StatefulWidget {
     this.min = 0.0,
     this.max = 100,
     this.step = 1.0,
-    this.precision = 1,
+    this.precision = 0,
     this.onChanged,
     this.buttonSize = 24.0,
     this.buttonColor=Colors.grey,
@@ -174,9 +174,10 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
             height: 30,
             child: TextField(
               enabled: false,// remove this to enable editing
-              style: const TextStyle(
-                color: Colors.grey,
+              style: TextStyle(
+                color: widget.initialValue>0?Colors.grey:Colors.grey,
                 fontSize: 14.0,
+                fontWeight: widget.initialValue>0?FontWeight.w600 : FontWeight.normal,
               ),
               controller: _controller,
               focusNode: _focusNode,

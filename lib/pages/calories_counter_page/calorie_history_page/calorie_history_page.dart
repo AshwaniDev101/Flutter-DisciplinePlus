@@ -154,6 +154,7 @@ class DayCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                IconButton(onPressed: (){}, icon: Icon(Icons.delete, color: Colors.red[300])),
               ],
             ),
             const SizedBox(height: 8),
@@ -185,30 +186,6 @@ class DayCard extends StatelessWidget {
       ),
     );
 
-    // return Card(
-    //   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-    //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    //   elevation: 2,
-    //   child: Padding(
-    //     padding: const EdgeInsets.all(12),
-    //     child: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         Text(
-    //           'Day $day',
-    //           style: theme.textTheme.titleMedium?.copyWith(
-    //             fontWeight: FontWeight.bold,
-    //             color: Colors.orangeAccent.shade700,
-    //           ),
-    //         ),
-    //         const SizedBox(height: 6),
-    //         Text('Calories: ${stat.calories}'),
-    //         Text('Proteins: ${stat.proteins} | Carbs: ${stat.carbohydrates} | Fats: ${stat.fats}'),
-    //         Text('Vitamins: ${stat.vitamins} | Minerals: ${stat.minerals}'),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   Widget _buildNutrientChip(String label, int value, Color color) {

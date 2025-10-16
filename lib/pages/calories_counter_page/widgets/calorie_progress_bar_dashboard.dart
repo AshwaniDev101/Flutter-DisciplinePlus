@@ -1,23 +1,23 @@
-
 import 'package:discipline_plus/pages/calories_counter_page/calorie_history_page/calorie_history_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import '../../../core/utils/helper.dart';
 import '../../../models/food_stats.dart';
 
 class CalorieProgressBarDashboard extends StatefulWidget {
-
+  final void Function() onClickAdd;
+  final void Function() onClickBack;
 
   final Stream<FoodStats?> stream;
-  const CalorieProgressBarDashboard({required this.stream, super.key});
+
+  const CalorieProgressBarDashboard(
+      {required this.stream, super.key, required this.onClickAdd, required this.onClickBack});
 
   @override
-  State<CalorieProgressBarDashboard> createState() => _CalorieProgressBarDashboardState();
+  State<CalorieProgressBarDashboard> createState() =>
+      _CalorieProgressBarDashboardState();
 }
 
-class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboard> {
-
-
+class _CalorieProgressBarDashboardState
+    extends State<CalorieProgressBarDashboard> {
   final atMostProgress = 1600;
   final max = 2000;
 
@@ -27,7 +27,6 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
       stream: widget.stream,
       initialData: FoodStats.empty(),
       builder: (context, snapshot) {
-
         // Safely handle null or loading states
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -36,75 +35,112 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
         final stats = snapshot.data ?? FoodStats.empty();
         final progress = stats.calories;
 
-
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        return Stack(
           children: [
-            Row(
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: CircularProgressIndicator(
-                        value: progress / atMostProgress,
-                        strokeWidth: 15,
-                        backgroundColor: Colors.grey.shade200,
-                        valueColor: AlwaysStoppedAnimation(_getProgressColor(stats)),
-                        // valueColor: AlwaysStoppedAnimation(Colors.blue),
-                      ),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '$progress',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.grey[500]!),
-                        ),
-                        const Text('2000 kcal', style: TextStyle(fontSize: 10)),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(width: 20,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            // Main Center Row
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Fat: ${stats.fats}", style: const TextStyle(fontSize: 12)),
-                  Text("Protein: ${stats.proteins}", style: const TextStyle(fontSize: 12)),
-                  Text("Minerals: ${stats.minerals}", style: const TextStyle(fontSize: 12)),
-                  Text("Carbs: ${stats.carbohydrates}", style: const TextStyle(fontSize: 12)),
-                  Text("Vitamins: ${stats.vitamins}", style: const TextStyle(fontSize: 12)),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: CircularProgressIndicator(
+                          value: progress / atMostProgress,
+                          strokeWidth: 15,
+                          backgroundColor: Colors.grey.shade200,
+                          valueColor:
+                              AlwaysStoppedAnimation(_getProgressColor(stats)),
+                        ),
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$progress',
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[500]!),
+                          ),
+                          const Text('2000 kcal',
+                              style: TextStyle(fontSize: 10)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    child: Text(getCurrentDateFormatted()),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => CalorieHistoryPage()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
 
-            ElevatedButton(child: Text(getCurrentDateFormatted()),
-                onPressed: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CalorieHistoryPage()
+            // Top-left Back Icon
+
+            // Top-left Back Icon
+            Positioned(
+              top: 0,
+              left: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200], // background color
+                    shape: BoxShape.circle,  // makes it circular
+                  ),
+                  child: IconButton(
+                    onPressed: widget.onClickBack,
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.grey,
+                      size: 26,
                     ),
-                  );
-                }
+                  ),
+                ),
+              ),
             ),
+
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200], // background color
+                    shape: BoxShape.circle,  // makes it circular
+                  ),
+                  child: IconButton(
+                    onPressed: widget.onClickAdd,
+                    icon: Icon(
+                      Icons.add,
+                      color: Colors.grey[600],
+                      size: 26,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+
 
           ],
         );
       },
     );
   }
-
-
 
   Color _getProgressColor(FoodStats? latestStats) {
     if (latestStats == null) {
@@ -118,23 +154,16 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
     } else if (kcal > 1600) {
       return Colors.orange;
     } else {
-
-
       return Colors.greenAccent[400]!;
     }
   }
 
-
   String getCurrentDateFormatted() {
     final now = DateTime.now(); // Get current date and time
-    final day = now.day.toString().padLeft(2, '0');   // Ensure two digits
+    final day = now.day.toString().padLeft(2, '0'); // Ensure two digits
     final month = now.month.toString().padLeft(2, '0'); // Ensure two digits
     final year = now.year.toString();
 
     return '$day/$month/$year';
   }
-
-
 }
-
-

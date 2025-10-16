@@ -20,30 +20,30 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
     return Scaffold(
       backgroundColor: Colors.white,
 
-      // ===== APP BAR =====
-      appBar: AppBar(
-        title: const Text(
-          'Calorie Counter',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colors.pink[200],
-        actions: [
-          // Add new food item
-          IconButton(
-            onPressed: () {
-              AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
-                _addFood(food);
-              });
-            },
-            icon: const Icon(Icons.add, color: Colors.white),
-          ),
-        ],
-      ),
+      // // ===== APP BAR =====
+      // appBar: AppBar(
+      //   title: const Text(
+      //     'Calorie Counter',
+      //     style: TextStyle(
+      //       fontWeight: FontWeight.bold,
+      //       fontSize: 20,
+      //       color: Colors.white,
+      //     ),
+      //   ),
+      //   iconTheme: const IconThemeData(color: Colors.white),
+      //   backgroundColor: Colors.pink[200],
+      //   actions: [
+      //     // Add new food item
+      //     IconButton(
+      //       onPressed: () {
+      //         AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
+      //           _addFood(food);
+      //         });
+      //       },
+      //       icon: const Icon(Icons.add, color: Colors.white),
+      //     ),
+      //   ],
+      // ),
 
       // ===== BODY =====
       body: SafeArea(
@@ -54,6 +54,14 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
             /// Displays a progress bar showing how much of the daily calorie goal is consumed.
             CalorieProgressBarDashboard(
               stream: FoodManager.instance.watchConsumedFoodStats(),
+                onClickAdd:(){
+                  AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
+                              _addFood(food);
+                            });
+                },
+                onClickBack: (){
+                  Navigator.pop(context);
+                },
             ),
 
             const SizedBox(height: 20),

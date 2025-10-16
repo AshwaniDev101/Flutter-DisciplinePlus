@@ -1,7 +1,4 @@
 
-import 'package:discipline_plus/database/services/firebase_heatmap_service.dart';
-import 'package:discipline_plus/pages/calories_counter_page/calorie_history_page/calorie_history_page.dart';
-import 'package:discipline_plus/pages/calories_counter_page/calories_counter_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
