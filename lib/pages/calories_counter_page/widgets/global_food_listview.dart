@@ -197,6 +197,7 @@ class _FoodCard extends StatelessWidget {
           margin: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,
           color: Colors.white,
+          elevation: 5,
           child: Row(
             children: [
               // colored bar

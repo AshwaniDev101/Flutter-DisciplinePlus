@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/food_stats.dart';
+import 'package:intl/intl.dart';
 import '../../../database/repository/calories_history_repository.dart';
 
 class CalorieHistoryPage extends StatefulWidget {
@@ -21,7 +22,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text(
           'Calorie History',
@@ -104,83 +105,100 @@ class DayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.pink.shade50, Colors.white],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.pink.withOpacity(0.15),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
+
+
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+      // margin: EdgeInsets.zero,
+      // clipBehavior: Clip.none,
+      color: Colors.white,
+
+      // elevation: 2,
+      // shape: RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.circular(16),
+      // ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(8),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
+                  padding: EdgeInsets.all(8), // control the circle size
+                  constraints: const BoxConstraints(),
+                ),
                 Text(
-                  'Day $day',
+                  '$day-${DateFormat.MMMM().format(DateTime.now())}-${DateTime.now().year}',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.pink.shade400,
+                    // fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.grey[600],
+
                   ),
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.pink.shade200,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '${stat.calories} kcal',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+
+                IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+                      // padding: EdgeInsets.all(2), // control the circle size
+                      // constraints: const BoxConstraints(),
                     ),
+
+              ],
+            ),
+            Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+
+
+                SizedBox(width: 8,),
+                Text(
+                  '${stat.calories}',
+                  style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20
                   ),
                 ),
-                IconButton(onPressed: (){}, icon: Icon(Icons.delete, color: Colors.red[300])),
+
+                Text(
+                  '/1600  kcal',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    // fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+
               ],
             ),
             const SizedBox(height: 8),
             Divider(color: Colors.pink.shade100, thickness: 1),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+            Wrap(
+              spacing: 8, // horizontal spacing between chips
+              runSpacing: 4, // vertical spacing when chips wrap to next line
               children: [
-                _buildNutrientChip(
-                    'Protein', stat.proteins, Colors.pink.shade300),
-                _buildNutrientChip(
-                    'Carbs', stat.carbohydrates, Colors.orange.shade300),
+                _buildNutrientChip('Protein', stat.proteins, Colors.pink.shade300),
+                _buildNutrientChip('Carbs', stat.carbohydrates, Colors.orange.shade300),
                 _buildNutrientChip('Fats', stat.fats, Colors.amber.shade400),
+                _buildNutrientChip('Vitamins', stat.vitamins, Colors.green.shade300),
+                _buildNutrientChip('Minerals', stat.minerals, Colors.blue.shade300),
               ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildNutrientChip(
-                    'Vitamins', stat.vitamins, Colors.green.shade300),
-                _buildNutrientChip(
-                    'Minerals', stat.minerals, Colors.blue.shade300),
-                const SizedBox(width: 60), // for symmetry
-              ],
-            ),
+            )
+
+
           ],
         ),
       ),
@@ -189,15 +207,25 @@ class DayCard extends StatelessWidget {
   }
 
   Widget _buildNutrientChip(String label, int value, Color color) {
-    return Row(
-      children: [
-        CircleAvatar(radius: 4, backgroundColor: color),
-        const SizedBox(width: 4),
-        Text(
-          '$label: $value',
-          style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(radius: 4, backgroundColor: color),
+          const SizedBox(width: 4),
+          Text(
+            '$label: $value',
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
+          ),
+        ],
+      ),
     );
   }
+
+
 }

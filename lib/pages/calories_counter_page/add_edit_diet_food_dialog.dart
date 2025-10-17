@@ -62,14 +62,14 @@ class AddEditDietFoodDialog {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: Center(
           child: Text(
             food == null ? 'Add New Diet Food' : 'Edit Diet Food',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.pink,
+              color: Colors.grey[700],
             ),
           ),
         ),

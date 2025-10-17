@@ -35,108 +35,136 @@ class _CalorieProgressBarDashboardState
         final stats = snapshot.data ?? FoodStats.empty();
         final progress = stats.calories;
 
-        return Stack(
-          children: [
-            // Main Center Row
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: CircularProgressIndicator(
-                          value: progress / atMostProgress,
-                          strokeWidth: 15,
-                          backgroundColor: Colors.grey.shade200,
-                          valueColor:
-                              AlwaysStoppedAnimation(_getProgressColor(stats)),
-                        ),
-                      ),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '$progress',
-                            style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[500]!),
+        return Container(
+          height: 120,
+          // color:Colors.white,
+          child: Stack(
+
+            children: [
+              // Main Center Row
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          height: 100,
+                          width: 100,
+
+                          child: CircularProgressIndicator(
+                            value: progress / atMostProgress,
+                            strokeWidth: 12,
+                            backgroundColor: Colors.grey.shade200,
+                            valueColor:
+                                AlwaysStoppedAnimation(_getProgressColor(stats)),
                           ),
-                          const Text('2000 kcal',
-                              style: TextStyle(fontSize: 10)),
-                        ],
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$progress',
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[500]!),
+                            ),
+                             Text('$atMostProgress kcal',
+                                style: TextStyle(fontSize: 10)),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                      child: Text(getCurrentDateFormatted()),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => CalorieHistoryPage()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // Top-left Back Icon
+
+              // Top-left Back Icon
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200], // background color
+                      shape: BoxShape.circle,  // makes it circular
+                    ),
+                    child: IconButton(
+                      onPressed: widget.onClickBack,
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.grey,
+                        size: 26,
                       ),
-                    ],
-                  ),
-                  const SizedBox(width: 20),
-                  ElevatedButton(
-                    child: Text(getCurrentDateFormatted()),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => CalorieHistoryPage()),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            // Top-left Back Icon
-
-            // Top-left Back Icon
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200], // background color
-                    shape: BoxShape.circle,  // makes it circular
-                  ),
-                  child: IconButton(
-                    onPressed: widget.onClickBack,
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.grey,
-                      size: 26,
                     ),
                   ),
                 ),
               ),
-            ),
 
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200], // background color
-                    shape: BoxShape.circle,  // makes it circular
-                  ),
-                  child: IconButton(
-                    onPressed: widget.onClickAdd,
-                    icon: Icon(
-                      Icons.add,
-                      color: Colors.grey[600],
-                      size: 26,
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200], // background color
+                      shape: BoxShape.circle,  // makes it circular
+                    ),
+                    child: IconButton(
+                      onPressed: widget.onClickAdd,
+                      icon: Icon(
+                        Icons.add,
+                        color: Colors.grey[600],
+                        size: 26,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200], // background color
+                      shape: BoxShape.circle,  // makes it circular
+                    ),
+                    child: IconButton(
+                      onPressed: widget.onClickAdd,
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.grey[600],
+                        size: 26,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
 
 
 
-          ],
+            ],
+          ),
         );
       },
     );

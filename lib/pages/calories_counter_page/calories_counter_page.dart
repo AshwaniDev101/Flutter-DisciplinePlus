@@ -18,7 +18,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
 
       // // ===== APP BAR =====
       // appBar: AppBar(
@@ -49,7 +49,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
 
             /// Displays a progress bar showing how much of the daily calorie goal is consumed.
             CalorieProgressBarDashboard(
