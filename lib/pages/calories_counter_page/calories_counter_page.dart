@@ -5,6 +5,7 @@ import '../../models/diet_food.dart';
 import 'add_edit_diet_food_dialog.dart';
 import 'food_manager.dart';
 
+
 /// The main page that allows users to view, add, edit, and delete foods,
 /// while tracking their total calorie consumption in real time.
 class CaloriesCounterPage extends StatefulWidget {
@@ -17,39 +18,18 @@ class CaloriesCounterPage extends StatefulWidget {
 class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
 
-      // // ===== APP BAR =====
-      // appBar: AppBar(
-      //   title: const Text(
-      //     'Calorie Counter',
-      //     style: TextStyle(
-      //       fontWeight: FontWeight.bold,
-      //       fontSize: 20,
-      //       color: Colors.white,
-      //     ),
-      //   ),
-      //   iconTheme: const IconThemeData(color: Colors.white),
-      //   backgroundColor: Colors.pink[200],
-      //   actions: [
-      //     // Add new food item
-      //     IconButton(
-      //       onPressed: () {
-      //         AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
-      //           _addFood(food);
-      //         });
-      //       },
-      //       icon: const Icon(Icons.add, color: Colors.white),
-      //     ),
-      //   ],
-      // ),
+
 
       // ===== BODY =====
       body: SafeArea(
         child: Column(
           children: [
-            // const SizedBox(height: 20),
+            const SizedBox(height: 14),
 
             /// Displays a progress bar showing how much of the daily calorie goal is consumed.
             CalorieProgressBarDashboard(
@@ -64,7 +44,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
                 },
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 14),
 
             /// Displays all available and consumed foods in a unified list.
             /// Handles edit and delete actions via callbacks.
@@ -81,6 +61,9 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
                 _deleteFood(food);
               },
             ),
+
+            searchBar()
+
           ],
         ),
       ),
@@ -112,8 +95,34 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
 
   /// Displays a simple snackbar for user feedback.
   void _showSnack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(content: Text(message)),
+    // );
+  }
+
+  Widget searchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(0),
+      child: Material(
+        elevation: 4, // adds shadow
+        // borderRadius: BorderRadius.circular(16),
+        child: TextField(
+          decoration: InputDecoration(
+            hintText: 'Search',
+            filled: true,
+            fillColor: Colors.grey[100],
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none, // removes the default border
+            ),
+            suffixIcon:IconButton(onPressed: (){}, icon: Icon(Icons.add))
+          ),
+        ),
+      ),
     );
   }
+
+
+
 }

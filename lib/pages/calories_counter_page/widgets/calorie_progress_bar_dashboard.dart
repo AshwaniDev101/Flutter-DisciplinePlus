@@ -35,8 +35,8 @@ class _CalorieProgressBarDashboardState
         final stats = snapshot.data ?? FoodStats.empty();
         final progress = stats.calories;
 
-        return Container(
-          height: 120,
+        return SizedBox(
+          height: 100,
           // color:Colors.white,
           child: Stack(
 
@@ -51,8 +51,8 @@ class _CalorieProgressBarDashboardState
                       alignment: Alignment.center,
                       children: [
                         SizedBox(
-                          height: 100,
-                          width: 100,
+                          height: 80,
+                          width: 80,
 
                           child: CircularProgressIndicator(
                             value: progress / atMostProgress,
@@ -121,7 +121,7 @@ class _CalorieProgressBarDashboardState
                 bottom: 0,
                 right: 0,
                 child: Padding(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200], // background color
@@ -132,34 +132,34 @@ class _CalorieProgressBarDashboardState
                       icon: Icon(
                         Icons.add,
                         color: Colors.grey[600],
-                        size: 26,
+                        size: 18,
                       ),
                     ),
                   ),
                 ),
               ),
 
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200], // background color
-                      shape: BoxShape.circle,  // makes it circular
-                    ),
-                    child: IconButton(
-                      onPressed: widget.onClickAdd,
-                      icon: Icon(
-                        Icons.settings,
-                        color: Colors.grey[600],
-                        size: 26,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   top: 0,
+              //   right: 0,
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: Container(
+              //       decoration: BoxDecoration(
+              //         color: Colors.grey[200], // background color
+              //         shape: BoxShape.circle,  // makes it circular
+              //       ),
+              //       child: IconButton(
+              //         onPressed: widget.onClickAdd,
+              //         icon: Icon(
+              //           Icons.settings,
+              //           color: Colors.grey[600],
+              //           size: 18,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
 
 
 
