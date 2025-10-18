@@ -5,6 +5,7 @@ import '../../../core/utils/helper.dart';
 import '../../../core/utils/app_settings.dart';
 import '../../../database/repository/calories_history_repository.dart';
 
+/// Main page displaying calorie history for a month
 class CalorieHistoryPage extends StatefulWidget {
   const CalorieHistoryPage({super.key});
 
@@ -13,12 +14,21 @@ class CalorieHistoryPage extends StatefulWidget {
 }
 
 class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
-  late final Future<Map<int, FoodStats>> _future;
+  /// Future to fetch month's calorie stats
+  late Future<Map<int, FoodStats>> _future;
 
   @override
   void initState() {
     super.initState();
-    _future = CaloriesHistoryRepository.instance.getMonthStats(year: 2025, month: 10);
+    _loadMonthStats();
+  }
+
+  /// Helper method to initialize or refresh the month stats
+  void _loadMonthStats() {
+    _future = CaloriesHistoryRepository.instance.getMonthStats(
+      year: 2025,
+      month: 10,
+    );
   }
 
   @override
@@ -29,7 +39,10 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
         title: const Text(
           'Calorie History',
           style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
         elevation: 2,
@@ -41,18 +54,13 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
           future: _future,
           builder: (context, snapshot) => _buildSnapshot(
             snapshot,
-            (stats) {
-              // Reverse the day keys
-              final dayKeys = stats.keys.toList()
-                ..sort((a, b) => b.compareTo(a));
+                (stats) {
+              // Reverse sort days (latest first)
+              final dayKeys = stats.keys.toList()..sort((a, b) => b.compareTo(a));
 
-              // final dayKeys = stats.keys.toList()..sort();
               return RefreshIndicator(
                 onRefresh: () async {
-                  setState(() {
-                    _future = CaloriesHistoryRepository.instance
-                        .getMonthStats(year: 2025, month: 10);
-                  });
+                  setState(_loadMonthStats);
                 },
                 child: ListView.separated(
                   physics: const BouncingScrollPhysics(),
@@ -72,9 +80,11 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
     );
   }
 
-  /// Helper to handle FutureBuilder states
+  /// Generic helper to handle FutureBuilder states
   Widget _buildSnapshot<T>(
-      AsyncSnapshot<T> snapshot, Widget Function(T data) builder) {
+      AsyncSnapshot<T> snapshot,
+      Widget Function(T data) builder,
+      ) {
     if (snapshot.connectionState == ConnectionState.waiting) {
       return const Center(child: CircularProgressIndicator());
     } else if (snapshot.hasError) {
@@ -98,7 +108,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
   }
 }
 
-/// Card widget representing a single day's food stats
+/// Card representing a single day's food statistics
 class DayCard extends StatelessWidget {
   final int day;
   final FoodStats stat;
@@ -107,125 +117,45 @@ class DayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-
+    final currentMonth = DateFormat.MMMM().format(DateTime.now());
+    final currentYear = DateTime.now().year;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-      // margin: EdgeInsets.zero,
-      // clipBehavior: Clip.none,
       color: Colors.white,
-
-      // elevation: 2,
-      // shape: RoundedRectangleBorder(
-      //   borderRadius: BorderRadius.circular(16),
-      // ),
       child: Padding(
-        padding: const EdgeInsets.only(left:8,right: 8,bottom: 10,top: 2),
+        padding: const EdgeInsets.fromLTRB(8, 2, 8, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-
+            /// Date label
             Text(
-              '$day-${DateFormat.MMMM().format(DateTime.now())}-${DateTime.now().year}',
-              style: TextStyle(
-                // fontWeight: FontWeight.bold,
-                fontSize: 12,
-                color: Colors.grey[500],
-
-
-              ),
+              '$day-$currentMonth-$currentYear',
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
+            const SizedBox(height: 6),
 
-
-
+            /// Calories progress and total
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              // crossAxisAlignment: CrossAxisAlignment.baseline,
               children: [
-
-
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Background circle (light grey)
-                    SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 6,
-                        value: 1, // full circle background
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-
-                    // Foreground circle (actual progress)
-                    SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 6,
-                        value: stat.calories / AppSettings.atMostProgress,
-                        color: getProgressColor(stat),
-                        strokeCap: StrokeCap.round,
-                      ),
-                    ),
-
-                    // Optional text inside (like %)
-                    Text(
-                      "${((stat.calories / AppSettings.atMostProgress) * 100).clamp(0, 100).toStringAsFixed(0)}%",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-
-
-
-                SizedBox(width: 20,),
-                Text(
-                  '${stat.calories} kcal',
-                  style: TextStyle(
-                      color: Colors.grey[600],
-                      // color: getProgressColor(stat),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22
-                  ),
-                ),
-
-                Text(
-                  '/${AppSettings.atMostProgress}',
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 12,
-                    // fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                Spacer(),
-
+                _buildProgressCircle(),
+                const SizedBox(width: 20),
+                _buildCaloriesInfo(),
+                const Spacer(),
                 IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
-                  // padding: EdgeInsets.all(2), // control the circle size
-                  // constraints: const BoxConstraints(),
                 ),
-
-
               ],
             ),
             const SizedBox(height: 8),
             Divider(color: Colors.pink.shade100, thickness: 1),
             const SizedBox(height: 8),
 
+            /// Nutrient chips
             Wrap(
-              spacing: 8, // horizontal spacing between chips
-              runSpacing: 4, // vertical spacing when chips wrap to next line
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 _buildNutrientChip('Protein', stat.proteins, Colors.pink.shade300),
                 _buildNutrientChip('Carbs', stat.carbohydrates, Colors.orange.shade300),
@@ -233,21 +163,100 @@ class DayCard extends StatelessWidget {
                 _buildNutrientChip('Vitamins', stat.vitamins, Colors.green.shade300),
                 _buildNutrientChip('Minerals', stat.minerals, Colors.blue.shade300),
               ],
-            )
-
-
+            ),
           ],
         ),
       ),
     );
-
   }
 
+  /// Circular progress showing calories vs maximum
+  Widget _buildProgressCircle() {
+    final progress = (stat.calories / AppSettings.atMostProgress).clamp(0.0, 1.0);
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        SizedBox(
+          height: 50,
+          width: 50,
+          child: CircularProgressIndicator(
+            strokeWidth: 6,
+            value: 1,
+            color: Colors.grey.shade300,
+          ),
+        ),
+        SizedBox(
+          height: 50,
+          width: 50,
+          child: CircularProgressIndicator(
+            strokeWidth: 6,
+            value: progress,
+            color: getProgressColor(stat),
+            strokeCap: StrokeCap.round,
+          ),
+        ),
+        Text(
+          "${(progress * 100).toStringAsFixed(0)}%",
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+        ),
+      ],
+    );
+  }
+
+  /// Calories display with excess indicator if over the limit
+  Widget _buildCaloriesInfo() {
+    final excess = stat.calories - AppSettings.atMostProgress;
+
+    return Row(
+      children: [
+        Text(
+          '${stat.calories} kcal',
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+          ),
+        ),
+        Text(
+          '/${AppSettings.atMostProgress}',
+          style: TextStyle(color: Colors.grey[500], fontSize: 12),
+        ),
+        const SizedBox(width: 10),
+        if (excess > 0)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.red.shade700,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.red.withOpacity(0.6),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Text(
+              '+$excess',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// Nutrient chip widget
   Widget _buildNutrientChip(String label, int value, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
+        color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -263,6 +272,4 @@ class DayCard extends StatelessWidget {
       ),
     );
   }
-
-
 }
