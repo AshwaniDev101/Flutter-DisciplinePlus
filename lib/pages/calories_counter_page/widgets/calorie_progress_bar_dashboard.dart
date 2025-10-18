@@ -1,5 +1,7 @@
 import 'package:discipline_plus/pages/calories_counter_page/calorie_history_page/calorie_history_page.dart';
 import 'package:flutter/material.dart';
+import '../../../core/utils/helper.dart';
+import '../../../core/utils/app_settings.dart';
 import '../../../models/food_stats.dart';
 
 class CalorieProgressBarDashboard extends StatefulWidget {
@@ -18,8 +20,7 @@ class CalorieProgressBarDashboard extends StatefulWidget {
 
 class _CalorieProgressBarDashboardState
     extends State<CalorieProgressBarDashboard> {
-  final atMostProgress = 1600;
-  final max = 2000;
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class _CalorieProgressBarDashboardState
         }
 
         final stats = snapshot.data ?? FoodStats.empty();
-        final progress = stats.calories;
+        final caloriesCount = stats.calories;
 
         return SizedBox(
           height: 100,
@@ -55,24 +56,24 @@ class _CalorieProgressBarDashboardState
                           width: 80,
 
                           child: CircularProgressIndicator(
-                            value: progress / atMostProgress,
+                            value: caloriesCount / AppSettings.atMostProgress,
                             strokeWidth: 12,
                             backgroundColor: Colors.grey.shade200,
                             valueColor:
-                                AlwaysStoppedAnimation(_getProgressColor(stats)),
+                                AlwaysStoppedAnimation(getProgressColor(stats)),
                           ),
                         ),
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '$progress',
+                              '$caloriesCount',
                               style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey[500]!),
                             ),
-                             Text('$atMostProgress kcal',
+                             Text('${AppSettings.atMostProgress} kcal',
                                 style: TextStyle(fontSize: 10)),
                           ],
                         ),
@@ -170,28 +171,5 @@ class _CalorieProgressBarDashboardState
     );
   }
 
-  Color _getProgressColor(FoodStats? latestStats) {
-    if (latestStats == null) {
-      return Colors.grey; // default color when data isn't ready
-    }
 
-    final kcal = latestStats.calories;
-
-    if (kcal > 2000) {
-      return Colors.red;
-    } else if (kcal > 1600) {
-      return Colors.orange;
-    } else {
-      return Colors.greenAccent[400]!;
-    }
-  }
-
-  String getCurrentDateFormatted() {
-    final now = DateTime.now(); // Get current date and time
-    final day = now.day.toString().padLeft(2, '0'); // Ensure two digits
-    final month = now.month.toString().padLeft(2, '0'); // Ensure two digits
-    final year = now.year.toString();
-
-    return '$day/$month/$year';
-  }
 }

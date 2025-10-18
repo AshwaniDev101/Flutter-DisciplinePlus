@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import 'package:intl/intl.dart';
+import '../../../core/utils/helper.dart';
+import '../../../core/utils/app_settings.dart';
 import '../../../database/repository/calories_history_repository.dart';
 
 class CalorieHistoryPage extends StatefulWidget {
@@ -110,7 +112,7 @@ class DayCard extends StatelessWidget {
 
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
       // margin: EdgeInsets.zero,
       // clipBehavior: Clip.none,
       color: Colors.white,
@@ -120,63 +122,70 @@ class DayCard extends StatelessWidget {
       //   borderRadius: BorderRadius.circular(16),
       // ),
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.only(left:8,right: 8,bottom: 10,top: 2),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
 
+
+            Text(
+              '$day-${DateFormat.MMMM().format(DateTime.now())}-${DateTime.now().year}',
+              style: TextStyle(
+                // fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: Colors.grey[500],
+
+
+              ),
+            ),
+
+
+
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+
+
+                SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 8,
+                      value:  stat.calories / AppSettings.atMostProgress,
+                      color: getProgressColor(stat),
+
+                    )
+                ),
+
+
+                SizedBox(width: 30,),
+                Text(
+                  '${stat.calories}',
+                  style: TextStyle(
+                      color: getProgressColor(stat),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22
+                  ),
+                ),
+
+                Text(
+                  ' /${AppSettings.atMostProgress} kcal',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 14,
+                    // fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+                Spacer(),
 
                 IconButton(
                   onPressed: () {},
-                  icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
-                  padding: EdgeInsets.all(8), // control the circle size
-                  constraints: const BoxConstraints(),
-                ),
-                Text(
-                  '$day-${DateFormat.MMMM().format(DateTime.now())}-${DateTime.now().year}',
-                  style: TextStyle(
-                    // fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.grey[600],
-
-                  ),
-                ),
-
-                IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
-                      // padding: EdgeInsets.all(2), // control the circle size
-                      // constraints: const BoxConstraints(),
-                    ),
-
-              ],
-            ),
-            Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-
-
-                SizedBox(width: 8,),
-                Text(
-                  '${stat.calories}',
-                  style: const TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20
-                  ),
-                ),
-
-                Text(
-                  '/1600  kcal',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    // fontWeight: FontWeight.w600,
-                  ),
+                  icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+                  // padding: EdgeInsets.all(2), // control the circle size
+                  // constraints: const BoxConstraints(),
                 ),
 
 
