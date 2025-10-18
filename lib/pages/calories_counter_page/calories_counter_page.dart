@@ -35,7 +35,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
 
             /// Displays a progress bar showing how much of the daily calorie goal is consumed.
             CalorieProgressBarDashboard(
-              dateTime: widget.currentDayDateTime,
+              currentDateTime: widget.currentDayDateTime,
               stream: FoodManager.instance.watchConsumedFoodStats(widget.currentDayDateTime),
                 onClickAdd:(){
                   AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {

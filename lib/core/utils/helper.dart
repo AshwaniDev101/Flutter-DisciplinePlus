@@ -60,11 +60,10 @@ Color getProgressColor(FoodStats? latestStats) {
 /// Returns the current date formatted as "DD/MM/YYYY".
 ///
 /// Pads day and month values to ensure two digits each.
-String getCurrentDateFormatted() {
-  final now = DateTime.now();
-  final day = now.day.toString().padLeft(2, '0');
-  final month = now.month.toString().padLeft(2, '0');
-  final year = now.year.toString();
+String getCurrentDateFormatted(DateTime dateTime) {
+  final day = dateTime.day.toString().padLeft(2, '0');
+  final month = dateTime.month.toString().padLeft(2, '0');
+  final year = dateTime.year.toString();
 
   return '$day/$month/$year';
 }
@@ -85,3 +84,10 @@ String generateReadableTimestamp() {
 ///
 /// Example: `7 → "07"`
 String _twoDigits(int n) => n.toString().padLeft(2, '0');
+
+
+
+
+bool isSameDate(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
