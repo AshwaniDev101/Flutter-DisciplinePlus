@@ -125,6 +125,9 @@ class DayCard extends StatelessWidget {
     final currentYear = DateFormat.y().format(dateTime);
 
 
+    //Datetime update
+    DateTime currentDayDateTime = DateTime(2025, 10, day);
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
       color: Colors.white,
@@ -149,7 +152,7 @@ class DayCard extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   onPressed: () {
-                    openCaloriesCounterPage(context, dateTime);
+                    openCaloriesCounterPage(context, currentDayDateTime);
                   },
                   icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
                 ),
@@ -282,10 +285,10 @@ class DayCard extends StatelessWidget {
   }
 
 
-  void openCaloriesCounterPage(BuildContext context, DateTime dateTime) {
+  void openCaloriesCounterPage(BuildContext context, DateTime currentDayDateTime) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CaloriesCounterPage(dateTime: dateTime)),
+      MaterialPageRoute(builder: (context) => CaloriesCounterPage(currentDayDateTime: currentDayDateTime)),
     );
 
 
