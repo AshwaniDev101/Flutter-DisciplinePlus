@@ -144,37 +144,65 @@ class DayCard extends StatelessWidget {
 
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.baseline,
               children: [
 
 
-                SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 8,
-                      value:  stat.calories / AppSettings.atMostProgress,
-                      color: getProgressColor(stat),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Background circle (light grey)
+                    SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 6,
+                        value: 1, // full circle background
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
 
-                    )
+                    // Foreground circle (actual progress)
+                    SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 6,
+                        value: stat.calories / AppSettings.atMostProgress,
+                        color: getProgressColor(stat),
+                        strokeCap: StrokeCap.round,
+                      ),
+                    ),
+
+                    // Optional text inside (like %)
+                    Text(
+                      "${((stat.calories / AppSettings.atMostProgress) * 100).clamp(0, 100).toStringAsFixed(0)}%",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
 
 
-                SizedBox(width: 30,),
+
+                SizedBox(width: 20,),
                 Text(
-                  '${stat.calories}',
+                  '${stat.calories} kcal',
                   style: TextStyle(
-                      color: getProgressColor(stat),
+                      color: Colors.grey[600],
+                      // color: getProgressColor(stat),
                       fontWeight: FontWeight.bold,
                       fontSize: 22
                   ),
                 ),
 
                 Text(
-                  ' /${AppSettings.atMostProgress} kcal',
+                  '/${AppSettings.atMostProgress}',
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 14,
+                    fontSize: 12,
                     // fontWeight: FontWeight.w600,
                   ),
                 ),
