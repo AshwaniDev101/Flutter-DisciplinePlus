@@ -9,7 +9,9 @@ import 'food_manager.dart';
 /// The main page that allows users to view, add, edit, and delete foods,
 /// while tracking their total calorie consumption in real time.
 class CaloriesCounterPage extends StatefulWidget {
-  const CaloriesCounterPage({super.key});
+
+  final DateTime dateTime;
+  const CaloriesCounterPage({super.key, required this.dateTime});
 
   @override
   State<CaloriesCounterPage> createState() => _CaloriesCounterPageState();
@@ -33,7 +35,8 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
 
             /// Displays a progress bar showing how much of the daily calorie goal is consumed.
             CalorieProgressBarDashboard(
-              stream: FoodManager.instance.watchConsumedFoodStats(),
+              dateTime: widget.dateTime,
+              stream: FoodManager.instance.watchConsumedFoodStats(widget.dateTime),
                 onClickAdd:(){
                   AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
                               _addFood(food);
@@ -49,7 +52,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
             /// Displays all available and consumed foods in a unified list.
             /// Handles edit and delete actions via callbacks.
             GlobalFoodList(
-              stream: FoodManager.instance.watchMergedFoodList(),
+              stream: FoodManager.instance.watchMergedFoodList(widget.dateTime),
               onEdit: (DietFood food) {
                 AddEditDietFoodDialog.show(
                   context,
@@ -60,6 +63,11 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
               onDeleted: (DietFood food) {
                 _deleteFood(food);
               },
+              onQuantityChange: (double oldValue, double newValue, DietFood food)
+              {
+                FoodManager.instance.changeConsumedCount(newValue - oldValue, food, widget.dateTime);
+              },
+
             ),
 
             searchBar()

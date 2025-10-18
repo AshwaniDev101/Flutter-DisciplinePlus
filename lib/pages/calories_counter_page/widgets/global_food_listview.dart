@@ -8,12 +8,14 @@ class GlobalFoodList extends StatelessWidget {
   final Stream<List<DietFood>> stream;
   final Function(DietFood food) onEdit;
   final Function(DietFood food) onDeleted;
+  final Function(double oldValue, double newValue, DietFood food) onQuantityChange;
 
   GlobalFoodList({
     Key? key,
     Stream<List<DietFood>>? stream,
     required this.onEdit,
     required this.onDeleted,
+    required this.onQuantityChange,
   })  : stream = stream ?? _defaultDummyStream,
         super(key: key);
 
@@ -159,9 +161,8 @@ class GlobalFoodList extends StatelessWidget {
                     barColor: barColor,
                     onClickOptionMenu: (context) =>
                         _showItemMenu(context, food),
-                    onAddPressed: () {
-                      // your add logic
-                    },
+                    onQuantityChange: onQuantityChange,
+
                   );
                 },
               ),
@@ -177,15 +178,18 @@ class _FoodCard extends StatelessWidget {
   final DietFood food;
   final Color barColor;
   final void Function(BuildContext buttonContext) onClickOptionMenu;
-  final VoidCallback? onAddPressed;
+  final Function(double oldValue, double newValue, DietFood dietFood) onQuantityChange;
+
+
 
   const _FoodCard({
-    Key? key,
+    super.key,
     required this.food,
     required this.barColor,
     required this.onClickOptionMenu,
-    this.onAddPressed,
-  }) : super(key: key);
+    required this.onQuantityChange,
+
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -257,9 +261,9 @@ class _FoodCard extends StatelessWidget {
               ),
               FoodQuantitySelector(
                 initialValue: food.count.toDouble(),
-                onChanged: (oldValue, newValue) {
-                  FoodManager.instance
-                      .changeConsumedCount(newValue - oldValue, food);
+                onChanged: (oldValue, newValue)
+                {
+                  onQuantityChange(oldValue, newValue, food);
                 },
               ),
 

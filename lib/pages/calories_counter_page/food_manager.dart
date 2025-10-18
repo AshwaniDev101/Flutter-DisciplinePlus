@@ -21,10 +21,10 @@ class FoodManager {
   /// Watches both available foods and consumed foods,
   /// and merges them into a single stream where each
   /// available food also contains its consumed count.
-  Stream<List<DietFood>> watchMergedFoodList() {
+  Stream<List<DietFood>> watchMergedFoodList(DateTime dateTime) {
     return Rx.combineLatest2<List<DietFood>, List<DietFood>, List<DietFood>>(
       _watchAvailableFood(),  // Stream of all available foods
-      _watchConsumedFood(),   // Stream of consumed foods
+      _watchConsumedFood(dateTime),   // Stream of consumed foods
           (availableList, consumedList) {
 
         // Create a quick lookup map of consumed food counts by ID
@@ -48,15 +48,15 @@ class FoodManager {
 
     return _dietFoodRepository.watchAvailableFood();
   }
-  Stream<List<DietFood>> _watchConsumedFood() {
+  Stream<List<DietFood>> _watchConsumedFood(DateTime dateTime) {
 
-    return _dietFoodRepository.watchConsumedFood(DateTime.now());
+    return _dietFoodRepository.watchConsumedFood(dateTime);
   }
 
 
-  Stream<FoodStats?> watchConsumedFoodStats() {
+  Stream<FoodStats?> watchConsumedFoodStats(DateTime dateTime) {
 
-    return _dietFoodRepository.watchConsumedFoodStats(DateTime.now());
+    return _dietFoodRepository.watchConsumedFoodStats(dateTime);
   }
 
 
@@ -65,34 +65,19 @@ class FoodManager {
     _dietFoodRepository.addAvailable(food);
   }
 
-
-
-  void changeConsumedCount(double count, DietFood food) {
-    _dietFoodRepository.changeConsumedCount(count,food, DateTime.now());
+  void changeConsumedCount(double count, DietFood food, DateTime dateTime) {
+    _dietFoodRepository.changeConsumedCount(count,food, dateTime);
 
   }
 
-  // void addToConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
-  //   _dietFoodRepository.addConsumed(latestFoodStatsData,food, DateTime.now());
-  // }
-  //
-  // void subtractFromConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
-  //   _dietFoodRepository.subtractConsumed(latestFoodStatsData,food, DateTime.now());
-  // }
   // Remove from available food list
   void removeFromAvailableFood(DietFood food) {
     _dietFoodRepository.deleteAvailable(food.id);
   }
-  // void removeFromConsumedFood(FoodStats latestFoodStatsData, DietFood food) {
-  //   _dietFoodRepository.deleteConsumed(latestFoodStatsData, food, DateTime.now());
-  // }
 
   // Edit available food
   void updateAvailableFood(DietFood food) {
     _dietFoodRepository.updateAvailable(food.id, food);
   }
-  // void editConsumedFood(DietFood food) {
-  //   _dietFoodRepository.updateConsumed(food.id, food, DateTime.now());
-  // }
 
 }

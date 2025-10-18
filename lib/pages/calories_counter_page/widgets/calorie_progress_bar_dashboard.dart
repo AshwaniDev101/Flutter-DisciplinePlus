@@ -8,10 +8,11 @@ class CalorieProgressBarDashboard extends StatefulWidget {
   final void Function() onClickAdd;
   final void Function() onClickBack;
 
+  final DateTime dateTime;
   final Stream<FoodStats?> stream;
 
   const CalorieProgressBarDashboard(
-      {required this.stream, super.key, required this.onClickAdd, required this.onClickBack});
+      {required this.dateTime,required this.stream, super.key, required this.onClickAdd, required this.onClickBack});
 
   @override
   State<CalorieProgressBarDashboard> createState() =>
@@ -85,7 +86,7 @@ class _CalorieProgressBarDashboardState
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => CalorieHistoryPage()),
+                          MaterialPageRoute(builder: (_) => CalorieHistoryPage(dateTime: widget.dateTime)),
                         );
                       },
                     ),
