@@ -150,12 +150,7 @@ class DayCard extends StatelessWidget {
                 const SizedBox(width: 20),
                 _buildCaloriesInfo(),
                 const Spacer(),
-                IconButton(
-                  onPressed: () {
-                    openCaloriesCounterPage(context, currentDayDateTime);
-                  },
-                  icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
-                ),
+                getIconButton(context,currentDayDateTime),
               ],
             ),
             const SizedBox(height: 8),
@@ -292,6 +287,53 @@ class DayCard extends StatelessWidget {
     );
 
 
+  }
+
+  IconButton getIconButton(BuildContext context, DateTime currentDayDateTime) {
+    return IconButton(
+      icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+      onPressed: () async {
+        final selected = await showMenu<String>(
+          context: context,
+          position: RelativeRect.fromLTRB(200, 400, 16, 0), // you can adjust this
+          items: [
+
+            const PopupMenuItem<String>(
+              value: 'edit',
+              child: Row(
+                children: [
+                  Icon(Icons.edit, size: 18, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Text('Edit'),
+                ],
+              ),
+            ),
+            const PopupMenuItem<String>(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('Delete'),
+                ],
+              ),
+            ),
+          ],
+        );
+
+        if (selected == 'edit') {
+
+          openCaloriesCounterPage(context, currentDayDateTime);
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(content: Text('Edit option clicked')),
+          // );
+        } else if (selected == 'delete') {
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(content: Text('Deleted successfully')),
+          // );
+        }
+      },
+    );
   }
 
 
