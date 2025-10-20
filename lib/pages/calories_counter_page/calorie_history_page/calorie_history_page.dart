@@ -17,7 +17,7 @@ class CalorieHistoryPage extends StatefulWidget {
 }
 
 class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
-  // late Future<Map<int, FoodStats>> _future;
+
   Map<int, FoodStats> _monthStats = {};
 
   @override
@@ -54,92 +54,64 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
       ),
 
       body: SafeArea(
-        child: _monthStats.isEmpty
-            ? const Center(child: Text('No data found'))
-            : RefreshIndicator(
-          onRefresh: _loadMonthStats,
-          child: ListView.separated(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: _monthStats.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 6),
-            itemBuilder: (context, index) {
-              final dayKeys = _monthStats.keys.toList()..sort((a, b) => b.compareTo(a));
-              final day = dayKeys[index];
-              return DayCard(
-                day: day,
-                dateTime: widget.pageDateTime,
-                foodStats: _monthStats[day]!,
-                onDelete: (cardDateTime) async {
-                  await CaloriesHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
-                  setState(() {
-                    _monthStats.remove(cardDateTime.day); // 👈 instantly update UI
-                  });
-                },
-              );
-            },
-          ),
+        child: Column(
+          children: [
+
+            _buildExcessLabel(),
+
+            _monthStats.isEmpty
+                ? const Center(child: Text('No data found'))
+                : Expanded(
+                  child: RefreshIndicator(
+                                onRefresh: _loadMonthStats,
+                                child: ListView.separated(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemCount: _monthStats.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                  itemBuilder: (context, index) {
+                    final dayKeys = _monthStats.keys.toList()..sort((a, b) => b.compareTo(a));
+                    final day = dayKeys[index];
+                    return DayCard(
+                      day: day,
+                      dateTime: widget.pageDateTime,
+                      foodStats: _monthStats[day]!,
+                      onDelete: (cardDateTime) async {
+                        await CaloriesHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
+                        setState(() {
+                          _monthStats.remove(cardDateTime.day); // 👈 instantly update UI
+                        });
+                      },
+                    );
+                  },
+                                ),
+                              ),
+                ),
+          ],
         ),
       ),
-      // body: SafeArea(
-      //   child: FutureBuilder<Map<int, FoodStats>>(
-      //     future: _monthStats,
-      //     builder: (context, snapshot) {
-      //       if (snapshot.connectionState == ConnectionState.waiting) {
-      //         return const Center(child: CircularProgressIndicator());
-      //       }
-      //
-      //       if (snapshot.hasError) {
-      //         return Center(
-      //           child: Text(
-      //             'Error: ${snapshot.error}',
-      //             style: const TextStyle(color: Colors.redAccent),
-      //           ),
-      //         );
-      //       }
-      //
-      //       if (!snapshot.hasData || snapshot.data!.isEmpty) {
-      //         return const Center(
-      //           child: Text(
-      //             'No data found',
-      //             style: TextStyle(fontSize: 16, color: Colors.grey),
-      //           ),
-      //         );
-      //       }
-      //
-      //       final stats = snapshot.data!;
-      //       final dayKeys = stats.keys.toList()..sort((a, b) => b.compareTo(a));
-      //
-      //       return RefreshIndicator(
-      //         onRefresh: () async => setState(_loadMonthStats),
-      //         child: ListView.separated(
-      //           physics: const BouncingScrollPhysics(),
-      //           padding: const EdgeInsets.symmetric(vertical: 8),
-      //           itemCount: dayKeys.length,
-      //           separatorBuilder: (_, __) => const SizedBox(height: 6),
-      //           itemBuilder: (context, index) {
-      //             final day = dayKeys[index];
-      //             return DayCard(
-      //               day: day,
-      //               dateTime: widget.pageDateTime,
-      //               foodStats: stats[day]!,
-      //               onDelete: (cardDateTime) async{
-      //                 await CaloriesHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
-      //                 setState(_loadMonthStats);
-      //
-      //               },
-      //             );
-      //           },
-      //         ),
-      //       );
-      //     },
-      //   ),
-      // ),
+
     );
   }
+
+  Widget _buildExcessLabel()
+  {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text("Excess Calories : ",style: TextStyle(fontSize: 16),),
+          Text("2316",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold, color:Colors.redAccent)),
+          // SizedBox(width: 10,)
+        ],
+      ),
+    );
+  }
+
 }
 
-/// Card representing a single day's food statistics
+
 class DayCard extends StatelessWidget {
   final int day;
   final DateTime dateTime;
@@ -161,69 +133,158 @@ class DayCard extends StatelessWidget {
     final cardDateTime = DateTime(dateTime.year, dateTime.month, day);
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+      elevation: 1.5,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 2, 8, 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '$day-$currentMonth-$currentYear',
-              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-            ),
-            const SizedBox(height: 6),
+      child: Stack(
+        children: [
 
-            Row(
+          Positioned(
+            top: 8,
+              right: 2,
+              child: _buildOptionsButton(context, cardDateTime)),
+
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProgressCircle(),
-                const SizedBox(width: 20),
-                _buildCaloriesInfo(),
-                const Spacer(),
-                _buildOptionsButton(context, cardDateTime),
+                // Date
+                Text(
+                  '$day $currentMonth, $currentYear',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey[500],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                // 4-column row
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Column 1: Progress Circle
+                    _buildProgressCircle(),
+
+                    const SizedBox(width: 8),
+
+                    // Column 2: Calories info
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '${foodStats.calories} kcal',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            Text(
+                              '/${AppSettings.atMostProgress}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                // fontWeight: FontWeight.w600,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+
+                          ],
+                        ),
+                        if (foodStats.calories > AppSettings.atMostProgress)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade700,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.red.withValues(alpha: 0.6),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                '+${foodStats.calories - AppSettings.atMostProgress}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          // Container(
+                          //   margin: const EdgeInsets.only(top: 2),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                          //   decoration: BoxDecoration(
+                          //     color: Colors.red.shade600,
+                          //     borderRadius: BorderRadius.circular(10),
+                          //   ),
+                          //   child: Text(
+                          //     '+${foodStats.calories - AppSettings.atMostProgress}',
+                          //     style: const TextStyle(
+                          //       color: Colors.white,
+                          //       fontSize: 10,
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   ),
+                          // ),
+                      ],
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    // Column 3: Nutrient chips
+                    Expanded(
+                      child: Wrap(
+                        spacing: 4,
+                        runSpacing: 2,
+                        children: [
+                          _buildNutrientChip('Protein', foodStats.proteins, Colors.pink.shade300),
+                          _buildNutrientChip('Carbs', foodStats.carbohydrates, Colors.orange.shade300),
+                          _buildNutrientChip('Fats', foodStats.fats, Colors.amber.shade400),
+                          _buildNutrientChip('Vitamins', foodStats.vitamins, Colors.green.shade300),
+                          _buildNutrientChip('Minerals', foodStats.minerals, Colors.blue.shade300),
+                        ],
+                      ),
+                    ),
+
+                  ],
+                ),
               ],
             ),
+          ),
+        ],
 
-            const SizedBox(height: 8),
-            Divider(color: Colors.grey.shade300, thickness: 1),
-            const SizedBox(height: 8),
-
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                _buildNutrientChip('Protein', foodStats.proteins, Colors.pink.shade300),
-                _buildNutrientChip('Carbs', foodStats.carbohydrates, Colors.orange.shade300),
-                _buildNutrientChip('Fats', foodStats.fats, Colors.amber.shade400),
-                _buildNutrientChip('Vitamins', foodStats.vitamins, Colors.green.shade300),
-                _buildNutrientChip('Minerals', foodStats.minerals, Colors.blue.shade300),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
 
   Widget _buildProgressCircle() {
     final progress = (foodStats.calories / AppSettings.atMostProgress).clamp(0.0, 1.0);
+
     return Stack(
       alignment: Alignment.center,
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: 36,
+          width: 36,
           child: CircularProgressIndicator(
-            strokeWidth: 6,
+            strokeWidth: 4,
             value: 1,
-            color: Colors.grey.shade300,
+            color: Colors.grey.shade200,
           ),
         ),
         SizedBox(
-          height: 50,
-          width: 50,
+          height: 36,
+          width: 36,
           child: CircularProgressIndicator(
-            strokeWidth: 6,
+            strokeWidth: 4,
             value: progress,
             color: getProgressColor(foodStats),
             strokeCap: StrokeCap.round,
@@ -231,77 +292,97 @@ class DayCard extends StatelessWidget {
         ),
         Text(
           "${(progress * 100).toStringAsFixed(0)}%",
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
         ),
-      ],
-    );
-  }
-
-  Widget _buildCaloriesInfo() {
-    final excess = foodStats.calories - AppSettings.atMostProgress;
-
-    return Row(
-      children: [
-        Text(
-          '${foodStats.calories} kcal',
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        Text(
-          '/${AppSettings.atMostProgress}',
-          style: TextStyle(color: Colors.grey[500], fontSize: 12),
-        ),
-        const SizedBox(width: 10),
-        if (excess > 0)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.red.shade700,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.red.withValues(alpha: 0.6),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Text(
-              '+$excess',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
       ],
     );
   }
 
   Widget _buildNutrientChip(String label, int value, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(16),
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(radius: 4, backgroundColor: color),
-          const SizedBox(width: 4),
+          CircleAvatar(radius: 2.5, backgroundColor: color),
+          const SizedBox(width: 2),
           Text(
             '$label: $value',
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
+            style: TextStyle(fontSize: 10, color: Colors.grey.shade800),
           ),
         ],
       ),
     );
   }
+
+
+  // Widget _buildOptionsButton(BuildContext context, DateTime cardDateTime){
+  //
+  //   return Container(
+  //     color: Colors.redAccent,
+  //       child: Icon(Icons.more_horiz_rounded));
+  // }
+  Widget _buildOptionsButton(BuildContext context, DateTime cardDateTime) {
+    final key = GlobalKey();
+    return GestureDetector(
+      onTap: () async {
+        final RenderBox button = key.currentContext!.findRenderObject() as RenderBox;
+        final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+        final position = RelativeRect.fromRect(
+          Rect.fromPoints(
+            button.localToGlobal(Offset.zero, ancestor: overlay),
+            button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+          ),
+          Offset.zero & overlay.size,
+        );
+
+        final selected = await showMenu<String>(
+          context: context,
+          position: position,
+          items: const [
+            PopupMenuItem<String>(
+              value: 'edit',
+              child: Row(
+                children: [
+                  Icon(Icons.edit, size: 16, color: Colors.blue),
+                  SizedBox(width: 6),
+                  Text('Edit', style: TextStyle(fontSize: 13)),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_outline, size: 16, color: Colors.red),
+                  SizedBox(width: 6),
+                  Text('Delete', style: TextStyle(fontSize: 13)),
+                ],
+              ),
+            ),
+          ],
+        );
+
+        if (selected == 'edit') _openCaloriesCounterPage(context, cardDateTime);
+        if (selected == 'delete') onDelete(cardDateTime);
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Container(
+        // color: Colors.redAccent,
+        key: key,
+        width: 20,
+        height: 20,
+        child: const Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
+      ),
+    );
+  }
+
+
 
   void _openCaloriesCounterPage(BuildContext context, DateTime cardDateTime) {
     Navigator.push(
@@ -311,61 +392,5 @@ class DayCard extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildOptionsButton(BuildContext context, DateTime cardDateTime) {
-    final key = GlobalKey();
-    return Builder(
-      builder: (context) => IconButton(
-        key: key,
-        icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
-        onPressed: () async {
-          final RenderBox button = key.currentContext!.findRenderObject() as RenderBox;
-          final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-
-          final position = RelativeRect.fromRect(
-            Rect.fromPoints(
-              button.localToGlobal(Offset.zero, ancestor: overlay),
-              button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
-            ),
-            Offset.zero & overlay.size,
-          );
-
-          final selected = await showMenu<String>(
-            context: context,
-            position: position,
-            items: const [
-              PopupMenuItem<String>(
-                value: 'edit',
-                child: Row(
-                  children: [
-                    Icon(Icons.edit, size: 18, color: Colors.blue),
-                    SizedBox(width: 8),
-                    Text('Edit'),
-                  ],
-                ),
-              ),
-              PopupMenuItem<String>(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                    SizedBox(width: 8),
-                    Text('Delete'),
-                  ],
-                ),
-              ),
-            ],
-          );
-
-          if (selected == 'edit') {
-            _openCaloriesCounterPage(context, cardDateTime);
-          } else if (selected == 'delete') {
-
-           onDelete(cardDateTime);
-
-          }
-        },
-      ),
-    );
-  }
 }
+
