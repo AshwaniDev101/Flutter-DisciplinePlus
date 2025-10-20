@@ -88,7 +88,7 @@ class _CalorieProgressBarDashboardState
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => CalorieHistoryPage(dateTime: widget.currentDateTime),
+                            builder: (_) => CalorieHistoryPage(pageDateTime: widget.currentDateTime),
                           ),
                         );
                       },

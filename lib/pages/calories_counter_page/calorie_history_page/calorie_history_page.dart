@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:discipline_plus/models/food_stats.dart';
 import 'package:intl/intl.dart';
+import 'package:discipline_plus/models/food_stats.dart';
 import '../../../core/utils/helper.dart';
 import '../../../core/utils/app_settings.dart';
 import '../../../database/repository/calories_history_repository.dart';
@@ -8,18 +8,17 @@ import '../calories_counter_page.dart';
 
 /// Main page displaying calorie history for a month
 class CalorieHistoryPage extends StatefulWidget {
+  final DateTime pageDateTime;
 
-  final DateTime dateTime;
-
-  const CalorieHistoryPage({required this.dateTime, super.key});
+  const CalorieHistoryPage({required this.pageDateTime, super.key});
 
   @override
   State<CalorieHistoryPage> createState() => _CalorieHistoryPageState();
 }
 
 class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
-  /// Future to fetch month's calorie stats
-  late Future<Map<int, FoodStats>> _future;
+  // late Future<Map<int, FoodStats>> _future;
+  Map<int, FoodStats> _monthStats = {};
 
   @override
   void initState() {
@@ -27,12 +26,12 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
     _loadMonthStats();
   }
 
-  /// Helper method to initialize or refresh the month stats
-  void _loadMonthStats() {
-    _future = CaloriesHistoryRepository.instance.getMonthStats(
-      year: 2025,
-      month: 10,
+  Future<void> _loadMonthStats() async {
+    _monthStats = await CaloriesHistoryRepository.instance.getMonthStats(
+      year: widget.pageDateTime.year,
+      month: widget.pageDateTime.month,
     );
+    setState(() {}); // Rebuild after loading
   }
 
   @override
@@ -53,61 +52,91 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
         backgroundColor: Colors.pink[300],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+
       body: SafeArea(
-        child: FutureBuilder<Map<int, FoodStats>>(
-          future: _future,
-          builder: (context, snapshot) {
-            // Loading state
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            // Error state
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Error: ${snapshot.error}',
-                  style: const TextStyle(color: Colors.redAccent),
-                ),
-              );
-            }
-
-            // No data state
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No data found',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              );
-            }
-
-            // Has data
-            final stats = snapshot.data!;
-            final dayKeys = stats.keys.toList()..sort((a, b) => b.compareTo(a));
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                setState(_loadMonthStats);
-              },
-              child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                separatorBuilder: (_, __) => const SizedBox(height: 6),
-                itemCount: dayKeys.length,
-                itemBuilder: (context, index) {
-                  final day = dayKeys[index];
-                  return DayCard(day: day, dateTime: widget.dateTime, foodStats: stats[day]!);
+        child: _monthStats.isEmpty
+            ? const Center(child: Text('No data found'))
+            : RefreshIndicator(
+          onRefresh: _loadMonthStats,
+          child: ListView.separated(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: _monthStats.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 6),
+            itemBuilder: (context, index) {
+              final dayKeys = _monthStats.keys.toList()..sort((a, b) => b.compareTo(a));
+              final day = dayKeys[index];
+              return DayCard(
+                day: day,
+                dateTime: widget.pageDateTime,
+                foodStats: _monthStats[day]!,
+                onDelete: (cardDateTime) async {
+                  await CaloriesHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
+                  setState(() {
+                    _monthStats.remove(cardDateTime.day); // 👈 instantly update UI
+                  });
                 },
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
-
+      // body: SafeArea(
+      //   child: FutureBuilder<Map<int, FoodStats>>(
+      //     future: _monthStats,
+      //     builder: (context, snapshot) {
+      //       if (snapshot.connectionState == ConnectionState.waiting) {
+      //         return const Center(child: CircularProgressIndicator());
+      //       }
+      //
+      //       if (snapshot.hasError) {
+      //         return Center(
+      //           child: Text(
+      //             'Error: ${snapshot.error}',
+      //             style: const TextStyle(color: Colors.redAccent),
+      //           ),
+      //         );
+      //       }
+      //
+      //       if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      //         return const Center(
+      //           child: Text(
+      //             'No data found',
+      //             style: TextStyle(fontSize: 16, color: Colors.grey),
+      //           ),
+      //         );
+      //       }
+      //
+      //       final stats = snapshot.data!;
+      //       final dayKeys = stats.keys.toList()..sort((a, b) => b.compareTo(a));
+      //
+      //       return RefreshIndicator(
+      //         onRefresh: () async => setState(_loadMonthStats),
+      //         child: ListView.separated(
+      //           physics: const BouncingScrollPhysics(),
+      //           padding: const EdgeInsets.symmetric(vertical: 8),
+      //           itemCount: dayKeys.length,
+      //           separatorBuilder: (_, __) => const SizedBox(height: 6),
+      //           itemBuilder: (context, index) {
+      //             final day = dayKeys[index];
+      //             return DayCard(
+      //               day: day,
+      //               dateTime: widget.pageDateTime,
+      //               foodStats: stats[day]!,
+      //               onDelete: (cardDateTime) async{
+      //                 await CaloriesHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
+      //                 setState(_loadMonthStats);
+      //
+      //               },
+      //             );
+      //           },
+      //         ),
+      //       );
+      //     },
+      //   ),
+      // ),
     );
   }
-
 }
 
 /// Card representing a single day's food statistics
@@ -115,18 +144,21 @@ class DayCard extends StatelessWidget {
   final int day;
   final DateTime dateTime;
   final FoodStats foodStats;
+  final void Function(DateTime cardDateTime) onDelete;
 
-
-  const DayCard({super.key, required this.day, required this.dateTime, required this.foodStats});
+  const DayCard({
+    super.key,
+    required this.day,
+    required this.dateTime,
+    required this.foodStats,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
     final currentMonth = DateFormat.MMMM().format(dateTime);
     final currentYear = DateFormat.y().format(dateTime);
-
-
-    //Datetime update
-    DateTime currentDayDateTime = DateTime(2025, 10, day);
+    final cardDateTime = DateTime(dateTime.year, dateTime.month, day);
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
@@ -136,28 +168,26 @@ class DayCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            /// Date label
             Text(
               '$day-$currentMonth-$currentYear',
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
             const SizedBox(height: 6),
 
-            /// Calories progress and total
             Row(
               children: [
                 _buildProgressCircle(),
                 const SizedBox(width: 20),
                 _buildCaloriesInfo(),
                 const Spacer(),
-                getIconButton(context,currentDayDateTime),
+                _buildOptionsButton(context, cardDateTime),
               ],
             ),
+
             const SizedBox(height: 8),
-            Divider(color: Colors.grey, thickness: 1),
+            Divider(color: Colors.grey.shade300, thickness: 1),
             const SizedBox(height: 8),
 
-            /// Nutrient chips
             Wrap(
               spacing: 8,
               runSpacing: 4,
@@ -175,10 +205,8 @@ class DayCard extends StatelessWidget {
     );
   }
 
-  /// Circular progress showing calories vs maximum
   Widget _buildProgressCircle() {
     final progress = (foodStats.calories / AppSettings.atMostProgress).clamp(0.0, 1.0);
-
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -209,7 +237,6 @@ class DayCard extends StatelessWidget {
     );
   }
 
-  /// Calories display with excess indicator if over the limit
   Widget _buildCaloriesInfo() {
     final excess = foodStats.calories - AppSettings.atMostProgress;
 
@@ -223,7 +250,6 @@ class DayCard extends StatelessWidget {
             fontSize: 22,
           ),
         ),
-
         Text(
           '/${AppSettings.atMostProgress}',
           style: TextStyle(color: Colors.grey[500], fontSize: 12),
@@ -249,7 +275,6 @@ class DayCard extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
               ),
             ),
           ),
@@ -257,7 +282,6 @@ class DayCard extends StatelessWidget {
     );
   }
 
-  /// Nutrient chip widget
   Widget _buildNutrientChip(String label, int value, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -279,62 +303,69 @@ class DayCard extends StatelessWidget {
     );
   }
 
-
-  void openCaloriesCounterPage(BuildContext context, DateTime currentDayDateTime) {
+  void _openCaloriesCounterPage(BuildContext context, DateTime cardDateTime) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CaloriesCounterPage(currentDayDateTime: currentDayDateTime)),
-    );
-
-
-  }
-
-  IconButton getIconButton(BuildContext context, DateTime currentDayDateTime) {
-    return IconButton(
-      icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
-      onPressed: () async {
-        final selected = await showMenu<String>(
-          context: context,
-          position: RelativeRect.fromLTRB(200, 400, 16, 0), // you can adjust this
-          items: [
-
-            const PopupMenuItem<String>(
-              value: 'edit',
-              child: Row(
-                children: [
-                  Icon(Icons.edit, size: 18, color: Colors.blue),
-                  SizedBox(width: 8),
-                  Text('Edit'),
-                ],
-              ),
-            ),
-            const PopupMenuItem<String>(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('Delete'),
-                ],
-              ),
-            ),
-          ],
-        );
-
-        if (selected == 'edit') {
-
-          openCaloriesCounterPage(context, currentDayDateTime);
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(content: Text('Edit option clicked')),
-          // );
-        } else if (selected == 'delete') {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(content: Text('Deleted successfully')),
-          // );
-        }
-      },
+      MaterialPageRoute(
+        builder: (context) => CaloriesCounterPage(currentDayDateTime: cardDateTime),
+      ),
     );
   }
 
+  Widget _buildOptionsButton(BuildContext context, DateTime cardDateTime) {
+    final key = GlobalKey();
+    return Builder(
+      builder: (context) => IconButton(
+        key: key,
+        icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+        onPressed: () async {
+          final RenderBox button = key.currentContext!.findRenderObject() as RenderBox;
+          final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
+          final position = RelativeRect.fromRect(
+            Rect.fromPoints(
+              button.localToGlobal(Offset.zero, ancestor: overlay),
+              button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+            ),
+            Offset.zero & overlay.size,
+          );
+
+          final selected = await showMenu<String>(
+            context: context,
+            position: position,
+            items: const [
+              PopupMenuItem<String>(
+                value: 'edit',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit, size: 18, color: Colors.blue),
+                    SizedBox(width: 8),
+                    Text('Edit'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Delete'),
+                  ],
+                ),
+              ),
+            ],
+          );
+
+          if (selected == 'edit') {
+            _openCaloriesCounterPage(context, cardDateTime);
+          } else if (selected == 'delete') {
+
+           onDelete(cardDateTime);
+
+          }
+        },
+      ),
+    );
+  }
 }

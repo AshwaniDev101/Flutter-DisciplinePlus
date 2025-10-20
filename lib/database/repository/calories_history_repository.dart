@@ -40,6 +40,26 @@ class CaloriesHistoryRepository {
     }
   }
 
+
+  /// Deletes a FoodStats document for the specified date.
+  ///
+  /// This function serves as an abstraction over the Firebase layer,
+  /// ensuring that UI components or higher-level business logic do not
+  /// directly depend on Firestore APIs. It can later be extended to
+  /// include error handling, offline caching, or analytics tracking.
+  Future<void> deleteFoodStats ({
+    required DateTime cardDateTime,
+  }) async {
+    try {
+      await _firebaseService.deleteFoodStats(
+        cardDateTime: cardDateTime,
+      );
+    } catch (e) {
+      // Centralized error logging can be added here in future (e.g., Sentry)
+      rethrow; // Re-throw so higher layers can handle UI or user notifications
+    }
+  }
+
   // /// Optional: get total calories for a month
   // Future<int> getTotalCaloriesForMonth({
   //   required int year,
