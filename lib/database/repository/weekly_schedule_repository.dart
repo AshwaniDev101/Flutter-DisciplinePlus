@@ -1,13 +1,13 @@
-// lib/repositories/schedule_repository.dart
+// lib/repositories/weekly_schedule_repository.dart
 
 import '../../models/initiative.dart';
-import '../services/firebase_schedule_service.dart';
+import '../services/firebase_weekly_schedule_service.dart';
 
 
-class ScheduleRepository {
-  final FirebaseScheduleService _service;
+class WeeklyScheduleRepository {
+  final FirebaseWeeklyScheduleService _service;
 
-  ScheduleRepository(this._service);
+  WeeklyScheduleRepository(this._service);
 
   /// Listen to all initiatives for a given [day]
   Stream<List<Initiative>> watchAll(String day) {

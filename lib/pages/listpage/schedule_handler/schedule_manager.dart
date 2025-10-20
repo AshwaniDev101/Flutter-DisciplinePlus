@@ -1,8 +1,8 @@
 
 
-import 'package:discipline_plus/database/services/firebase_schedule_service.dart';
+import 'package:discipline_plus/database/services/firebase_weekly_schedule_service.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../../database/repository/schedule_repository.dart';
+import '../../../database/repository/weekly_schedule_repository.dart';
 import '../../../models/initiative.dart';
 import 'schedule_day_controller.dart';
 import 'schedule_helpers.dart';
@@ -46,7 +46,7 @@ class ScheduleManager {
   static final ScheduleManager _instance = ScheduleManager._internal();
   static ScheduleManager get instance => _instance;
 
-  final _repository = ScheduleRepository(FirebaseScheduleService.instance);
+  final _repository = WeeklyScheduleRepository(FirebaseWeeklyScheduleService.instance);
   final _dayController = ScheduleDayController();
 
   List<Initiative> _cache = [];

@@ -1,9 +1,10 @@
+import 'package:discipline_plus/database/services/firebase_food_history_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import '../../../core/utils/helper.dart';
 import '../../../core/utils/app_settings.dart';
-import '../../../database/repository/calories_history_repository.dart';
+import '../../../database/repository/food_history_repository.dart';
 import '../calories_counter_page.dart';
 
 /// Main page displaying calorie history for a month
@@ -19,6 +20,11 @@ class CalorieHistoryPage extends StatefulWidget {
 class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
 
   Map<int, FoodStats> _monthStats = {};
+  int _excessCalories = 0;
+
+
+
+
 
   @override
   void initState() {
@@ -27,12 +33,23 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
   }
 
   Future<void> _loadMonthStats() async {
-    _monthStats = await CaloriesHistoryRepository.instance.getMonthStats(
+    _monthStats = await FoodHistoryRepository.instance.getMonthStats(
       year: widget.pageDateTime.year,
       month: widget.pageDateTime.month,
     );
+
+    _excessCalories = _calculateTotalExcess(_monthStats);
     setState(() {}); // Rebuild after loading
   }
+
+  int _calculateTotalExcess(Map<int, FoodStats> monthStats) {
+    return monthStats.values
+        .map((food) => food.calories - AppSettings.atMostProgress)
+        .where((excess) => excess > 0)
+        .fold(0, (sum, e) => sum + e);
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +94,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
                       dateTime: widget.pageDateTime,
                       foodStats: _monthStats[day]!,
                       onDelete: (cardDateTime) async {
-                        await CaloriesHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
+                        await FoodHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
                         setState(() {
                           _monthStats.remove(cardDateTime.day); // 👈 instantly update UI
                         });
@@ -102,8 +119,8 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text("Excess Calories : ",style: TextStyle(fontSize: 16),),
-          Text("2316",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold, color:Colors.redAccent)),
-          // SizedBox(width: 10,)
+          Text("${_excessCalories }",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold, color:Colors.redAccent)),
+          SizedBox(width: 10,)
         ],
       ),
     );
@@ -302,7 +319,7 @@ class DayCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -320,12 +337,7 @@ class DayCard extends StatelessWidget {
   }
 
 
-  // Widget _buildOptionsButton(BuildContext context, DateTime cardDateTime){
-  //
-  //   return Container(
-  //     color: Colors.redAccent,
-  //       child: Icon(Icons.more_horiz_rounded));
-  // }
+
   Widget _buildOptionsButton(BuildContext context, DateTime cardDateTime) {
     final key = GlobalKey();
     return GestureDetector(

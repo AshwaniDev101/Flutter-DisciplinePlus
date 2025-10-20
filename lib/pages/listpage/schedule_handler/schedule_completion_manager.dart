@@ -1,17 +1,17 @@
 import 'package:discipline_plus/database/services/firebase_global_initiative_list_service.dart';
-import 'package:discipline_plus/database/services/firebase_initiative_completion_service.dart';
+import 'package:discipline_plus/database/services/firebase_initiative_history_service.dart';
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../../database/repository/global_initiative_list_repository.dart';
-import '../../../database/repository/initiative_completion_repository.dart';
+import '../../../database/repository/initiative_history_repository.dart';
 
 
 /// The [ScheduleCompletionManager] is responsible for tracking and updating
 /// the completion state of initiatives in the app.
 ///
 /// It acts as the bridge between the app’s business logic and the underlying
-/// [FirebaseInitiativeCompletionService], providing a reactive interface
+/// [FirebaseInitiativeHistoryService], providing a reactive interface
 /// for reading and writing completion data.
 ///
 /// Key responsibilities:
@@ -44,7 +44,7 @@ class ScheduleCompletionManager {
   static ScheduleCompletionManager get instance => _instance;
 
 
-  final InitiativeCompletionRepository _initiativeCompletionRepository = InitiativeCompletionRepository(FirebaseInitiativeCompletionService.instance);
+  final InitiativeHistoryRepository _initiativeCompletionRepository = InitiativeHistoryRepository(FirebaseInitiativeHistoryService.instance);
 
 
   final GlobalInitiativeListRepository _globalInitiativeListRepository = GlobalInitiativeListRepository(FirebaseGlobalInitiativeListService.instance);

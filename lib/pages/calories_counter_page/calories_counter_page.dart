@@ -1,3 +1,4 @@
+import 'package:discipline_plus/database/repository/food_history_repository.dart';
 import 'package:discipline_plus/pages/calories_counter_page/widgets/calorie_progress_bar_dashboard.dart';
 import 'package:discipline_plus/pages/calories_counter_page/widgets/global_food_listview.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,11 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
                 AddEditDietFoodDialog.show(
                   context,
                   food: food,
-                  onAdd: (DietFood food) => _editFood(food),
+                  onAdd: (DietFood editedFood) {
+
+                    _editFood(editedFood);
+
+                  }
                 );
               },
               onDeleted: (DietFood food) {
@@ -88,9 +93,14 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
   }
 
   /// Updates an existing [DietFood] entry in the database.
-  void _editFood(DietFood food) {
-    FoodManager.instance.updateAvailableFood(food);
-    _showSnack('${food.name} edited!');
+  void _editFood(DietFood editedFood) {
+    FoodManager.instance.updateAvailableFood(editedFood);
+    _showSnack('${editedFood.name} edited!');
+
+    // FoodHistoryRepository.instance.updateFoodHistory(editedFood);
+
+
+
   }
 
   /// Removes a [DietFood] item from the database.

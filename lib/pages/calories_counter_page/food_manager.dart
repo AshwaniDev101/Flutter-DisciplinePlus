@@ -2,10 +2,12 @@ import 'dart:async';
 
 // import 'package:rxdart/rxdart.dart';
 
-import 'package:discipline_plus/database/repository/diet_food_repository.dart';
+import 'package:discipline_plus/database/repository/food_history_repository.dart';
+import 'package:discipline_plus/database/repository/global_diet_food_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../database/services/firebase_diet_food_service.dart';
+import '../../database/services/firebase_food_history_service.dart';
+import '../../database/services/firebase_global_diet_food_service.dart';
 import '../../models/diet_food.dart';
 import '../../models/food_stats.dart';
 
@@ -15,7 +17,8 @@ class FoodManager {
   static FoodManager get instance => _instance;
 
 
-  final DietFoodRepository _dietFoodRepository = DietFoodRepository(FirebaseDietFoodService.instance);
+  final GlobalDietFoodRepository _dietFoodRepository = GlobalDietFoodRepository(FirebaseGlobalDietFoodService.instance);
+
 
 
   /// Watches both available foods and consumed foods,
@@ -56,7 +59,7 @@ class FoodManager {
 
   Stream<FoodStats?> watchConsumedFoodStats(DateTime dateTime) {
 
-    return _dietFoodRepository.watchConsumedFoodStats(dateTime);
+    return FoodHistoryRepository.instance.watchConsumedFoodStats(dateTime);
   }
 
 
@@ -66,7 +69,7 @@ class FoodManager {
   }
 
   void changeConsumedCount(double count, DietFood food, DateTime dateTime) {
-    _dietFoodRepository.changeConsumedCount(count,food, dateTime);
+    FoodHistoryRepository.instance.changeConsumedCount(count,food, dateTime);
 
   }
 

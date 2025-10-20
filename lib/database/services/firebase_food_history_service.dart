@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import '../../models/diet_food.dart';
 import '../../models/food_stats.dart';
 
 /// A dedicated Firebase service responsible for managing the user's
@@ -15,15 +16,17 @@ import '../../models/food_stats.dart';
 /// The service follows a singleton pattern to ensure only one instance
 /// interacts with Firestore throughout the app lifecycle, improving
 /// consistency and performance.
-class FirebaseCaloriesHistoryService {
+class FirebaseFoodHistoryService {
   /// Private constructor — enforces the singleton pattern
-  FirebaseCaloriesHistoryService._();
+  FirebaseFoodHistoryService._();
 
   /// Global singleton instance
-  static final instance = FirebaseCaloriesHistoryService._();
+  static final instance = FirebaseFoodHistoryService._();
+
 
   /// Firestore instance used for all database operations
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+
 
   /// Root-level Firestore collection for user data
   final String _root = 'users';
@@ -45,7 +48,7 @@ class FirebaseCaloriesHistoryService {
     required int year,
     required int month,
   }) async {
-    final monthRef = _firestore
+    final monthRef = _db
         .collection(_root)
         .doc(_userId)
         .collection('history')
@@ -88,7 +91,7 @@ class FirebaseCaloriesHistoryService {
   Future<Map<int, Map<int, FoodStats>>> getFoodStatsForYear({
     required int year,
   }) async {
-    final yearRef = _firestore
+    final yearRef = _db
         .collection(_root)
         .doc(_userId)
         .collection('history')
@@ -123,6 +126,33 @@ class FirebaseCaloriesHistoryService {
     return yearlyStats;
   }
 
+
+
+  FoodStats latestFoodStats = FoodStats.empty();
+
+  Stream<FoodStats?> watchDietStatistics(DateTime date) {
+    final ref = _db
+        .collection('users')
+        .doc(_userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}');
+
+    return ref.snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data != null && data['foodStats'] != null) {
+          latestFoodStats = FoodStats.fromMap(Map<String, dynamic>.from(data['foodStats']));
+          return latestFoodStats;
+        }
+      }
+      return null;
+    });
+  }
+
+
+
   /// Updates or creates the [FoodStats] record for a specific day.
   ///
   /// If the document for that date does not exist, it will be created.
@@ -136,7 +166,7 @@ class FirebaseCaloriesHistoryService {
     required FoodStats foodStats,
   }) async {
 
-    var ref = _firestore
+    var ref = _db
         .collection(_root)
         .doc(_userId)
         .collection('history')
@@ -162,7 +192,7 @@ class FirebaseCaloriesHistoryService {
     required DateTime cardDateTime,
   }) async {
 
-    var ref = _firestore
+    var ref = _db
         .collection(_root)
         .doc(_userId)
         .collection('history')
@@ -173,114 +203,93 @@ class FirebaseCaloriesHistoryService {
     print("============ Deleting ${ref.path.toString()}");
     await ref.delete();
   }
+
+
+
+  /// Add food to consumed list
+  Future<void> changeConsumedFoodCount(double count, DietFood food, DateTime dateTime) async {
+    final ref = _db
+        .collection('users')
+        .doc(_userId)
+        .collection('history')
+        .doc('${dateTime.year}')
+        .collection('${dateTime.month}')
+        .doc('${dateTime.day}')
+        .collection('food_consumed_list')
+        .doc(food.id);
+
+    final map = food.toConsumedMap()..remove('id');
+
+    final snapshot = await ref.get();
+
+    if (snapshot.exists) {
+      final existingData = snapshot.data()!;
+      final existingCount = existingData['count'] ?? 0;
+
+      await ref.update({
+        ...map,
+        'count': existingCount + count,
+      });
+    } else {
+      await ref.set({
+        ...map,
+        'count': count,
+      });
+    }
+
+    if(count>=0)
+    {
+      _incrementConsumedFoodStats(food.foodStats, dateTime);
+    } else
+    {
+      _decrementConsumedFoodStats(food.foodStats, dateTime);
+    }
+    // update daily stats
+
+  }
+
+
+  Future<void> _incrementConsumedFoodStats(FoodStats newFoodStats, DateTime datetime) async
+  {
+    FoodStats updatedFoodStats = latestFoodStats.sum(newFoodStats);
+
+    _updateConsumedFoodStats(updatedFoodStats,datetime);
+  }
+
+  Future<void> _decrementConsumedFoodStats(FoodStats newFoodStats, DateTime datetime) async
+  {
+    FoodStats updatedFoodStats = latestFoodStats.subtract(newFoodStats);
+
+    _updateConsumedFoodStats(updatedFoodStats, datetime);
+  }
+
+
+  Future<void> _updateConsumedFoodStats(FoodStats updatedFoodStats, DateTime date) async {
+
+    final ref = _db
+        .collection('users')
+        .doc(_userId)
+        .collection('history')
+        .doc('${date.year}')
+        .collection('${date.month}')
+        .doc('${date.day}');
+
+    final map = {
+      'foodStats': updatedFoodStats.toMap(),
+    };
+
+    await ref.set(map, SetOptions(merge: true));
+  }
+
+
+
+
+
+
+
 }
 
 
 
 
 
-
-
-
-
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/cupertino.dart';
-// import '../../models/food_stats.dart';
-//
-// /// A Firebase service for fetching user's calorie history.
-// ///
-// /// This service is designed for structured Firestore data:
-// /// users/{userId}/history/{year}/{month}/{day}/foodStats
-// class FirebaseCaloriesHistoryService {
-//   // Singleton instance
-//   FirebaseCaloriesHistoryService._();
-//   static final instance = FirebaseCaloriesHistoryService._();
-//
-//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-//
-//   final String _root = 'users';
-//   final String _userId = 'user1'; // TODO: Replace with dynamic user ID later.
-//
-//   /// Fetches [FoodStats] for all days in a specific [year] and [month].
-//   ///
-//   /// Returns a map where the key is the day of the month and the value is [FoodStats].
-//
-//
-//   Future<Map<int, FoodStats>> getFoodStatsForMonth({
-//     required int year,
-//     required int month,
-//   }) async {
-//     final monthRef = _firestore
-//         .collection(_root)
-//         .doc(_userId)
-//         .collection('history')
-//         .doc(year.toString())
-//         .collection(month.toString());
-//
-//     final snapshot = await monthRef.get();
-//
-//     final Map<int, FoodStats> statsMap = {};
-//
-//     for (final doc in snapshot.docs) {
-//       final data = doc.data();
-//       final day = int.tryParse(doc.id);
-//
-//       if (day != null && data['foodStats'] != null) {
-//         try {
-//           statsMap[day] = FoodStats.fromMap(data['foodStats']);
-//         } catch (e) {
-//
-//           debugPrint('Invalid foodStats data for day $day: $e');
-//         }
-//       }
-//     }
-//
-//     final reversedMap = Map.fromEntries(
-//       statsMap.entries.toList()..sort((a, b) => b.key.compareTo(a.key)),
-//     );
-//
-//     return reversedMap;
-//   }
-//
-//   /// Fetches all [FoodStats] for a given [year].
-//   ///
-//   /// Returns a nested map: `{ month: { day: FoodStats } }`.
-//   /// Only includes months that contain at least one valid entry.
-//   Future<Map<int, Map<int, FoodStats>>> getFoodStatsForYear({
-//     required int year,
-//   }) async {
-//     final yearRef = _firestore
-//         .collection(_root)
-//         .doc(_userId)
-//         .collection('history')
-//         .doc(year.toString());
-//
-//     final Map<int, Map<int, FoodStats>> yearlyStats = {};
-//
-//     // Run month fetches in parallel for efficiency
-//     final monthFutures = List.generate(12, (index) async {
-//       final month = index + 1;
-//       final monthRef = yearRef.collection(month.toString());
-//       final snapshot = await monthRef.get();
-//
-//       final Map<int, FoodStats> monthMap = {};
-//
-//       for (final doc in snapshot.docs) {
-//         final data = doc.data();
-//         final day = int.tryParse(doc.id);
-//
-//         if (day != null && data['foodStats'] != null) {
-//           try {
-//             monthMap[day] = FoodStats.fromMap(data['foodStats']);
-//           } catch (_) {}
-//         }
-//       }
-//
-//       if (monthMap.isNotEmpty) yearlyStats[month] = monthMap;
-//     });
-//
-//     await Future.wait(monthFutures);
-//     return yearlyStats;
-//   }
-// }

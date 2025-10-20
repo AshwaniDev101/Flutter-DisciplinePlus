@@ -1,17 +1,16 @@
-// firebase_schedule_service.dart
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/initiative.dart';
 
-class FirebaseScheduleService {
+class FirebaseWeeklyScheduleService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String _root = 'users';
   final String _userId = 'user1';
   final String _initiative_list = 'initiative_list';
 
   // Singleton
-  FirebaseScheduleService._();
-  static final instance = FirebaseScheduleService._();
+  FirebaseWeeklyScheduleService._();
+  static final instance = FirebaseWeeklyScheduleService._();
 
 
   CollectionReference get _initiativeCollection => _db.collection(_root).doc(_userId).collection('schedule');

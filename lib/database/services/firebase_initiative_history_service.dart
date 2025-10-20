@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirebaseInitiativeCompletionService {
+class FirebaseInitiativeHistoryService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // Singleton pattern
-  FirebaseInitiativeCompletionService._();
-  static final instance = FirebaseInitiativeCompletionService._();
+  FirebaseInitiativeHistoryService._();
+  static final instance = FirebaseInitiativeHistoryService._();
 
   final String userId = 'user1'; // TODO: make dynamic later
 

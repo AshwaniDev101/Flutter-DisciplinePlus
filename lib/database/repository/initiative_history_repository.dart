@@ -1,12 +1,12 @@
-import 'package:discipline_plus/database/services/firebase_initiative_completion_service.dart';
+import 'package:discipline_plus/database/services/firebase_initiative_history_service.dart';
 
 /// Repository layer for initiative completion logic.
 /// This class abstracts away all Firebase logic,
 /// allowing your app to be tested and maintained more easily.
-class InitiativeCompletionRepository {
-  final FirebaseInitiativeCompletionService _service;
+class InitiativeHistoryRepository {
+  final FirebaseInitiativeHistoryService _service;
 
-  InitiativeCompletionRepository(this._service);
+  InitiativeHistoryRepository(this._service);
 
   /// Watch completion history for a specific date
   Stream<Map<String, bool>> watchInitiativeCompletionHistory(DateTime date) {
