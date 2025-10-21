@@ -11,8 +11,8 @@ import 'food_manager.dart';
 /// while tracking their total calorie consumption in real time.
 class CaloriesCounterPage extends StatefulWidget {
 
-  final DateTime currentDayDateTime;
-  const CaloriesCounterPage({super.key, required this.currentDayDateTime});
+  final DateTime pageDateTime;
+  const CaloriesCounterPage({super.key, required this.pageDateTime});
 
   @override
   State<CaloriesCounterPage> createState() => _CaloriesCounterPageState();
@@ -36,8 +36,8 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
 
             /// Displays a progress bar showing how much of the daily calorie goal is consumed.
             CalorieProgressBarDashboard(
-              currentDateTime: widget.currentDayDateTime,
-              stream: FoodManager.instance.watchConsumedFoodStats(widget.currentDayDateTime),
+              currentDateTime: widget.pageDateTime,
+              stream: FoodManager.instance.watchConsumedFoodStats(widget.pageDateTime),
                 onClickAdd:(){
                   AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
                               _addFood(food);
@@ -53,7 +53,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
             /// Displays all available and consumed foods in a unified list.
             /// Handles edit and delete actions via callbacks.
             GlobalFoodList(
-              stream: FoodManager.instance.watchMergedFoodList(widget.currentDayDateTime),
+              stream: FoodManager.instance.watchMergedFoodList(widget.pageDateTime),
               onEdit: (DietFood food) {
                 AddEditDietFoodDialog.show(
                   context,
@@ -70,7 +70,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
               },
               onQuantityChange: (double oldValue, double newValue, DietFood food)
               {
-                FoodManager.instance.changeConsumedCount(newValue - oldValue, food, widget.currentDayDateTime);
+                FoodManager.instance.changeConsumedCount(newValue - oldValue, food, widget.pageDateTime);
               },
 
             ),
@@ -97,7 +97,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
     FoodManager.instance.updateAvailableFood(editedFood);
     _showSnack('${editedFood.name} edited!');
 
-    // FoodHistoryRepository.instance.updateFoodHistory(editedFood);
+    // FoodHistoryRepository.instance.updateFoodStats(editedFood.foodStats, widget.pageDateTime);
 
 
 

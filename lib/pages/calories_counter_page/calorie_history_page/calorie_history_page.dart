@@ -400,7 +400,7 @@ class DayCard extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CaloriesCounterPage(currentDayDateTime: cardDateTime),
+        builder: (context) => CaloriesCounterPage(pageDateTime: cardDateTime),
       ),
     );
   }

@@ -3,20 +3,16 @@ import 'package:flutter/material.dart';
 import '../../../core/utils/helper.dart';
 
 class MonthHeatmap extends StatelessWidget {
-  final double height;
-  final double hSpacing;
-  final double vSpacing;
-  final double horizontalPadding;
-  final bool useHorizontalScroll; // if true, allow scrolling when many columns
+  final double height = 70;
+  final double hSpacing = 6;
+  final double vSpacing = 6;
+  final double horizontalPadding = 4;
+  final double verticalPadding = 8.0;
+  final bool   useHorizontalScroll = false; // if true, allow scrolling when many columns
   final Map<String, dynamic> heatLevelMap;
 
   const MonthHeatmap({
     Key? key,
-    this.height = 70,
-    this.hSpacing = 3,
-    this.vSpacing = 3,
-    this.horizontalPadding = 4,
-    this.useHorizontalScroll = false,
     required this.heatLevelMap,
   }) : super(key: key);
 
@@ -55,7 +51,7 @@ class MonthHeatmap extends StatelessWidget {
     final availableWidth = deviceWidth - horizontalPadding * 2 - totalHSpacing;
     final rawBoxSize = (availableWidth / columns);
 
-    final verticalPadding = 8.0;
+    // final verticalPadding = 8.0;
     final totalVSpacing = (rows - 1) * vSpacing;
     final availableHeight = height - verticalPadding * 2 - totalVSpacing;
     final rawRowHeight = (availableHeight / rows);
@@ -104,6 +100,7 @@ class MonthHeatmap extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           border: isToday ? Border.all(width: 2, color: Colors.black12) : null,
         ),
+        child: Center(child: Text("${dayNumber}",style: TextStyle(fontSize: 10,color: Colors.grey[600]),)),
       );
     });
 
@@ -130,10 +127,25 @@ class MonthHeatmap extends StatelessWidget {
     return Container(
       height: height,
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
-      child: useHorizontalScroll
-          ? SingleChildScrollView(scrollDirection: Axis.horizontal, child: rowContent)
-          : rowContent,
+      // padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              // color: Colors.redAccent,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 4.0,top: 2),
+                child: Text(('${getMonthName(DateTime.now())} ${DateTime.now().year}'),style: TextStyle(fontSize: 12,color: Colors.grey[600])),
+              )),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: useHorizontalScroll
+                ? SingleChildScrollView(scrollDirection: Axis.horizontal, child: rowContent)
+                : rowContent,
+          ),
+        ],
+      ),
     );
   }
 }

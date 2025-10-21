@@ -1,4 +1,5 @@
 import 'package:discipline_plus/models/food_stats.dart';
+import 'package:intl/intl.dart';
 import '../../database/services/firebase_food_history_service.dart';
 import '../../models/diet_food.dart';
 
@@ -71,6 +72,8 @@ Stream<FoodStats?> watchConsumedFoodStats(DateTime date) {
   Future<void> changeConsumedCount(double count ,DietFood food, DateTime date) {
     return _service.changeConsumedFoodCount(count,food, date);
   }
+
+
 
 
 }

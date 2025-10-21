@@ -1,6 +1,7 @@
 // Flutter core and UI libraries
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 // Importing data model for food statistics
 import '../../models/food_stats.dart';
@@ -91,3 +92,9 @@ String _twoDigits(int n) => n.toString().padLeft(2, '0');
 bool isSameDate(DateTime a, DateTime b) {
   return a.year == b.year && a.month == b.month && a.day == b.day;
 }
+
+String getMonthName(DateTime date) {
+  return DateFormat.MMMM().format(date);
+}
+
+

@@ -16,7 +16,7 @@ import '../heatmap_page/heatmap_panel.dart';
 import '../timerpage/timer_page.dart';
 
 
-const double _panelMinHeight = 60;
+const double _panelMinHeight = 80;
 const double _panelMaxHeight = 550;
 
 class HomePage extends StatefulWidget {
