@@ -1,23 +1,26 @@
-import 'package:discipline_plus/pages/calories_counter_page/food_manager.dart';
+
 import 'package:discipline_plus/pages/calories_counter_page/widgets/food_quantity_selector.dart';
 import 'package:flutter/material.dart';
 import '../../../models/diet_food.dart';
 import '../../../models/food_stats.dart';
 
-class GlobalFoodList extends StatelessWidget {
+class GlobalFoodList extends StatefulWidget {
+
+  final String searchQuery;
   final Stream<List<DietFood>> stream;
   final Function(DietFood food) onEdit;
   final Function(DietFood food) onDeleted;
   final Function(double oldValue, double newValue, DietFood food) onQuantityChange;
 
+
   GlobalFoodList({
-    Key? key,
+    super.key,
+    this.searchQuery = '',
     Stream<List<DietFood>>? stream,
     required this.onEdit,
     required this.onDeleted,
     required this.onQuantityChange,
-  })  : stream = stream ?? _defaultDummyStream,
-        super(key: key);
+  })  : stream = stream ?? _defaultDummyStream;
 
   static final Stream<List<DietFood>> _defaultDummyStream = Stream.value([
     DietFood(
@@ -47,6 +50,11 @@ class GlobalFoodList extends StatelessWidget {
         time: DateTime.now()),
   ]);
 
+  @override
+  State<GlobalFoodList> createState() => _GlobalFoodListState();
+}
+
+class _GlobalFoodListState extends State<GlobalFoodList> {
   final List<Color> _colorPalette = const [
     Color(0xFFF8BBD0),
     Color(0xFFBBDEFB),
@@ -109,17 +117,24 @@ class GlobalFoodList extends StatelessWidget {
       ],
     ).then((value) {
       if (value == 'edit') {
-        onEdit(food);
+        widget.onEdit(food);
       } else if (value == 'delete') {
-        onDeleted(food);
+        widget.onDeleted(food);
       }
     });
   }
 
-  @override
+
+
+
+
+
+@override
   Widget build(BuildContext context) {
+
+
     return StreamBuilder<List<DietFood>>(
-      stream: stream,
+      stream: widget.stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -132,46 +147,48 @@ class GlobalFoodList extends StatelessWidget {
           return const Center(child: Text('No items yet'));
         }
 
-        return MediaQuery.removePadding(
-          context: context,
-          removeTop: true,
-          child: Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-              child: ListView.separated(
-                key: ValueKey(foods.length),
-                // 🔥 This line is the magic
-                physics: const BouncingScrollPhysics(),
-                itemCount: foods.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 6),
-                itemBuilder: (context, index) {
-                  final food = foods[index];
-                  final barColor = _colorPalette[index % _colorPalette.length];
+        // // Filter locally
+        final filtered = foods.where((f) {
+          return f.name.toLowerCase().contains(widget.searchQuery.toLowerCase());
+        }).toList();
 
-                  return _FoodCard(
-                    key: ValueKey(food.id),
-                    // optional: smooth per-item updates
-                    food: food,
-                    barColor: barColor,
-                    onClickOptionMenu: (context) =>
-                        _showItemMenu(context, food),
-                    onQuantityChange: onQuantityChange,
+        if (filtered.isEmpty) {
+          return const Center(child: Text('No matching items'));
+        }
 
-                  );
-                },
-              ),
-            ),
-          ),
+        return ListView.separated(
+          key: ValueKey(foods.length),
+          physics: const BouncingScrollPhysics(),
+          // itemCount: foods.length,
+          itemCount: filtered.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 6),
+          itemBuilder: (context, index) {
+
+
+
+            // final food = foods[index];
+            final food = filtered[index];
+            final barColor = _colorPalette[index % _colorPalette.length];
+
+            return _FoodCard(
+              key: ValueKey(food.id),
+
+              food: food,
+              barColor: barColor,
+              onClickOptionMenu: (context) =>
+                  _showItemMenu(context, food),
+              onQuantityChange: widget.onQuantityChange,
+
+            );
+          },
         );
       },
     );
   }
+
+
+
+
 }
 
 class _FoodCard extends StatelessWidget {

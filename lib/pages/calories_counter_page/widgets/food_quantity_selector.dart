@@ -14,19 +14,18 @@ class FoodQuantitySelector extends StatefulWidget {
   final bool enableHoldToRepeat;
 
   const FoodQuantitySelector({
-    Key? key,
+    super.key,
     required this.initialValue,
     this.min = 0.0,
     this.max = 100,
     this.step = 1.0,
     this.precision = 0,
     this.onChanged,
-    this.buttonSize = 24.0,
+    this.buttonSize = 28.0,
     this.buttonColor=Colors.grey,
     this.enableHoldToRepeat = true,
   })  : assert(min <= max),
-        assert(precision >= 0),
-        super(key: key);
+        assert(precision >= 0);
 
   @override
   State<FoodQuantitySelector> createState() => _FoodQuantitySelectorState();
@@ -141,7 +140,7 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
         height: widget.buttonSize,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: enabled ? color.withOpacity(0.2) : Colors.grey.withOpacity(0.05),
+          color: enabled ? color.withValues(alpha: 0.2): Colors.grey.withValues(alpha: 0.05),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, size: widget.buttonSize * 0.55, color: enabled ? color : Colors.grey),

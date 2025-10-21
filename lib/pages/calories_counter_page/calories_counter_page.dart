@@ -1,4 +1,4 @@
-import 'package:discipline_plus/database/repository/food_history_repository.dart';
+
 import 'package:discipline_plus/pages/calories_counter_page/widgets/calorie_progress_bar_dashboard.dart';
 import 'package:discipline_plus/pages/calories_counter_page/widgets/global_food_listview.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +20,12 @@ class CaloriesCounterPage extends StatefulWidget {
 }
 
 class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
+
+
+
+
+  String _searchQuery = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,10 +58,10 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // const SizedBox(height: 14),
+            const SizedBox(height: 14),
 
 
-            /// Displays a progress bar showing how much of the daily calorie goal is consumed.
+            //  Displays a progress bar showing how much of the daily calorie goal is consumed.
             CalorieProgressBarDashboard(
               currentDateTime: widget.pageDateTime,
               stream: FoodManager.instance.watchConsumedFoodStats(
@@ -72,32 +78,54 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
 
             const SizedBox(height: 14),
 
+
+
+
             /// Displays all available and consumed foods in a unified list.
             /// Handles edit and delete actions via callbacks.
-            GlobalFoodList(
-              stream: FoodManager.instance.watchMergedFoodList(
-                  widget.pageDateTime),
-              onEdit: (DietFood food) {
-                AddEditDietFoodDialog.show(
-                    context,
-                    food: food,
-                    onAdd: (DietFood editedFood) {
-                      _editFood(editedFood);
-                    }
-                );
-              },
-              onDeleted: (DietFood food) {
-                _deleteFood(food);
-              },
-              onQuantityChange: (double oldValue, double newValue,
-                  DietFood food) {
-                FoodManager.instance.changeConsumedCount(
-                    newValue - oldValue, food, widget.pageDateTime);
-              },
+            Expanded(
+              child: GlobalFoodList(
+                searchQuery: _searchQuery,
+                stream: FoodManager.instance.watchMergedFoodList(
+                    widget.pageDateTime),
+                onEdit: (DietFood food) {
+                  AddEditDietFoodDialog.show(
+                      context,
+                      food: food,
+                      onAdd: (DietFood editedFood) {
+                        _editFood(editedFood);
+                      }
+                  );
+                },
+                onDeleted: (DietFood food) {
+                  _deleteFood(food);
+                },
+                onQuantityChange: (double oldValue, double newValue,
+                    DietFood food) {
+                  FoodManager.instance.changeConsumedCount(
+                      newValue - oldValue, food, widget.pageDateTime);
+                },
 
+              ),
             ),
 
-            searchBar()
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search food...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onChanged: (value) => setState(() {
+                  _searchQuery = value.toLowerCase();
+                }),
+              ),
+            ),
+            // searchBar()
 
           ],
         ),
