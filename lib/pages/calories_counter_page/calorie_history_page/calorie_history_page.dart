@@ -38,15 +38,29 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
       month: widget.pageDateTime.month,
     );
 
-    _excessCalories = _calculateTotalExcess(_monthStats);
+    _excessCalories = _calculateNetExcess(_monthStats);
     setState(() {}); // Rebuild after loading
   }
 
-  int _calculateTotalExcess(Map<int, FoodStats> monthStats) {
-    return monthStats.values
-        .map((food) => food.calories - AppSettings.atMostProgress)
-        .where((excess) => excess > 0)
-        .fold(0, (sum, e) => sum + e);
+  // int _calculateTotalExcess(Map<int, FoodStats> monthStats) {
+  //   return monthStats.values
+  //       .map((food) => food.calories - AppSettings.atMostProgress)
+  //       .where((excess) => excess > 0)
+  //       .fold(0, (sum, e) => sum + e);
+  // }
+
+  int _calculateNetExcess(Map<int, FoodStats> monthStats) {
+    int total = 0; // start from zero
+
+    for (var food in monthStats.values) {
+      int allowed = AppSettings.atMostProgress;
+      int diff = food.calories - allowed;
+
+      // add or subtract directly
+      total += diff;
+    }
+
+    return total;
   }
 
 
@@ -235,22 +249,7 @@ class DayCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          // Container(
-                          //   margin: const EdgeInsets.only(top: 2),
-                          //   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.red.shade600,
-                          //     borderRadius: BorderRadius.circular(10),
-                          //   ),
-                          //   child: Text(
-                          //     '+${foodStats.calories - AppSettings.atMostProgress}',
-                          //     style: const TextStyle(
-                          //       color: Colors.white,
-                          //       fontSize: 10,
-                          //       fontWeight: FontWeight.bold,
-                          //     ),
-                          //   ),
-                          // ),
+
                       ],
                     ),
 

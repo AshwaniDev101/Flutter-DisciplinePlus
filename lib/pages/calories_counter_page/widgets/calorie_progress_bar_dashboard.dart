@@ -23,6 +23,19 @@ class _CalorieProgressBarDashboardState
     extends State<CalorieProgressBarDashboard> {
 
 
+
+  Widget _getTitle()
+  {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Text('Calorie Counter',
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800])),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<FoodStats?>(
@@ -40,141 +53,170 @@ class _CalorieProgressBarDashboardState
         return SizedBox(
           height: 100,
           // color:Colors.white,
-          child: Stack(
-
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Main Center Row
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          height: 80,
-                          width: 80,
 
-                          child: CircularProgressIndicator(
-                            value: caloriesCount / AppSettings.atMostProgress,
-                            strokeWidth: 12,
-                            backgroundColor: Colors.grey.shade200,
-                            valueColor:
-                                AlwaysStoppedAnimation(getProgressColor(stats)),
+
+              Stack(
+                children: [
+
+                  // Add button
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200], // background color
+                          shape: BoxShape.circle,  // makes it circular
+                        ),
+                        child: IconButton(
+                          onPressed: widget.onClickAdd,
+                          icon: Icon(
+                            Icons.add,
+                            color: Colors.grey[600],
+                            size: 18,
                           ),
                         ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '$caloriesCount',
-                              style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[500]!),
+                      ),
+                    ),
+                  ),
+
+
+                  Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+
+                      SizedBox(width: 20,),
+                      // Progress Bar
+                      Stack(
+                        children: [
+
+
+                          // Main Center Row
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 80,
+                                      width: 80,
+
+                                      child: CircularProgressIndicator(
+                                        value: caloriesCount / AppSettings.atMostProgress,
+                                        strokeWidth: 12,
+                                        backgroundColor: Colors.grey.shade200,
+                                        valueColor:
+                                            AlwaysStoppedAnimation(getProgressColor(stats)),
+                                      ),
+                                    ),
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          '$caloriesCount',
+                                          style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[500]!),
+                                        ),
+                                         Text('${AppSettings.atMostProgress} kcal',
+                                            style: TextStyle(fontSize: 10)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+
+
+                              ],
                             ),
-                             Text('${AppSettings.atMostProgress} kcal',
-                                style: TextStyle(fontSize: 10)),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 20),
-                    ElevatedButton(
-                      onPressed: !isSameDate(widget.currentDateTime, DateTime.now())
-                          ? null
-                          : () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => CalorieHistoryPage(pageDateTime: widget.currentDateTime),
                           ),
-                        );
-                      },
-                      child: Text(getCurrentDateFormatted(widget.currentDateTime)),
-                    ),
-                  ],
-                ),
-              ),
 
-              // Top-left Back Icon
 
-              // Top-left Back Icon
-              Positioned(
-                top: 0,
-                left: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200], // background color
-                      shape: BoxShape.circle,  // makes it circular
-                    ),
-                    child: IconButton(
-                      onPressed: widget.onClickBack,
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.grey,
-                        size: 26,
+
+
+
+
+                        ],
                       ),
-                    ),
-                  ),
-                ),
-              ),
+                      SizedBox(width: 20,),
+                      // Elevated button and Excess Label
+                      Column(
+                        children: [
 
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200], // background color
-                      shape: BoxShape.circle,  // makes it circular
-                    ),
-                    child: IconButton(
-                      onPressed: widget.onClickAdd,
-                      icon: Icon(
-                        Icons.add,
-                        color: Colors.grey[600],
-                        size: 18,
+
+                          ElevatedButton(
+                            onPressed: !isSameDate(widget.currentDateTime, DateTime.now())
+                                ? null
+                                : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => CalorieHistoryPage(pageDateTime: widget.currentDateTime),
+                                ),
+                              );
+                            },
+                            child: Text(getCurrentDateFormatted(widget.currentDateTime)),
+                          ),
+
+                          SizedBox(height: 4,),
+                          _getExcessCaloriesLabel(caloriesCount)
+
+                        ],
                       ),
-                    ),
+                    ],
                   ),
-                ),
+                ],
               ),
-
-              // Positioned(
-              //   top: 0,
-              //   right: 0,
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: Container(
-              //       decoration: BoxDecoration(
-              //         color: Colors.grey[200], // background color
-              //         shape: BoxShape.circle,  // makes it circular
-              //       ),
-              //       child: IconButton(
-              //         onPressed: widget.onClickAdd,
-              //         icon: Icon(
-              //           Icons.settings,
-              //           color: Colors.grey[600],
-              //           size: 18,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-
-
-
             ],
           ),
         );
       },
     );
+
   }
+
+
+  Widget _getExcessCaloriesLabel(int caloriesCount) {
+    int diff = caloriesCount - AppSettings.atMostProgress;
+
+    // Add "+" sign only for positive numbers
+    String formatted = '${diff > 0 ? '+$diff' : '$diff'} kcal';
+
+
+    return                             Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.red.shade700,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.red.withValues(alpha: 0.6),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        formatted,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+
+
+  }
+
 
 
 }
