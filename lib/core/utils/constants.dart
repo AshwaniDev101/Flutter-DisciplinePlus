@@ -4,5 +4,5 @@ import 'package:flutter/material.dart';
 
 class Constants
 {
-  static const background_color = Colors.white;
+  static const background_color = Colors.pink;
 }
