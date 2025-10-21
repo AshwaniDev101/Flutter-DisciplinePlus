@@ -33,7 +33,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
     @override
     Widget build(BuildContext context) {
       return Container(
-        color: Colors.white,
+        color: Colors.grey[100],
         child: Column(
           children: [
             Expanded(
@@ -67,10 +67,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                   onReorder: (oldIndex, newIndex) {
                     setState(() {
                       if (newIndex > oldIndex) newIndex--;
-                      // final item = initiatives[oldIndex];
-                      // TaskManager.instance.removeInitiativeAt(oldIndex);
-                      // TaskManager.instance.insertInitiativeAt(newIndex, item);
-                      // TaskManager.instance.updateAllOrders();
+
                     });
                   },
                   children: [
@@ -88,7 +85,9 @@ class _ScheduleListviewState extends State<ScheduleListview> {
     }
 
 
-  Widget _dismissibleItem(BuildContext context, Initiative init, int index) {
+
+
+    Widget _dismissibleItem(BuildContext context, Initiative init, int index) {
     return Dismissible(
       key: ValueKey(init.id),
       direction: DismissDirection.horizontal,
@@ -112,11 +111,11 @@ class _ScheduleListviewState extends State<ScheduleListview> {
 
             child: Card(
               elevation: 0,
-              color: Colors.white,
+              color: Colors.grey[100],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              // margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
                 onTap: () {
@@ -126,135 +125,85 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                 onLongPress: () {
                   _showMenu(context, Offset(0, 0), init); // pass proper position if needed
                 },
-                child: Row(
-                  // mainAxisSize: MainAxisSize.min,
+                child: Column(
                   children: [
-                    ReorderableDragStartListener(
-                      index: index,
-                      child: _buildLeadingIcon(
-                        isComplete: init.isComplete,
-                        whiteCircleSize: 20,
-                        iconSize: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            init.title,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.indigo[700],
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: init.completionTime.remainingTime(),
-                                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                                ),
-                                if (init.studyBreak.completionTime.minute != 0)
-                                  TextSpan(
-                                    text: "   ${init.studyBreak.completionTime.minute}m brk",
-                                    style: const TextStyle(fontSize: 12, color: Colors.red),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
 
-                    // Row(
-                    //   mainAxisSize: MainAxisSize.min,
-                    //   children: [
-                    //     InkWell(
-                    //       onTap: () {
-                    //         print("Play tapped");
-                    //         // Add your play action here
-                    //       },
-                    //       borderRadius: BorderRadius.circular(4),
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.all(4.0), // increase tap area
-                    //         child: Icon(Icons.play_arrow_rounded, color: Colors.green),
-                    //       ),
-                    //     ),
-                    //     const SizedBox(width: 8),
-                    //     InkWell(
-                    //       onTap: () {
-                    //         print("More tapped");
-                    //         // Add your menu action here
-                    //       },
-                    //       borderRadius: BorderRadius.circular(4),
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.all(4.0),
-                    //         child: Icon(Icons.more_vert_rounded, color: Colors.grey),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // )
+
+
                     Row(
-                      mainAxisSize: MainAxisSize.min, // shrink-wrap icons
                       children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.play_arrow_rounded, color: Colors.green[300]),
-                          padding: EdgeInsets.zero,
 
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.more_vert_rounded, color: Colors.grey),
-                          padding: EdgeInsets.zero,
 
+                        ReorderableDragStartListener(
+                          index: index,
+                          child: _buildLeadingIcon(
+                            isComplete: init.isComplete,
+                            whiteCircleSize: 20,
+                            iconSize: 24,
+                          ),
                         ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              Text('02:05',style: TextStyle(fontSize: 12,color: Colors.grey[600]), ),
+                              Text(
+                                init.title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.indigo[700],
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: init.completionTime.remainingTime(),
+                                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                    ),
+                                    if (init.studyBreak.completionTime.minute != 0)
+                                      TextSpan(
+                                        text: "   ${init.studyBreak.completionTime.minute}m brk",
+                                        style: const TextStyle(fontSize: 12, color: Colors.red),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+
+                        Row(
+                          mainAxisSize: MainAxisSize.min, // shrink-wrap icons
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.play_arrow_rounded, color: Colors.green[300]),
+                              padding: EdgeInsets.zero,
+
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.more_vert_rounded, color: Colors.grey),
+                              padding: EdgeInsets.zero,
+
+                            ),
+                          ],
+                        ),
+
                       ],
                     ),
-
                   ],
                 ),
               ),
             ),
 
-            // child: ListTile(
-            //   dense: true,
-            //   leading: ReorderableDragStartListener(
-            //     index: index,
-            //     child: _buildLeadingIcon(
-            //       isComplete: init.isComplete,
-            //       whiteCircleSize: 20,
-            //       iconSize: 24,
-            //     ),
-            //   ),
-            //   title: Text(
-            //     init.title,
-            //     style: TextStyle(
-            //       fontSize: 16,
-            //       color: Colors.indigo[700],
-            //       fontWeight: FontWeight.w400,
-            //     ),
-            //   ),
-            //   subtitle: RichText(
-            //     text: TextSpan(
-            //       children: [
-            //         TextSpan(
-            //           text: init.completionTime.remainingTime(),
-            //           style: const TextStyle(fontSize: 14, color: Colors.grey),
-            //         ),
-            //         if (init.studyBreak.completionTime.minute != 0)
-            //           TextSpan(
-            //             text: "   ${init.studyBreak.completionTime.minute}m brk",
-            //             style: const TextStyle(fontSize: 12, color: Colors.red),
-            //           ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+
           ),
         ),
       ),
@@ -269,32 +218,6 @@ class _ScheduleListviewState extends State<ScheduleListview> {
     child: Icon(icon, color: Colors.white),
   );
 
-  // Widget _buildIcon(bool done) => Icon(
-  //   done ? Icons.circle_rounded : Icons.circle_outlined,
-  //   color: Colors.indigo[300],
-  //   size: 24,
-  // );
-
-
-  // void _showMenu(BuildContext context, Offset pos, Initiative item) {
-  //   showMenu(
-  //     context: context,
-  //     position: RelativeRect.fromLTRB(pos.dx, pos.dy, pos.dx, pos.dy),
-  //     items: [
-  //       const PopupMenuItem(value: 'edit', child: Text('Edit')),
-  //       const PopupMenuItem(value: 'delete', child: Text('Delete')),
-  //       const PopupMenuItem(value: 'delete', child: Text('Complete')),
-  //     ],
-  //   ).then((value) {
-  //     if (value == 'delete') {
-  //       ScheduleManager.instance.deleteInitiativeFrom(SelectedDayManager.currentSelectedWeekDay.value, item.id);
-  //     } else if (value == 'edit') {
-  //
-  //
-  //       widget.onItemEdit(item);
-  //     }
-  //   });
-  // }
 
     void _showMenu(BuildContext context, Offset pos, Initiative item) {
       showMenu(
@@ -356,7 +279,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
         alignment: Alignment.center,
         clipBehavior: Clip.none,
         children: [
-          Positioned(top: -8, bottom: -8, left: 11, child: Container(width: 2, color: Colors.grey)),
+          Positioned(top: -15, bottom: -15, left: 11, child: Container(width: 2, color: Colors.grey)),
           Container(
             width: whiteCircleSize,
             height: whiteCircleSize,

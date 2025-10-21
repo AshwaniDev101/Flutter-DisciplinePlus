@@ -43,14 +43,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'DisciplinePlus',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Constants.background_color),
-        useMaterial3: true,
-        popupMenuTheme: PopupMenuThemeData(
-          color: Colors.grey[50], // menu background
-          textStyle: TextStyle(color: Colors.grey[400]), // menu text
-        ),
-      ),
+      // theme: ThemeData(
+      //   // colorScheme: ColorScheme.fromSeed(seedColor: Constants.background_color),
+      //   useMaterial3: true,
+      //   popupMenuTheme: PopupMenuThemeData(
+      //     color: Colors.grey[50], // menu background
+      //     textStyle: TextStyle(color: Colors.grey[400]), // menu text
+      //   ),
+      // ),
       home: HomePage(),
       // home: CaloriesCounterPage()
       // home: CalorieHistoryPage()

@@ -97,11 +97,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 const Divider(height: 1, thickness: 1),
                 Expanded(
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(12)),
-                    ),
+
+                    // decoration: BoxDecoration(
+                    //   color: Theme.of(context).colorScheme.surface,
+                    //   borderRadius: const BorderRadius.vertical(
+                    //       bottom: Radius.circular(12)),
+                    // ),
                     child: ScheduleListview(
                       // dayIndex: 0,
                       scrollController: _scrollController,
