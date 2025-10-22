@@ -1,9 +1,18 @@
 import '../services/firebase_heatmap_service.dart';
 
 class HeatmapRepository {
-  final FirebaseHeatmapService _service;
 
-  HeatmapRepository(this._service);
+
+
+  HeatmapRepository._internal();
+
+  static final  HeatmapRepository instance = HeatmapRepository._internal();
+
+
+
+
+
+  final FirebaseHeatmapService _service = FirebaseHeatmapService.instance;
 
   Stream<Map<String, dynamic>> watchHeatmap({
     required int year,

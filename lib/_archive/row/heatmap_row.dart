@@ -23,7 +23,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
   DateTime? selectedDate;
 
   final ScrollController _scrollController = ScrollController();
-  final HeatmapRepository _heatmapRepository = HeatmapRepository(FirebaseHeatmapService.instance);
+  final HeatmapRepository _heatmapRepository = HeatmapRepository.instance;
 
 
   @override
@@ -76,17 +76,6 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
   });
 
-
-  // void _onDateTap(int day)
-  // {
-  //   selectedDate = DateTime(currentDate.year, currentDate.month, day);
-  //
-  //   var week = getWeekdayName(selectedDate!);
-  //
-  //   CurrentDayManager.setWeekday(week);
-  //   // Load data for different days
-  //   ScheduleManager.instance.changeDay(week);
-  // }
 
 
   String getWeekdayName(DateTime datetime)

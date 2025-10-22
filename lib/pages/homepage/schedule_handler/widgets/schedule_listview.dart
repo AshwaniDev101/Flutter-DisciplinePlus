@@ -1,6 +1,5 @@
 import 'package:discipline_plus/pages/timerpage/timer_page.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/utils/constants.dart';
 import '../../../../managers/selected_day_manager.dart';
 import '../../../../models/initiative.dart';
 import '../schedule_completion_manager.dart';
@@ -9,14 +8,12 @@ import '../schedule_manager.dart';
 
 /// Displays a list of daily schedules using real-time stream updates
 class ScheduleListview extends StatefulWidget {
-  final ScrollController scrollController;
-  final void Function(DismissDirection, Initiative) onItemSwipe;
+
+
   final void Function(Initiative) onItemEdit;
 
   const ScheduleListview({
     super.key,
-    required this.scrollController,
-    required this.onItemSwipe,
     required this.onItemEdit,
   });
 

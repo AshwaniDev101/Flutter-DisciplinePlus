@@ -15,16 +15,19 @@ class FoodStats {
     required this.calories,
   });
 
-  static FoodStats empty() {
-    return FoodStats(
-      proteins: 0,
-      carbohydrates: 0,
-      fats: 0,
-      vitamins: 0,
-      minerals: 0,
-      calories: 0,
-    );
-  }
+  // static FoodStats empty() {
+  //   return FoodStats(
+  //     proteins: 0,
+  //     carbohydrates: 0,
+  //     fats: 0,
+  //     vitamins: 0,
+  //     minerals: 0,
+  //     calories: 0,
+  //   );
+  // }
+
+  FoodStats.empty():proteins=0, carbohydrates=0,fats=0,vitamins=0,minerals=0,calories=0;
+
 
   FoodStats sum(FoodStats other) {
     return FoodStats(
