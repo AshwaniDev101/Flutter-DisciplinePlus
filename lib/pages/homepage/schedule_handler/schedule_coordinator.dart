@@ -1,4 +1,5 @@
-import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
+
+import 'package:discipline_plus/pages/homepage/schedule_handler/schedule_manager.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../../../models/initiative.dart';
 

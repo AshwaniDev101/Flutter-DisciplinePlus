@@ -2,7 +2,7 @@
 import 'package:discipline_plus/database/repository/global_initiative_list_repository.dart';
 import 'package:discipline_plus/database/services/firebase_global_initiative_list_service.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../models/initiative.dart';
+import '../../../models/initiative.dart';
 
 
 // This handle a single list in a single page

@@ -1,12 +1,12 @@
 
 import 'package:discipline_plus/_archive/row/widgets/snap_scrolling.dart';
-import 'package:discipline_plus/pages/listpage/schedule_handler/schedule_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
 import '../../../database/services/firebase_heatmap_service.dart';
 import '../../../managers/selected_day_manager.dart';
+import '../../pages/homepage/schedule_handler/schedule_manager.dart';
 
 
 class HeatmapRow extends StatefulWidget {

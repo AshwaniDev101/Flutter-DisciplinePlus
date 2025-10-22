@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../models/initiative.dart';
-import '../../../models/app_time.dart';
-import '../../../models/study_break.dart';
+
+import '../../../../models/app_time.dart';
+import '../../../../models/initiative.dart';
+import '../../../../models/study_break.dart';
 import 'widget/quantity_selector.dart';
 
 class NewInitiativeDialog extends StatefulWidget {

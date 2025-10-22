@@ -5,7 +5,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'core/utils/constants.dart';
 import 'firebase_options.dart';
 import 'managers/audio_manager.dart';
-import 'pages/listpage/home_page.dart';
+import 'pages/homepage/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

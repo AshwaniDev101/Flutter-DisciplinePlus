@@ -94,7 +94,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Search food...',
+                  hintText: 'Search filter',
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
