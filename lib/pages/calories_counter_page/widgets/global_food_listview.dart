@@ -1,17 +1,14 @@
-
 import 'package:discipline_plus/pages/calories_counter_page/widgets/food_quantity_selector.dart';
 import 'package:flutter/material.dart';
 import '../../../models/diet_food.dart';
 import '../../../models/food_stats.dart';
 
 class GlobalFoodList extends StatefulWidget {
-
   final String searchQuery;
   final Stream<List<DietFood>> stream;
   final Function(DietFood food) onEdit;
   final Function(DietFood food) onDeleted;
   final Function(double oldValue, double newValue, DietFood food) onQuantityChange;
-
 
   GlobalFoodList({
     super.key,
@@ -20,34 +17,14 @@ class GlobalFoodList extends StatefulWidget {
     required this.onEdit,
     required this.onDeleted,
     required this.onQuantityChange,
-  })  : stream = stream ?? _defaultDummyStream;
+  }) : stream = stream ?? _defaultDummyStream;
 
   static final Stream<List<DietFood>> _defaultDummyStream = Stream.value([
-    DietFood(
-        id: '1',
-        name: 'Apple',
-        foodStats: FoodStats.empty(),
-        time: DateTime.now()),
-    DietFood(
-        id: '2',
-        name: 'Banana',
-        foodStats: FoodStats.empty(),
-        time: DateTime.now()),
-    DietFood(
-        id: '3',
-        name: 'Boiled Egg',
-        foodStats: FoodStats.empty(),
-        time: DateTime.now()),
-    DietFood(
-        id: '4',
-        name: 'Oats',
-        foodStats: FoodStats.empty(),
-        time: DateTime.now()),
-    DietFood(
-        id: '5',
-        name: 'Milk',
-        foodStats: FoodStats.empty(),
-        time: DateTime.now()),
+    DietFood(id: '1', name: 'Apple', foodStats: FoodStats.empty(), time: DateTime.now()),
+    DietFood(id: '2', name: 'Banana', foodStats: FoodStats.empty(), time: DateTime.now()),
+    DietFood(id: '3', name: 'Boiled Egg', foodStats: FoodStats.empty(), time: DateTime.now()),
+    DietFood(id: '4', name: 'Oats', foodStats: FoodStats.empty(), time: DateTime.now()),
+    DietFood(id: '5', name: 'Milk', foodStats: FoodStats.empty(), time: DateTime.now()),
   ]);
 
   @override
@@ -96,14 +73,12 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
 
   void _showItemMenu(BuildContext buttonContext, DietFood food) {
     final RenderBox button = buttonContext.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Overlay.of(buttonContext)!.context.findRenderObject() as RenderBox;
+    final RenderBox overlay = Overlay.of(buttonContext)!.context.findRenderObject() as RenderBox;
 
     final RelativeRect position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero),
-            ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
       ),
       Offset.zero & overlay.size,
     );
@@ -124,15 +99,8 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
     });
   }
 
-
-
-
-
-
-@override
+  @override
   Widget build(BuildContext context) {
-
-
     return StreamBuilder<List<DietFood>>(
       stream: widget.stream,
       builder: (context, snapshot) {
@@ -163,32 +131,22 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
           itemCount: filtered.length,
           separatorBuilder: (_, __) => const SizedBox(height: 6),
           itemBuilder: (context, index) {
-
-
-
             // final food = foods[index];
             final food = filtered[index];
             final barColor = _colorPalette[index % _colorPalette.length];
 
             return _FoodCard(
               key: ValueKey(food.id),
-
               food: food,
               barColor: barColor,
-              onClickOptionMenu: (context) =>
-                  _showItemMenu(context, food),
+              onClickOptionMenu: (context) => _showItemMenu(context, food),
               onQuantityChange: widget.onQuantityChange,
-
             );
           },
         );
       },
     );
   }
-
-
-
-
 }
 
 class _FoodCard extends StatelessWidget {
@@ -197,15 +155,12 @@ class _FoodCard extends StatelessWidget {
   final void Function(BuildContext buttonContext) onClickOptionMenu;
   final Function(double oldValue, double newValue, DietFood dietFood) onQuantityChange;
 
-
-
   const _FoodCard({
     super.key,
     required this.food,
     required this.barColor,
     required this.onClickOptionMenu,
     required this.onQuantityChange,
-
   });
 
   @override
@@ -226,17 +181,13 @@ class _FoodCard extends StatelessWidget {
               // content
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         food.name,
-                        style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87),
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black87),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -249,17 +200,15 @@ class _FoodCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
-                          if( food.count>1)
-                          Text(
-                            ' (total:${(food.foodStats.calories*food.count).toInt()})',
-                            style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-
+                          if (food.count > 1)
+                            Text(
+                              ' (total:${(food.foodStats.calories * food.count).toInt()})',
+                              style: TextStyle(fontSize: 13, color: Colors.grey[500]),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                         ],
                       ),
-
                     ],
                   ),
                 ),
@@ -271,15 +220,13 @@ class _FoodCard extends StatelessWidget {
                     onPressed: () {
                       onClickOptionMenu(buttonContext);
                     },
-                    icon: Icon(Icons.more_vert_rounded,
-                        color: Colors.grey, size: 20),
+                    icon: Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
                   );
                 },
               ),
               FoodQuantitySelector(
                 initialValue: food.count.toDouble(),
-                onChanged: (oldValue, newValue)
-                {
+                onChanged: (oldValue, newValue) {
                   onQuantityChange(oldValue, newValue, food);
                 },
               ),

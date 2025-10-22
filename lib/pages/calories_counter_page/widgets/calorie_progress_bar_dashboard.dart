@@ -189,16 +189,17 @@ class _CalorieProgressBarDashboardState
 
     // Add "+" sign only for positive numbers
     String formatted = '${diff > 0 ? '+$diff' : '$diff'} kcal';
+    // String formatted = '+${diff} kcal';
 
 
     return                             Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.red.shade700,
+        color: diff > 0 ?Colors.red.shade700:Colors.green.shade700,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withValues(alpha: 0.6),
+            color: diff > 0?Colors.red.withValues(alpha: 0.6):Colors.green.withValues(alpha: 0.6),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
