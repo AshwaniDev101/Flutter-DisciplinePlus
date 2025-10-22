@@ -25,29 +25,8 @@ class ScheduleCoordinator {
   List<Initiative> _latestMerged = [];
 
 
-  // Cached latest merged initiatives
-  // Subscribe once and keep latest merged initiatives cached
-
-
-
 
 /// Combined stream: daily initiatives + their completion state
-//   Stream<List<Initiative>> get mergedDayInitiatives {
-//     return Rx.combineLatest2<List<Initiative>, List<Initiative>, List<Initiative>>(
-//       ScheduleManager.instance.schedule$,
-//         GlobalListManager.instance.watch(),
-//           (dailyList, globalCompletionList) {
-//         final completionMap = {
-//           for (final i in globalCompletionList) i.id: i.isComplete,
-//         };
-//
-//         return dailyList.map((i) {
-//           final isComplete = completionMap[i.id] ?? false;
-//           return i.copyWith(isComplete: isComplete);
-//         }).toList();
-//       },
-//     );
-//   }
   Stream<List<Initiative>> get mergedDayInitiatives {
     return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
       ScheduleManager.instance.schedule$,
@@ -56,16 +35,14 @@ class ScheduleCoordinator {
         print('Daily Keys: ${dailyMap.keys.toList()}');
         print('Global Initiative List: ${globalInitiativeList.map((e) => e.title).toList()}');
 
-        // Convert dailyMap to a map of id -> isComplete
-        final completionMap = {
-          for (final entry in dailyMap.entries) entry.key: entry.value.isComplete,
-        };
-
-        // Merge global initiatives with completion info from dailyMap
-        final merged = globalInitiativeList.map((i) {
-          final isComplete = completionMap[i.id] ?? false;
+        // Merge only initiatives that exist in dailyMap
+        final merged = globalInitiativeList
+            .where((i) => dailyMap.containsKey(i.id)) // keep only if id exists in dailyMap
+            .map((i) {
+          final isComplete = dailyMap[i.id]!.isComplete; // safe now
           return i.copyWith(isComplete: isComplete);
-        }).toList();
+        })
+            .toList();
 
         print('Merged List: ${merged.map((e) => e.isComplete).toList()}');
 
@@ -75,28 +52,31 @@ class ScheduleCoordinator {
   }
 
   // Stream<List<Initiative>> get mergedDayInitiatives {
-  //   return Rx.combineLatest2<List<Initiative>, List<Initiative>, List<Initiative>>(
+  //   return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
   //     ScheduleManager.instance.schedule$,
   //     GlobalListManager.instance.watch(),
-  //         (dailyList, globalInitiativeList) {
-  //       print('Daily List: ${dailyList.map((e) => e.title).toList()}');
-  //       print('Global InitiativeList List: ${globalInitiativeList.map((e) => e.title).toList()}');
+  //         (dailyMap, globalInitiativeList) {
+  //       print('Daily Keys: ${dailyMap.keys.toList()}');
+  //       print('Global Initiative List: ${globalInitiativeList.map((e) => e.title).toList()}');
   //
+  //       // Convert dailyMap to a map of id -> isComplete
   //       final completionMap = {
-  //         for (final i in globalInitiativeList) i.id: i.isComplete,
+  //         for (final entry in dailyMap.entries) entry.key: entry.value.isComplete,
   //       };
   //
-  //       final merged = dailyList.map((i) {
+  //       // Merge global initiatives with completion info from dailyMap
+  //       final merged = globalInitiativeList.map((i) {
   //         final isComplete = completionMap[i.id] ?? false;
   //         return i.copyWith(isComplete: isComplete);
   //       }).toList();
   //
-  //       print('Merged List: ${merged.map((e) => e.title).toList()}');
+  //       print('Merged List: ${merged.map((e) => e.isComplete).toList()}');
   //
   //       return merged;
   //     },
   //   );
   // }
+
 
 
   /// Returns the latest cached completion percentage synchronously

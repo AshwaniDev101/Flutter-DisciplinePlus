@@ -16,17 +16,6 @@ class FirebaseWeeklyScheduleService {
   CollectionReference get _initiativeCollection => _db.collection(_root).doc(_userId).collection('schedule');
 
   /// Stream all initiatives for [day] (e.g. "Sunday") ordered by index.
-  // Stream<List<Initiative>> streamForDay(String day) {
-  //
-  //   return _initiativeCollection.doc(day).collection(_initiative_list).orderBy('index').snapshots().map(
-  //         (snapshot) => snapshot.docs.map((doc) {
-  //       final data = doc.data();
-  //       data['id'] = doc.id;
-  //       return Initiative.fromMap(data);
-  //     }).toList(),
-  //   );
-  // }
-
   Stream<Map<String, InitiativeCompletion>> watchDay(String day) {
     return _initiativeCollection
         .doc(day)
@@ -60,30 +49,36 @@ final map = {
   'isComplete':false,
   'index':0
 };
-    // print(ref.toString());
+
     return ref.set(map);
   }
 
 
+  /// Update an existing [initiative] under [day] by [id].
+  Future<void> completeInitiative(String day, String initiativeID, bool isComplete) {
+    final ref = _initiativeCollection.doc(day)
+        .collection(_initiative_list)
+        .doc(initiativeID);
+    // final map = initiative.toMap()..remove('id');
 
-  /// Delete initiative by [id] under [day].
-  Future<void> deleteInitiative(String day, String id) {
+    final map = {
+      'isComplete':isComplete,
+    };
+    return ref.update(map);
+  }
+
+
+  /// Delete initiative by [initiativeID] under [day].
+  Future<void> deleteInitiative(String day, String initiativeID) {
+
+    // print("===== Delete is called $initiativeID");
     return _initiativeCollection.doc(day)
         .collection(_initiative_list)
-        .doc(id)
+        .doc(initiativeID)
         .delete();
   }
 
 
-  /// Update an existing [initiative] under [day] by [id].
-  Future<void> updateInitiative(String day, String id, Initiative initiative) {
-    final ref = _initiativeCollection.doc(day)
-        .collection(_initiative_list)
-        .doc(id);
-    final map = initiative.toMap()..remove('id');
-
-    return ref.update(map);
-  }
 
 
   /// Reorder the list by writing each initiative's index in a batch.

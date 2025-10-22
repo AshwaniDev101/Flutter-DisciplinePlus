@@ -2,18 +2,22 @@ import 'package:discipline_plus/pages/timerpage/timer_page.dart';
 import 'package:flutter/material.dart';
 import '../../../../managers/selected_day_manager.dart';
 import '../../../../models/initiative.dart';
-import '../schedule_coordinator.dart';
-import '../schedule_manager.dart';
+
 
 /// Displays a list of daily schedules using real-time stream updates
 class ScheduleListview extends StatefulWidget {
 
-
+  final Stream<List<Initiative>> stream;
   final void Function(Initiative) onItemEdit;
+  final void Function(Initiative) onItemDelete;
+  final void Function(Initiative, bool) onItemComplete;
 
   const ScheduleListview({
     super.key,
+    required this.stream,
     required this.onItemEdit,
+    required this.onItemDelete,
+    required this.onItemComplete,
   });
 
   @override
@@ -29,7 +33,8 @@ class _ScheduleListviewState extends State<ScheduleListview> {
         children: [
           Expanded(
             child: StreamBuilder<List<Initiative>>(
-              stream: ScheduleCoordinator.instance.mergedDayInitiatives,
+              stream: widget.stream,
+              // stream: ScheduleCoordinator.instance.mergedDayInitiatives,
               builder: (context, snapshot) {
                 // --- Handle errors and loading states ---
                 if (snapshot.hasError) {
@@ -230,8 +235,8 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     onChanged: (val) {
                       if (val == null) return;
                       setState(() => item.isComplete = val);
-                      // ScheduleCompletionManager.instance
-                      //     .toggleCompletion(item.id, val);
+                      widget.onItemComplete(item,val);
+
                     },
                   ),
                   const Text('Complete'),
@@ -243,10 +248,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
       ],
     ).then((value) {
       if (value == 'delete') {
-        ScheduleManager.instance.deleteInitiativeFrom(
-          SelectedDayManager.currentSelectedWeekDay.value,
-          item.id,
-        );
+        widget.onItemDelete(item);
       } else if (value == 'edit') {
         widget.onItemEdit(item);
       }

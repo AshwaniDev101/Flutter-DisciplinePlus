@@ -5,12 +5,14 @@ import '../services/firebase_weekly_schedule_service.dart';
 
 
 class WeeklyScheduleRepository {
-  final FirebaseWeeklyScheduleService _service;
+  final FirebaseWeeklyScheduleService _service = FirebaseWeeklyScheduleService.instance;
 
-  WeeklyScheduleRepository(this._service);
+  WeeklyScheduleRepository._internal();
+  static final WeeklyScheduleRepository instance = WeeklyScheduleRepository._internal();
+
 
   /// Listen to all initiatives for a given [day]
-  Stream <Map<String, InitiativeCompletion>> watchAll(String day) {
+  Stream <Map<String, InitiativeCompletion>> watchDay(String day) {
     return _service.watchDay(day);
   }
 
@@ -30,14 +32,8 @@ class WeeklyScheduleRepository {
   }
 
   /// Update an existing initiative in [day]
-  Future<void> update(String day, String id, Initiative ini) {
-    return _service.updateInitiative(day, id, ini);
-  }
-
-  /// Mark an initiative complete/incomplete on [day]
-  Future<void> markComplete(String day, String id, Initiative ini, bool isComplete) {
-    ini.isComplete = isComplete;
-    return _service.updateInitiative(day, id, ini);
+  Future<void> completeInitiative(String day, String initiativeID, bool isComplete) {
+    return _service.completeInitiative(day, initiativeID, isComplete);
   }
 
   /// Reorder the list under [day] by updating each Initiative.index
