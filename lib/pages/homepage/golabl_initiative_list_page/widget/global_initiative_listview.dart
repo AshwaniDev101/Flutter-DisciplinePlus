@@ -1,9 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../managers/selected_day_manager.dart';
 import '../../../../models/initiative.dart';
+import '../../../../widget/global_helper_widget_functions.dart';
 import '../../dialog_helper.dart';
 import '../../schedule_handler/schedule_manager.dart';
 import '../global_list_manager.dart';
@@ -16,15 +16,10 @@ class GlobalInitiativeListview extends StatefulWidget {
 }
 
 class _GlobalInitiativeListviewState extends State<GlobalInitiativeListview> {
-
-
   final TextEditingController searchController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
-
-
     return StreamBuilder<List<Initiative>>(
       stream: GlobalListManager.instance.watch(),
       builder: (context, snapshot) {
@@ -43,28 +38,22 @@ class _GlobalInitiativeListviewState extends State<GlobalInitiativeListview> {
         }
 
         return ListView.separated(
-            itemBuilder: (context, index) {
-              final initiative = initiatives[index];
-              return _GlobalInitiativeCard(initiative: initiative);
-            },
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: initiatives.length,
-
-
+          itemBuilder: (context, index) {
+            final initiative = initiatives[index];
+            return _GlobalInitiativeCard(initiative: initiative);
+          },
+          separatorBuilder: (context, index) => const Divider(),
+          itemCount: initiatives.length,
         );
       },
     );
-
-
   }
-
 }
 
-
 class _GlobalInitiativeCard extends StatelessWidget {
-
   final Initiative initiative;
-  const _GlobalInitiativeCard({required this.initiative, super.key});
+
+  const _GlobalInitiativeCard({required this.initiative,});
 
   @override
   Widget build(BuildContext context) {
@@ -80,18 +69,17 @@ class _GlobalInitiativeCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                IconButton(
-                  onPressed: () {
-                    GlobalListManager.instance.deleteInitiative(initiative.id);
-                  },
-                  icon: Icon(Icons.delete),
-                ),
-                IconButton(
-                  onPressed: () {
-                    DialogHelper.showEditInitiativeDialog(context: context, existingInitiative: initiative);
-                  },
-                  icon: Icon(Icons.edit),
-                ),
+
+                EditDeleteOptionMenuWidget(context,
+                onDelete: () {
+                  GlobalListManager.instance.deleteInitiative(initiative.id);
+                },
+                onEdit: () {
+                  DialogHelper.showEditInitiativeDialog(context: context, existingInitiative: initiative);
+                }
+            ),
+
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,12 +112,12 @@ class _GlobalInitiativeCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    ScheduleManager.instance.addInitiativeIn(SelectedDayManager.currentSelectedWeekDay.value, initiative);
-                  },
-                  child: Text("Add"),
-                ),
+                IconButton(
+                    onPressed: () {
+                      ScheduleManager.instance
+                          .addInitiativeIn(SelectedDayManager.currentSelectedWeekDay.value, initiative);
+                    },
+                    icon: Icon(Icons.add))
               ],
             ),
           ),
@@ -138,5 +126,3 @@ class _GlobalInitiativeCard extends StatelessWidget {
     );
   }
 }
-
-

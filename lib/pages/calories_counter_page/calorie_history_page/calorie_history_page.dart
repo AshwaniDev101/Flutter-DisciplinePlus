@@ -5,6 +5,7 @@ import 'package:discipline_plus/models/food_stats.dart';
 import '../../../core/utils/helper.dart';
 import '../../../core/utils/app_settings.dart';
 import '../../../database/repository/food_history_repository.dart';
+import '../../../widget/global_helper_widget_functions.dart';
 import '../calories_counter_page.dart';
 
 /// Main page displaying calorie history for a month
@@ -18,13 +19,8 @@ class CalorieHistoryPage extends StatefulWidget {
 }
 
 class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
-
   Map<int, FoodStats> _monthStats = {};
   int _excessCalories = 0;
-
-
-
-
 
   @override
   void initState() {
@@ -63,8 +59,6 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
     return total;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,65 +77,64 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
         backgroundColor: Colors.pink[300],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-
       body: SafeArea(
         child: Column(
           children: [
-
             _buildExcessLabel(),
-
             _monthStats.isEmpty
                 ? const Center(child: Text('No data found'))
                 : Expanded(
-                  child: RefreshIndicator(
-                                onRefresh: _loadMonthStats,
-                                child: ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  itemCount: _monthStats.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
-                  itemBuilder: (context, index) {
-                    final dayKeys = _monthStats.keys.toList()..sort((a, b) => b.compareTo(a));
-                    final day = dayKeys[index];
-                    return DayCard(
-                      day: day,
-                      dateTime: widget.pageDateTime,
-                      foodStats: _monthStats[day]!,
-                      onDelete: (cardDateTime) async {
-                        await FoodHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
-                        setState(() {
-                          _monthStats.remove(cardDateTime.day); // 👈 instantly update UI
-                        });
-                      },
-                    );
-                  },
-                                ),
-                              ),
-                ),
+                    child: RefreshIndicator(
+                      onRefresh: _loadMonthStats,
+                      child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        itemCount: _monthStats.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 6),
+                        itemBuilder: (context, index) {
+                          final dayKeys = _monthStats.keys.toList()..sort((a, b) => b.compareTo(a));
+                          final day = dayKeys[index];
+                          return DayCard(
+                            day: day,
+                            dateTime: widget.pageDateTime,
+                            foodStats: _monthStats[day]!,
+                            onDelete: (cardDateTime) async {
+                              await FoodHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
+                              setState(() {
+                                _monthStats.remove(cardDateTime.day); // 👈 instantly update UI
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
-
     );
   }
 
-  Widget _buildExcessLabel()
-  {
+  Widget _buildExcessLabel() {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text("Excess Calories : ",style: TextStyle(fontSize: 16),),
-          Text("${_excessCalories }",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold, color:Colors.redAccent)),
-          SizedBox(width: 10,)
+          Text(
+            "Excess Calories : ",
+            style: TextStyle(fontSize: 16),
+          ),
+          Text("${_excessCalories}",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+          SizedBox(
+            width: 10,
+          )
         ],
       ),
     );
   }
-
 }
-
 
 class DayCard extends StatelessWidget {
   final int day;
@@ -170,12 +163,12 @@ class DayCard extends StatelessWidget {
       color: Colors.white,
       child: Stack(
         children: [
-
           Positioned(
-            top: 8,
+              top: 8,
               right: 2,
-              child: _buildOptionsButton(context, cardDateTime)),
-
+              child: EditDeleteOptionMenuWidget(context,
+                  onDelete: () => onDelete(cardDateTime),
+                  onEdit: () => _openCaloriesCounterPage(context, cardDateTime))),
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
@@ -223,33 +216,31 @@ class DayCard extends StatelessWidget {
                                 color: Colors.grey[500],
                               ),
                             ),
-
                           ],
                         ),
                         if (foodStats.calories > AppSettings.atMostProgress)
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: Colors.red.shade700,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.red.withValues(alpha: 0.6),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                '+${foodStats.calories - AppSettings.atMostProgress}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade700,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.red.withValues(alpha: 0.6),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
                                 ),
+                              ],
+                            ),
+                            child: Text(
+                              '+${foodStats.calories - AppSettings.atMostProgress}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-
+                          ),
                       ],
                     ),
 
@@ -269,14 +260,12 @@ class DayCard extends StatelessWidget {
                         ],
                       ),
                     ),
-
                   ],
                 ),
               ],
             ),
           ),
         ],
-
       ),
     );
   }
@@ -335,66 +324,6 @@ class DayCard extends StatelessWidget {
     );
   }
 
-
-
-  Widget _buildOptionsButton(BuildContext context, DateTime cardDateTime) {
-    final key = GlobalKey();
-    return GestureDetector(
-      onTap: () async {
-        final RenderBox button = key.currentContext!.findRenderObject() as RenderBox;
-        final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-
-        final position = RelativeRect.fromRect(
-          Rect.fromPoints(
-            button.localToGlobal(Offset.zero, ancestor: overlay),
-            button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
-          ),
-          Offset.zero & overlay.size,
-        );
-
-        final selected = await showMenu<String>(
-          context: context,
-          position: position,
-          items: const [
-            PopupMenuItem<String>(
-              value: 'edit',
-              child: Row(
-                children: [
-                  Icon(Icons.edit, size: 16, color: Colors.blue),
-                  SizedBox(width: 6),
-                  Text('Edit', style: TextStyle(fontSize: 13)),
-                ],
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete_outline, size: 16, color: Colors.red),
-                  SizedBox(width: 6),
-                  Text('Delete', style: TextStyle(fontSize: 13)),
-                ],
-              ),
-            ),
-          ],
-        );
-
-        if (selected == 'edit') _openCaloriesCounterPage(context, cardDateTime);
-        if (selected == 'delete') onDelete(cardDateTime);
-      },
-      behavior: HitTestBehavior.translucent,
-      child: Container(
-        // color: Colors.redAccent,
-        key: key,
-        width: 20,
-        height: 20,
-        child: const Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
-      ),
-    );
-  }
-
-
-
   void _openCaloriesCounterPage(BuildContext context, DateTime cardDateTime) {
     Navigator.push(
       context,
@@ -403,5 +332,62 @@ class DayCard extends StatelessWidget {
       ),
     );
   }
-}
 
+  // /// TODO: You can remove this function menus, because it's identical to global InitiativeList option menu and global FoodList option menu,In which both use 'edit' and 'delete', by creating a single helper function, u can use it at both location
+  // Widget _buildOptionsButton(BuildContext context,
+  //     {required void Function() onDelete, required void Function() onEdit}) {
+  //   final key = GlobalKey();
+  //   return GestureDetector(
+  //     onTap: () async {
+  //       final RenderBox button = key.currentContext!.findRenderObject() as RenderBox;
+  //       final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+  //
+  //       final position = RelativeRect.fromRect(
+  //         Rect.fromPoints(
+  //           button.localToGlobal(Offset.zero, ancestor: overlay),
+  //           button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+  //         ),
+  //         Offset.zero & overlay.size,
+  //       );
+  //
+  //       final selected = await showMenu<String>(
+  //         context: context,
+  //         position: position,
+  //         items: const [
+  //           PopupMenuItem<String>(
+  //             value: 'edit',
+  //             child: Row(
+  //               children: [
+  //                 Icon(Icons.edit, size: 16, color: Colors.blue),
+  //                 SizedBox(width: 6),
+  //                 Text('Edit', style: TextStyle(fontSize: 13)),
+  //               ],
+  //             ),
+  //           ),
+  //           PopupMenuItem<String>(
+  //             value: 'delete',
+  //             child: Row(
+  //               children: [
+  //                 Icon(Icons.delete_outline, size: 16, color: Colors.red),
+  //                 SizedBox(width: 6),
+  //                 Text('Delete', style: TextStyle(fontSize: 13)),
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //
+  //       if (selected == 'edit') onEdit();
+  //       if (selected == 'delete') onDelete();
+  //     },
+  //     behavior: HitTestBehavior.translucent,
+  //     child: Container(
+  //       // color: Colors.redAccent,
+  //       key: key,
+  //       width: 20,
+  //       height: 20,
+  //       child: const Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
+  //     ),
+  //   );
+  // }
+}
