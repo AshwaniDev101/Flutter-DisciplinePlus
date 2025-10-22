@@ -24,27 +24,27 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
 
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        // makes it transparent
-        elevation: 0,
-        // removes shadow
-        centerTitle: true,
-        // centers the title
-        iconTheme: IconThemeData(
-          color: Colors.grey[600], // change this to any color you like
-        ),
-        title: Text(
-          'Calorie Counter',
-          style: TextStyle(
-            color: Colors.grey[600],
-            // change to white if you have dark background
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-            letterSpacing: 0.5,
-          ),
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.pink[300],
+      //   // makes it transparent
+      //   elevation: 0,
+      //   // removes shadow
+      //   centerTitle: true,
+      //   // centers the title
+      //   iconTheme: IconThemeData(
+      //     color: Colors.white, // change this to any color you like
+      //   ),
+      //   title: Text(
+      //     'Calorie Counter',
+      //     style: TextStyle(
+      //       color: Colors.white,
+      //       // change to white if you have dark background
+      //       fontWeight: FontWeight.w600,
+      //       fontSize: 20,
+      //       letterSpacing: 0.5,
+      //     ),
+      //   ),
+      // ),
 
       // ===== BODY =====
       body: SafeArea(
@@ -66,7 +66,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
               },
             ),
 
-            const SizedBox(height: 14),
+            // const SizedBox(height: 14),
 
             /// Displays all available and consumed foods in a unified list.
             /// Handles edit and delete actions via callbacks.
@@ -144,25 +144,25 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
     // );
   }
 
-  Widget searchBar() {
-    return Padding(
-      padding: const EdgeInsets.all(0),
-      child: Material(
-        elevation: 4, // adds shadow
-        // borderRadius: BorderRadius.circular(16),
-        child: TextField(
-          decoration: InputDecoration(
-              hintText: 'Search',
-              filled: true,
-              fillColor: Colors.grey[100],
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none, // removes the default border
-              ),
-              suffixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.add))),
-        ),
-      ),
-    );
-  }
+  // Widget searchBar() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(0),
+  //     child: Material(
+  //       elevation: 4, // adds shadow
+  //       // borderRadius: BorderRadius.circular(16),
+  //       child: TextField(
+  //         decoration: InputDecoration(
+  //             hintText: 'Search',
+  //             filled: true,
+  //             fillColor: Colors.grey[100],
+  //             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+  //             border: OutlineInputBorder(
+  //               borderRadius: BorderRadius.circular(16),
+  //               borderSide: BorderSide.none, // removes the default border
+  //             ),
+  //             suffixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.add))),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

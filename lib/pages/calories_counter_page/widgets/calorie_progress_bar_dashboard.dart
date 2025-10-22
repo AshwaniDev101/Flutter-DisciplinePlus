@@ -27,10 +27,10 @@ class _CalorieProgressBarDashboardState
   Widget _getTitle()
   {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(2.0),
       child: Text('Calorie Counter',
           style: TextStyle(
-              fontSize: 16,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               color: Colors.grey[800])),
     );
@@ -86,11 +86,35 @@ class _CalorieProgressBarDashboardState
                   ),
 
 
+                  // Top-left Back Icon
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200], // background color
+                          shape: BoxShape.circle,  // makes it circular
+                        ),
+                        child: IconButton(
+                          onPressed: widget.onClickBack,
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.grey,
+                            size: 26,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
 
-                      SizedBox(width: 20,),
+                      // SizedBox(width: 20,),
                       // Progress Bar
                       Stack(
                         children: [
@@ -106,12 +130,12 @@ class _CalorieProgressBarDashboardState
                                   alignment: Alignment.center,
                                   children: [
                                     SizedBox(
-                                      height: 80,
-                                      width: 80,
+                                      height: 70,
+                                      width: 70,
 
                                       child: CircularProgressIndicator(
                                         value: caloriesCount / AppSettings.atMostProgress,
-                                        strokeWidth: 12,
+                                        strokeWidth: 10,
                                         backgroundColor: Colors.grey.shade200,
                                         valueColor:
                                             AlwaysStoppedAnimation(getProgressColor(stats)),
@@ -123,12 +147,13 @@ class _CalorieProgressBarDashboardState
                                         Text(
                                           '$caloriesCount',
                                           style: TextStyle(
-                                              fontSize: 24,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.grey[500]!),
+                                              color: Colors.grey[700]!
+                                            ),
                                         ),
-                                         Text('${AppSettings.atMostProgress} kcal',
-                                            style: TextStyle(fontSize: 10)),
+                                         Text('/${AppSettings.atMostProgress} kcal',
+                                            style: TextStyle(fontSize: 9)),
                                       ],
                                     ),
                                   ],
@@ -150,7 +175,7 @@ class _CalorieProgressBarDashboardState
                       // Elevated button and Excess Label
                       Column(
                         children: [
-
+                          _getTitle(),
 
                           ElevatedButton(
                             onPressed: !isSameDate(widget.currentDateTime, DateTime.now())
