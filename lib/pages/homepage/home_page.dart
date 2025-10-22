@@ -1,19 +1,14 @@
 
-import 'package:discipline_plus/pages/homepage/golabl_initiative_list_page/new_initiatives/new_initiative_dialog.dart';
-import 'package:discipline_plus/pages/homepage/schedule_handler/schedule_completion_manager.dart';
-import 'package:discipline_plus/pages/homepage/schedule_handler/schedule_coordinator.dart';
+
 import 'package:discipline_plus/pages/homepage/schedule_handler/schedule_manager.dart';
 import 'package:discipline_plus/pages/homepage/schedule_handler/widgets/schedule_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import '../../database/repository/heatmap_repository.dart';
 import '../../drawer/drawer.dart';
 import '../../managers/selected_day_manager.dart';
 import 'dialog_helper.dart';
 import 'golabl_initiative_list_page/global_initiative_list_page.dart';
-import 'golabl_initiative_list_page/global_list_manager.dart';
 import '../heatmap_page/heatmap_panel.dart';
-import '../timerpage/timer_page.dart';
 
 const double _panelMinHeight = 80;
 const double _panelMaxHeight = 550;
@@ -33,7 +28,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
   void initState() {
     super.initState();
 
-    GlobalListManager.instance.bindToInitiatives();
   }
 
   @override

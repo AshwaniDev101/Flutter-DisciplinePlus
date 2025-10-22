@@ -16,26 +16,51 @@ class FirebaseWeeklyScheduleService {
   CollectionReference get _initiativeCollection => _db.collection(_root).doc(_userId).collection('schedule');
 
   /// Stream all initiatives for [day] (e.g. "Sunday") ordered by index.
-  Stream<List<Initiative>> streamForDay(String day) {
+  // Stream<List<Initiative>> streamForDay(String day) {
+  //
+  //   return _initiativeCollection.doc(day).collection(_initiative_list).orderBy('index').snapshots().map(
+  //         (snapshot) => snapshot.docs.map((doc) {
+  //       final data = doc.data();
+  //       data['id'] = doc.id;
+  //       return Initiative.fromMap(data);
+  //     }).toList(),
+  //   );
+  // }
 
-    return _initiativeCollection.doc(day).collection(_initiative_list).orderBy('index').snapshots().map(
-          (snapshot) => snapshot.docs.map((doc) {
+  Stream<Map<String, InitiativeCompletion>> watchDay(String day) {
+    return _initiativeCollection
+        .doc(day)
+        .collection(_initiative_list)
+        .snapshots()
+        .map((snapshot) {
+      final result = <String, InitiativeCompletion>{};
+
+      for (var doc in snapshot.docs) {
         final data = doc.data();
-        data['id'] = doc.id;
-        return Initiative.fromMap(data);
-      }).toList(),
-    );
+        // ensure data is Map<String, dynamic>
+        final mapData = Map<String, dynamic>.from(data);
+        result[doc.id] = InitiativeCompletion.fromMap(doc.id, mapData);
+      }
 
+      return result;
+    });
   }
 
+
+
+
+
   /// Add a new [initiative] under [day].
-  Future<void> addInitiative(String day, Initiative initiative) {
+  Future<void> addInitiative(String day, String initiativeID) {
     final ref = _initiativeCollection.doc(day)
         .collection(_initiative_list)
-        .doc(initiative.id);
-    final map = initiative.toMap()..remove('id');
-
-    print(ref.toString());
+        .doc(initiativeID);
+    // final map = initiative.toMap()..remove('id');
+final map = {
+  'isComplete':false,
+  'index':0
+};
+    // print(ref.toString());
     return ref.set(map);
   }
 

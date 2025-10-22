@@ -3,9 +3,13 @@ import 'package:discipline_plus/models/initiative.dart';
 import '../services/firebase_global_initiative_list_service.dart';
 
 class GlobalInitiativeListRepository {
-  final FirebaseGlobalInitiativeListService _service;
 
-  GlobalInitiativeListRepository(this._service);
+  final FirebaseGlobalInitiativeListService _service = FirebaseGlobalInitiativeListService.instance;
+
+  GlobalInitiativeListRepository._internal();
+
+  static final GlobalInitiativeListRepository instance = GlobalInitiativeListRepository._internal();
+
 
   Stream<List<Initiative>> watchInitiatives() {
     return _service.watchInitiatives();

@@ -10,18 +10,18 @@ class WeeklyScheduleRepository {
   WeeklyScheduleRepository(this._service);
 
   /// Listen to all initiatives for a given [day]
-  Stream<List<Initiative>> watchAll(String day) {
-    return _service.streamForDay(day);
+  Stream <Map<String, InitiativeCompletion>> watchAll(String day) {
+    return _service.watchDay(day);
   }
 
-  /// Fetch current snapshot (one-time) for [day]
-  Future<List<Initiative>> fetchInitiatives(String day) {
-    return _service.streamForDay(day).first;
-  }
+  // /// Fetch current snapshot (one-time) for [day]
+  // Future<List<Initiative>> fetchInitiatives(String day) {
+  //   return _service.watchDay(day).first;
+  // }
 
   /// Add a new initiative to [day]
-  Future<void> add(String day, Initiative ini) {
-    return _service.addInitiative(day, ini);
+  Future<void> add(String day, String initiativeID) {
+    return _service.addInitiative(day, initiativeID);
   }
 
   /// Delete initiative by [id] from [day]

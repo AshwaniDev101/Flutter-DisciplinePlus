@@ -49,9 +49,9 @@ class ScheduleManager {
   final _repository = WeeklyScheduleRepository(FirebaseWeeklyScheduleService.instance);
   final _dayController = ScheduleDayController();
 
-  List<Initiative> _cache = [];
+  Map<String, InitiativeCompletion> _cache = {};
 
-  late final Stream<List<Initiative>> schedule$ = _dayController.day$
+  late final Stream<Map<String, InitiativeCompletion>> schedule$ = _dayController.day$
       .distinct()
       .switchMap((day) => _repository.watchAll(day))
       .map((list) {
@@ -68,14 +68,14 @@ class ScheduleManager {
   void changeDay(String newDay) => _dayController.changeDay(newDay);
 
   // CRUD
-  Future<void> addInitiativeIn(String day, Initiative ini) => _repository.add(day, ini);
-  Future<void> update(String day, Initiative ini) => _repository.update(day, ini.id, ini);
-  Future<void> deleteInitiativeFrom(String day, String id) => _repository.delete(day, id);
+  Future<void> addInitiativeIn(String weekDayName, String initiativeID) => _repository.add(weekDayName, initiativeID);
+  Future<void> update(String weekDayName, Initiative ini) => _repository.update(weekDayName, ini.id, ini);
+  Future<void> deleteInitiativeFrom(String weekDayName, String id) => _repository.delete(weekDayName, id);
 
 
   // Utilities (delegated)
   // double get completionRate => ScheduleHelpers.calculateCompletion(_cache);
-  Initiative? getNext(int index) => ScheduleHelpers.nextInitiative(_cache, index);
+  // Initiative? getNext(int index) => ScheduleHelpers.nextInitiative(_cache, index);
   int get length => _cache.length;
   String get currentDay => _dayController.currentDay;
 }

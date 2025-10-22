@@ -1,10 +1,9 @@
-
 import 'package:discipline_plus/pages/homepage/golabl_initiative_list_page/widget/global_initiative_listview.dart';
 import 'package:flutter/material.dart';
 import '../../../../managers/selected_day_manager.dart';
 import '../dialog_helper.dart';
-
-
+import '../schedule_handler/schedule_manager.dart';
+import 'global_list_manager.dart';
 
 class GlobalInitiativeListPage extends StatefulWidget {
   const GlobalInitiativeListPage({
@@ -16,47 +15,23 @@ class GlobalInitiativeListPage extends StatefulWidget {
 }
 
 class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Add tasks to '${SelectedDayManager.currentSelectedWeekDay.value}'"),
+          title: Text("Add to '${SelectedDayManager.currentSelectedWeekDay.value}'"),
           actions: [
-
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: Container(
-            //     width: 30,
-            //     height: 30,
-            //     decoration: BoxDecoration(
-            //       shape: BoxShape.circle,
-            //       color: Colors.grey, // background fill
-            //       border: Border.all(color: Colors.grey.shade700, width: 2), // optional darker border
-            //     ),
-            //     child: IconButton(
-            //       padding: EdgeInsets.zero,
-            //       icon: Icon(Icons.add, color: Colors.white), // icon color contrasts background
-            //       onPressed: () {
-            //         // your click action here
-            //       },
-            //     ),
-            //   ),
-            // )
-
-
-
             Padding(
               padding: const EdgeInsets.only(right: 10),
               child: TextButton(
                 onPressed: () {
-
                   DialogHelper.showAddInitiativeDialog(context: context);
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue, // bright background
-                  foregroundColor: Colors.white, // text color
+                  backgroundColor: Colors.blue,
+                  // bright background
+                  foregroundColor: Colors.white,
+                  // text color
                   // padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25), // rounded corners
@@ -73,25 +48,24 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
                 ),
               ),
             )
-
-
-
-            // IconButton(
-            //   icon: Icon(Icons.add),
-            //   onPressed: () => Navigator.pop(context),
-            // ),
           ],
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () => DialogHelper.showAddInitiativeDialog(context: context),
-        //   child: Text("new"),
-        // ),
-        body: SafeArea(child: Column(
+        body: SafeArea(
+            child: Column(
           children: [
-            Expanded(child: GlobalInitiativeListview())
+            Expanded(
+                child: GlobalInitiativeListview(
+              onAdd: (initiative) {
+                ScheduleManager.instance.addInitiativeIn(SelectedDayManager.currentSelectedWeekDay.value, initiative.id);
+              },
+              onEdit: (initiative) {
+                DialogHelper.showEditInitiativeDialog(context: context, existingInitiative: initiative);
+              },
+              onDelete: (initiative) {
+                GlobalListManager.instance.deleteInitiative(initiative.id);
+              },
+            ))
           ],
-        ))
-    );
+        )));
   }
-
 }

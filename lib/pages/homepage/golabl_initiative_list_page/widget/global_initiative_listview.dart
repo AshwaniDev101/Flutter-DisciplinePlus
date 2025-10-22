@@ -1,15 +1,15 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
-import '../../../../managers/selected_day_manager.dart';
+import 'package:flutter/material.dart';
 import '../../../../models/initiative.dart';
 import '../../../../widget/global_helper_widget_functions.dart';
-import '../../dialog_helper.dart';
-import '../../schedule_handler/schedule_manager.dart';
 import '../global_list_manager.dart';
 
 class GlobalInitiativeListview extends StatefulWidget {
-  const GlobalInitiativeListview({super.key});
+
+  final void Function(Initiative) onAdd;
+  final void Function(Initiative) onEdit;
+  final void Function(Initiative) onDelete;
+  const GlobalInitiativeListview({super.key, required this.onAdd, required this.onEdit, required this.onDelete});
 
   @override
   State<GlobalInitiativeListview> createState() => _GlobalInitiativeListviewState();
@@ -40,7 +40,12 @@ class _GlobalInitiativeListviewState extends State<GlobalInitiativeListview> {
         return ListView.builder(
           itemBuilder: (context, index) {
             final initiative = initiatives[index];
-            return _GlobalInitiativeCard(initiative: initiative);
+            return _GlobalInitiativeCard(
+                onAdd: widget.onAdd,
+                onEdit: widget.onEdit,
+                onDelete: widget.onDelete,
+
+                initiative: initiative);
           },
           itemCount: initiatives.length,
         );
@@ -50,10 +55,15 @@ class _GlobalInitiativeListviewState extends State<GlobalInitiativeListview> {
 }
 
 class _GlobalInitiativeCard extends StatelessWidget {
+
+  final void Function(Initiative) onAdd;
+  final void Function(Initiative) onEdit;
+  final void Function(Initiative) onDelete;
   final Initiative initiative;
 
   const _GlobalInitiativeCard({
     required this.initiative,
+    required this.onAdd, required this.onEdit, required this.onDelete
   });
 
   @override
@@ -70,11 +80,7 @@ class _GlobalInitiativeCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                EditDeleteOptionMenuWidget(context, onDelete: () {
-                  GlobalListManager.instance.deleteInitiative(initiative.id);
-                }, onEdit: () {
-                  DialogHelper.showEditInitiativeDialog(context: context, existingInitiative: initiative);
-                }),
+                EditDeleteOptionMenuWidget(context, onDelete: ()=> onDelete(initiative), onEdit: ()=>onEdit(initiative)),
 
                 SizedBox(width: 10,),
 
@@ -120,9 +126,7 @@ class _GlobalInitiativeCard extends StatelessWidget {
 
                 AddButtonWithProgress(onClick:()
                 {
-                  ScheduleManager.instance
-                      .addInitiativeIn(SelectedDayManager.currentSelectedWeekDay.value, initiative);
-
+                  onAdd(initiative);
                   showMySnackBar(context, "Initiative Added");
                 }),
 

@@ -2,7 +2,6 @@ import 'package:discipline_plus/pages/timerpage/timer_page.dart';
 import 'package:flutter/material.dart';
 import '../../../../managers/selected_day_manager.dart';
 import '../../../../models/initiative.dart';
-import '../schedule_completion_manager.dart';
 import '../schedule_coordinator.dart';
 import '../schedule_manager.dart';
 
@@ -231,8 +230,8 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     onChanged: (val) {
                       if (val == null) return;
                       setState(() => item.isComplete = val);
-                      ScheduleCompletionManager.instance
-                          .toggleCompletion(item.id, val);
+                      // ScheduleCompletionManager.instance
+                      //     .toggleCompletion(item.id, val);
                     },
                   ),
                   const Text('Complete'),

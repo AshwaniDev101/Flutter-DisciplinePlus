@@ -2,6 +2,26 @@ import 'package:discipline_plus/models/study_break.dart';
 import '../core/utils/helper.dart';
 import 'app_time.dart';
 
+
+class InitiativeCompletion {
+  final String id;
+  final bool isComplete;
+
+  InitiativeCompletion({
+    required this.id,
+    required this.isComplete,
+  });
+
+  factory InitiativeCompletion.fromMap(String id, Map<String, dynamic> map) {
+    return InitiativeCompletion(
+      id: id,
+      isComplete: map['isComplete'] as bool? ?? false,
+    );
+  }
+}
+
+
+
 class Initiative {
   final String id;
   final String title;
@@ -48,6 +68,7 @@ class Initiative {
       index: map['index'] as int? ?? 0, // Safely load index or default to 0
     );
   }
+
 
 
 
