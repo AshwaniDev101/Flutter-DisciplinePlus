@@ -1,5 +1,5 @@
 import 'package:discipline_plus/models/diet_food.dart';
-import 'package:discipline_plus/models/food_stats.dart';
+
 import '../services/firebase_global_diet_food_service.dart';
 
 class GlobalDietFoodRepository {

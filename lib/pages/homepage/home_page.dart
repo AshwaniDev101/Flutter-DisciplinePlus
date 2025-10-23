@@ -83,20 +83,15 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 onItemEdit: (existingInitiative) {
                   DialogHelper.showEditInitiativeDialog(context: context, existingInitiative: existingInitiative);
                 },
-                onItemDelete: (initiative)
-                {
+                onItemDelete: (initiative) {
                   ScheduleManager.instance.deleteInitiativeFrom(
                     SelectedDayManager.currentSelectedWeekDay.value,
                     initiative.id,
                   );
                 },
-                onItemComplete: (initiative,isComplete)
-                {
-
-                  WeeklyScheduleRepository.instance.completeInitiative(SelectedDayManager.currentSelectedWeekDay.value,initiative.id, isComplete);
-                  // ScheduleCompletionManager.instance
-                  //     .toggleCompletion(item.id, val);
-
+                onItemComplete: (initiative, isComplete) {
+                  WeeklyScheduleRepository.instance
+                      .completeInitiative(SelectedDayManager.currentSelectedWeekDay.value, initiative.id, isComplete);
                 },
               ),
             ),

@@ -8,7 +8,7 @@ class GlobalInitiativeListRepository {
 
   GlobalInitiativeListRepository._internal();
 
-  static final GlobalInitiativeListRepository instance = GlobalInitiativeListRepository._internal();
+  static final instance = GlobalInitiativeListRepository._internal();
 
 
   Stream<List<Initiative>> watchInitiatives() {

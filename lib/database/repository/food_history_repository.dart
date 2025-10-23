@@ -1,5 +1,4 @@
 import 'package:discipline_plus/models/food_stats.dart';
-import 'package:intl/intl.dart';
 import '../../database/services/firebase_food_history_service.dart';
 import '../../models/diet_food.dart';
 
@@ -7,10 +6,10 @@ import '../../models/diet_food.dart';
 /// This abstracts Firebase and provides a single place to get data
 class FoodHistoryRepository {
 
+  final _service = FirebaseFoodHistoryService.instance;
 
-  FoodHistoryRepository._();
-  static final instance = FoodHistoryRepository._();
-  final FirebaseFoodHistoryService _service = FirebaseFoodHistoryService.instance;
+  FoodHistoryRepository._internal();
+  static final instance = FoodHistoryRepository._internal();
 
 
   /// Get food stats for a specific month

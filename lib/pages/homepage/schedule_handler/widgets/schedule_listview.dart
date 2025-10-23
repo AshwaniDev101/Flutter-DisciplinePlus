@@ -205,8 +205,12 @@ class _ScheduleListviewState extends State<ScheduleListview> {
     );
   }
 
+
   /// Menu options for edit/delete/complete
-  void _showMenu(BuildContext context, GlobalKey key, Initiative item) {
+  /// Compact menu options for edit/delete/complete
+  void _showMenu(BuildContext context, GlobalKey key, Initiative initiative) {
+
+    // bool isComplete = false;
     final RenderBox button = key.currentContext!.findRenderObject() as RenderBox;
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
@@ -222,25 +226,37 @@ class _ScheduleListviewState extends State<ScheduleListview> {
       context: context,
       position: position,
       items: [
-        const PopupMenuItem(value: 'edit', child: Text('Edit')),
-        const PopupMenuItem(value: 'delete', child: Text('Delete')),
+        PopupMenuItem(
+          value: 'edit',
+          child: const Text('Edit', style: TextStyle(fontSize: 14)),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: const Text('Delete', style: TextStyle(fontSize: 14)),
+        ),
         PopupMenuItem(
           value: 'complete',
           child: StatefulBuilder(
             builder: (context, setState) {
-              return Row(
-                children: [
-                  Checkbox(
-                    value: item.isComplete,
-                    onChanged: (val) {
-                      if (val == null) return;
-                      setState(() => item.isComplete = val);
-                      widget.onItemComplete(item,val);
 
-                    },
+              return InkWell(
+                onTap: () {
+                  setState(() {
+                    initiative.isComplete = !initiative.isComplete;
+                    widget.onItemComplete(initiative, initiative.isComplete);
+                  });
+                },
+
+                child: Padding(
+                  padding: const EdgeInsets.only(top:2,bottom: 2,right: 2),
+                  child: Row(
+                    children: [
+                      Icon(initiative.isComplete?Icons.check_box:Icons.check_box_outline_blank_rounded, color: initiative.isComplete?Colors.blue:Colors.grey),
+                      SizedBox(width: 4,),
+                      Text(initiative.isComplete?'Completed!':'Complete?', style: TextStyle(fontSize: 14)),
+                    ]
                   ),
-                  const Text('Complete'),
-                ],
+                ),
               );
             },
           ),
@@ -248,13 +264,12 @@ class _ScheduleListviewState extends State<ScheduleListview> {
       ],
     ).then((value) {
       if (value == 'delete') {
-        widget.onItemDelete(item);
+        widget.onItemDelete(initiative);
       } else if (value == 'edit') {
-        widget.onItemEdit(item);
+        widget.onItemEdit(initiative);
       }
     });
   }
-
 
 
 }

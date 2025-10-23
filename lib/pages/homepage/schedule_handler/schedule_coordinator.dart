@@ -51,33 +51,6 @@ class ScheduleCoordinator {
     );
   }
 
-  // Stream<List<Initiative>> get mergedDayInitiatives {
-  //   return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
-  //     ScheduleManager.instance.schedule$,
-  //     GlobalListManager.instance.watch(),
-  //         (dailyMap, globalInitiativeList) {
-  //       print('Daily Keys: ${dailyMap.keys.toList()}');
-  //       print('Global Initiative List: ${globalInitiativeList.map((e) => e.title).toList()}');
-  //
-  //       // Convert dailyMap to a map of id -> isComplete
-  //       final completionMap = {
-  //         for (final entry in dailyMap.entries) entry.key: entry.value.isComplete,
-  //       };
-  //
-  //       // Merge global initiatives with completion info from dailyMap
-  //       final merged = globalInitiativeList.map((i) {
-  //         final isComplete = completionMap[i.id] ?? false;
-  //         return i.copyWith(isComplete: isComplete);
-  //       }).toList();
-  //
-  //       print('Merged List: ${merged.map((e) => e.isComplete).toList()}');
-  //
-  //       return merged;
-  //     },
-  //   );
-  // }
-
-
 
   /// Returns the latest cached completion percentage synchronously
   double get latestCompletionPercentage {
@@ -89,11 +62,5 @@ class ScheduleCoordinator {
 
   void changeDay(String day) => _scheduleManager.changeDay(day);
 
-  // Future<void> toggleCompletion(String initiativeId, bool value) async {
-  //   await _initiativeCompletionRepository.setInitiativeCompletion(
-  //     DateTime.now(),
-  //     initiativeId,
-  //     value,
-  //   );
-  // }
+
 }
