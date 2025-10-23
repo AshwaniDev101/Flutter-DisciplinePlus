@@ -10,13 +10,6 @@ class NewInitiativeDialog extends StatefulWidget {
   final void Function(Initiative newInitiative)? onNewSave;
   final void Function(Initiative newInitiative)? onEditSave;
 
-  // const NewInitiativeDialog({
-//   super.key,
-//   this.existing_initiative,
-//   required this.onNewSave,
-//   required this.onEditSave,
-// });
-
   const NewInitiativeDialog.save({
     super.key,
     required this.onNewSave,
@@ -81,8 +74,15 @@ class _NewInitiativeDialogState extends State<NewInitiativeDialog> {
   Widget build(BuildContext c) {
 
     return AlertDialog(
-      title: Text(widget.onEditSave!=null ? 'Edit Initiative' : 'New Initiative',
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black38)),
+      title: Row(
+        children: [
+
+          Icon(widget.onEditSave!=null ? Icons.edit_note_rounded: Icons.add_card, color: Colors.grey[500],),
+          SizedBox(width: 5,),
+          Text(widget.onEditSave!=null ? 'Edit Initiative' : 'New Initiative',
+              style: const TextStyle(fontSize:18,fontWeight: FontWeight.bold, color: Colors.black38)),
+        ],
+      ),
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       content: SizedBox(
@@ -92,11 +92,16 @@ class _NewInitiativeDialogState extends State<NewInitiativeDialog> {
           children: [
             TextField(
               controller: _titleCtrl,
-              style: const TextStyle(color: Colors.black45, fontSize: 22, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.grey[500], fontSize: 16, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 hintText: 'Enter title here',
                 hintStyle: const TextStyle(color: Colors.black26, fontSize: 16),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: Colors.blue,width: 2),
+
+                )
               ),
             ),
             const SizedBox(height: 10),
@@ -118,7 +123,7 @@ class _NewInitiativeDialogState extends State<NewInitiativeDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Colors.black26, fontSize: 16)),
+        Text(label, style: TextStyle(color: Colors.grey[500], fontSize: 14)),
         QuantitySelector(initialValue: value, initialStep: 5, onChanged: onChanged),
       ],
     );

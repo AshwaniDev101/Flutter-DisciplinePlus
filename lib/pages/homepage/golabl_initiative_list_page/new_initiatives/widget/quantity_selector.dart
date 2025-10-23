@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,35 +14,27 @@ class QuantitySelector extends StatefulWidget {
 }
 
 class _QuantitySelectorState extends State<QuantitySelector> {
-  // late int quantity;
-
   TextEditingController textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     textController.text = widget.initialValue.toString();
-
   }
 
   void updateQuantity(int newQty) {
     setState(() {
       textController.text = newQty.toString();
-    } );
+    });
     widget.onChanged(int.parse(textController.text));
-
   }
 
-
-
-  void onAdd()
-  {
-    updateQuantity(int.parse(textController.text)+ widget.initialStep);
+  void onAdd() {
+    updateQuantity(int.parse(textController.text) + widget.initialStep);
     FocusScope.of(context).unfocus();
   }
 
-  void onSubtract()
-  {
+  void onSubtract() {
     updateQuantity(int.parse(textController.text) - widget.initialStep);
   }
 
@@ -52,37 +43,14 @@ class _QuantitySelectorState extends State<QuantitySelector> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // IconButton(
-        //   icon: Icon(Icons.plus, color: Colors.blue),
-        //   onPressed: int.parse(textController.text)>1?onSubtract:null,
-        // ),
-        if(int.parse(textController.text)>1)
-        Material(
-          color: Colors.blue[300],  // Circle background + ripple surface
-          shape: CircleBorder(),
-
-          child: InkWell(
-            onTap: onSubtract,
-            customBorder: CircleBorder(),
-            child: SizedBox(
-              width: 28,
-              height: 28,
-              child: Center(
-                child: Text(
-                  "-${widget.initialStep}",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+        if (int.parse(textController.text) > 1)
+          _RoundButton(
+            text: "-${widget.initialStep}",
+            onClick: onSubtract,
           ),
+        SizedBox(
+          width: 5,
         ),
-
-
-
-        SizedBox(width: 10,),
         SizedBox(
           width: 50,
           child: TextField(
@@ -91,62 +59,83 @@ class _QuantitySelectorState extends State<QuantitySelector> {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             style: TextStyle(
-              color: Colors.black45,    // Your desired text color
-              fontSize: 22,
-              fontWeight: FontWeight.bold
-            ),
+                color: Colors.black45, // Your desired text color
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
             decoration: InputDecoration(
               isDense: true,
               contentPadding: EdgeInsets.all(4),
               hintText: '',
               hintStyle: TextStyle(color: Colors.black26),
-              border: InputBorder.none,             // No border by default
-              enabledBorder: InputBorder.none,      // No border when idle
-              focusedBorder: OutlineInputBorder(    // Rectangle when focused
+              border: InputBorder.none,
+              // No border by default
+              enabledBorder: InputBorder.none,
+              // No border when idle
+              focusedBorder: OutlineInputBorder(
+                // Rectangle when focused
                 borderRadius: BorderRadius.circular(4),
                 borderSide: BorderSide(color: Colors.blue, width: 2),
               ),
 
               // contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             ),
-
-            onChanged: (value)
-            {
+            onChanged: (value) {
               updateQuantity(int.parse(value));
             },
           ),
-
-
         ),
-        Text('min', style: TextStyle(fontSize: 14,color: Colors.black45)),
-        SizedBox(width: 10,),
-        Material(
-          color: Colors.grey[300],  // Circle background + ripple surface
-          shape: CircleBorder(),
-          child: InkWell(
-            onTap: onAdd,
-            customBorder: CircleBorder(),
-            child: SizedBox(
-              width: 28,
-              height: 28,
-              child: Center(
-                child: Text(
-                  "+${widget.initialStep}",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+
+
+        Text('min', style: TextStyle(fontSize: 14, color: Colors.black45)),
+        SizedBox(
+          width: 10,
+        ),
+        _RoundButton(
+          text: "+${widget.initialStep}",
+          onClick: onAdd,
+        ),
+      ],
+    );
+  }
+}
+
+class _RoundButton extends StatelessWidget {
+  final String text;
+  final void Function() onClick;
+  final Color color;
+  final double fontSize;
+
+  _RoundButton({
+    super.key,
+    required this.text,
+    required this.onClick,
+    this.fontSize = 12,
+    Color? color,
+  }) : color = color ?? Colors.blue[300]!;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: color,
+      shape: CircleBorder(),
+      child: InkWell(
+        onTap: onClick,
+        customBorder: CircleBorder(),
+        child: SizedBox(
+          width: 28,
+          height: 28,
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: fontSize,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
         ),
-        // IconButton(
-        //   icon: Icon(Icons.add_circle_outline_rounded,color: Colors.blue,),
-        //   onPressed: onAdd,
-        //
-        // ),
-      ],
+      ),
     );
   }
 }
