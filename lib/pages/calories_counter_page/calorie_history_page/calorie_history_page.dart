@@ -1,4 +1,4 @@
-import 'package:discipline_plus/database/services/firebase_food_history_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:discipline_plus/models/food_stats.dart';
@@ -99,7 +99,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
                             dateTime: widget.pageDateTime,
                             foodStats: _monthStats[day]!,
                             onDelete: (cardDateTime) async {
-                              await FoodHistoryRepository.instance.deleteFoodStats(cardDateTime: cardDateTime);
+                              await FoodHistoryRepository.instance.deleteFoodStats(date: cardDateTime);
                               setState(() {
                                 _monthStats.remove(cardDateTime.day); // 👈 instantly update UI
                               });

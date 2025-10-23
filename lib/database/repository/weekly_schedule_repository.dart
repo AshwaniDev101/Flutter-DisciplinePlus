@@ -3,23 +3,17 @@
 import '../../models/initiative.dart';
 import '../services/firebase_weekly_schedule_service.dart';
 
-
 class WeeklyScheduleRepository {
-  final FirebaseWeeklyScheduleService _service = FirebaseWeeklyScheduleService.instance;
+  final _service = FirebaseWeeklyScheduleService.instance;
 
   WeeklyScheduleRepository._internal();
+
   static final WeeklyScheduleRepository instance = WeeklyScheduleRepository._internal();
 
-
   /// Listen to all initiatives for a given [day]
-  Stream <Map<String, InitiativeCompletion>> watchDay(String day) {
+  Stream<Map<String, InitiativeCompletion>> watchDay(String day) {
     return _service.watchDay(day);
   }
-
-  // /// Fetch current snapshot (one-time) for [day]
-  // Future<List<Initiative>> fetchInitiatives(String day) {
-  //   return _service.watchDay(day).first;
-  // }
 
   /// Add a new initiative to [day]
   Future<void> add(String day, String initiativeID) {

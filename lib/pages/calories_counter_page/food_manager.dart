@@ -17,7 +17,7 @@ class FoodManager {
   static FoodManager get instance => _instance;
 
 
-  final GlobalDietFoodRepository _dietFoodRepository = GlobalDietFoodRepository(FirebaseGlobalDietFoodService.instance);
+  final _dietFoodRepository = GlobalDietFoodRepository.instance;
 
 
 

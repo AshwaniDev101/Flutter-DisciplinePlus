@@ -4,9 +4,11 @@ import 'package:discipline_plus/database/services/firebase_initiative_history_se
 /// This class abstracts away all Firebase logic,
 /// allowing your app to be tested and maintained more easily.
 class InitiativeHistoryRepository {
-  final FirebaseInitiativeHistoryService _service;
+  final _service = FirebaseInitiativeHistoryService.instance;
 
-  InitiativeHistoryRepository(this._service);
+  InitiativeHistoryRepository._internal();
+
+  static final instance = InitiativeHistoryRepository._internal();
 
   /// Watch completion history for a specific date
   Stream<Map<String, bool>> watchInitiativeCompletionHistory(DateTime date) {
@@ -21,6 +23,4 @@ class InitiativeHistoryRepository {
   ) {
     return _service.setInitiativeCompletion(date, initiativeId, isComplete);
   }
-
-
 }

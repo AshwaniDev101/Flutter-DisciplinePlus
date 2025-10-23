@@ -1,19 +1,16 @@
 import '../services/firebase_heatmap_service.dart';
 
+/// A repository for managing heatmap data.
+/// This class provides a singleton instance to interact with the Firebase heatmap service.
 class HeatmapRepository {
-
-
+  final _service = FirebaseHeatmapService.instance;
 
   HeatmapRepository._internal();
 
-  static final  HeatmapRepository instance = HeatmapRepository._internal();
+  static final instance = HeatmapRepository._internal();
 
-
-
-
-
-  final FirebaseHeatmapService _service = FirebaseHeatmapService.instance;
-
+  /// Watches for changes in the heatmap data for a specific activity in a given month and year.
+  /// Returns a stream of heatmap data.
   Stream<Map<String, dynamic>> watchHeatmap({
     required int year,
     required int month,
@@ -26,6 +23,8 @@ class HeatmapRepository {
     );
   }
 
+  /// Watches for changes in all heatmaps for a given month and year.
+  /// Returns a stream of all heatmap data.
   Stream<Map<String, Map<String, dynamic>>> watchAllHeatmapsInMonth({
     required int year,
     required int month,
@@ -36,6 +35,8 @@ class HeatmapRepository {
     );
   }
 
+  /// Retrieves the heatmap data for a specific activity in a given month and year.
+  /// Returns a single snapshot of the heatmap data.
   Future<Map<String, dynamic>> getActivityHeatmap({
     required int year,
     required int month,
@@ -48,6 +49,8 @@ class HeatmapRepository {
     );
   }
 
+  /// Retrieves all heatmap data for a given month and year.
+  /// Returns a single snapshot of all heatmap data.
   Future<Map<String, Map<String, dynamic>>> getAllInMonth({
     required int year,
     required int month,
@@ -58,6 +61,7 @@ class HeatmapRepository {
     );
   }
 
+  /// Updates a single entry in the heatmap for a specific activity and date.
   Future<void> updateEntry({
     required String activityId,
     required DateTime date,
@@ -72,6 +76,7 @@ class HeatmapRepository {
     );
   }
 
+  /// Updates multiple entries in the heatmap for a specific activity and month.
   Future<void> updateEntries({
     required String activityId,
     required int year,
@@ -87,15 +92,14 @@ class HeatmapRepository {
     );
   }
 
+  /// Overwrites the entire heatmap for a specific activity and month.
   Future<void> overwriteHeatmap({
     required String activityId,
     required int year,
     required int month,
     required Map<int, dynamic> dayHeatLevel,
   }) async {
-    final data = {
-      for (var entry in dayHeatLevel.entries) entry.key.toString(): entry.value
-    };
+    final data = {for (var entry in dayHeatLevel.entries) entry.key.toString(): entry.value};
     await _service.overwriteHeatmap(
       activityId: activityId,
       year: year,
@@ -104,6 +108,23 @@ class HeatmapRepository {
     );
   }
 
+  /// Updates multiple heatmaps for different activities in a single batch operation.
+  Future<void> batchUpdateMultiple({
+    required int year,
+    required int month,
+    required Map<String, Map<int, dynamic>> updates,
+  }) async {
+    final mapped = {
+      for (var entry in updates.entries) entry.key: {for (var e in entry.value.entries) e.key.toString(): e.value}
+    };
+    await _service.batchUpdateMultipleActivities(
+      year: year,
+      month: month,
+      updates: mapped,
+    );
+  }
+
+  /// Deletes the heatmap for a specific activity and month.
   Future<void> delete({
     required String activityId,
     required int year,
@@ -116,6 +137,7 @@ class HeatmapRepository {
     );
   }
 
+  /// Deletes all heatmaps for a given month.
   Future<void> deleteAllInMonth({
     required int year,
     required int month,
@@ -123,24 +145,6 @@ class HeatmapRepository {
     await _service.deleteAllHeatmapsInMonth(
       year: year,
       month: month,
-    );
-  }
-
-  Future<void> batchUpdateMultiple({
-    required int year,
-    required int month,
-    required Map<String, Map<int, dynamic>> updates,
-  }) async {
-    final mapped = {
-      for (var entry in updates.entries)
-        entry.key: {
-          for (var e in entry.value.entries) e.key.toString(): e.value
-        }
-    };
-    await _service.batchUpdateMultipleActivities(
-      year: year,
-      month: month,
-      updates: mapped,
     );
   }
 }
