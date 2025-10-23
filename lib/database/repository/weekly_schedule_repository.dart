@@ -1,4 +1,3 @@
-// lib/repositories/weekly_schedule_repository.dart
 
 import '../../models/initiative.dart';
 import '../services/firebase_weekly_schedule_service.dart';

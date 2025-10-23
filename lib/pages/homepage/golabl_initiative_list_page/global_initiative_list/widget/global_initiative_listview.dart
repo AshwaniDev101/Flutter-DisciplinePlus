@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import '../../../../../models/initiative.dart';
-import '../../../../../widget/global_helper_widget_functions.dart';
+import '../../../../../widget/edit_delete_option_menu.dart';
 import '../global_list_manager.dart';
 
 class GlobalInitiativeListview extends StatefulWidget {
@@ -80,7 +80,7 @@ class _GlobalInitiativeCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                EditDeleteOptionMenuWidget(context, onDelete: ()=> onDelete(initiative), onEdit: ()=>onEdit(initiative)),
+                EditDeleteOptionMenu(onDelete: ()=> onDelete(initiative), onEdit: ()=>onEdit(initiative)),
 
                 SizedBox(width: 10,),
 

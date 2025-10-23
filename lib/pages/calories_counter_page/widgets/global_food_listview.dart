@@ -73,7 +73,7 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
 
   void _showItemMenu(BuildContext buttonContext, DietFood food) {
     final RenderBox button = buttonContext.findRenderObject() as RenderBox;
-    final RenderBox overlay = Overlay.of(buttonContext)!.context.findRenderObject() as RenderBox;
+    final RenderBox overlay = Overlay.of(buttonContext).context.findRenderObject() as RenderBox;
 
     final RelativeRect position = RelativeRect.fromRect(
       Rect.fromPoints(

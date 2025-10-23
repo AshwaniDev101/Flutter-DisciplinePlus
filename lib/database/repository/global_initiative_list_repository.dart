@@ -1,5 +1,4 @@
 import 'package:discipline_plus/models/initiative.dart';
-
 import '../services/firebase_global_initiative_list_service.dart';
 
 /// A repository for managing the global list of initiatives.

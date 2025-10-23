@@ -5,7 +5,7 @@ import 'package:discipline_plus/models/food_stats.dart';
 import '../../../core/utils/helper.dart';
 import '../../../core/utils/app_settings.dart';
 import '../../../database/repository/food_history_repository.dart';
-import '../../../widget/global_helper_widget_functions.dart';
+import '../../../widget/edit_delete_option_menu.dart';
 import '../calories_counter_page.dart';
 
 /// Main page displaying calorie history for a month
@@ -167,7 +167,7 @@ class DayCard extends StatelessWidget {
           Positioned(
               top: 8,
               right: 2,
-              child: EditDeleteOptionMenuWidget(context,
+              child: EditDeleteOptionMenu(
                   onDelete: () => onDelete(cardDateTime),
                   onEdit: () => _openCaloriesCounterPage(context, cardDateTime))),
           Padding(

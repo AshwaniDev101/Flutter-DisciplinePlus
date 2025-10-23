@@ -1,5 +1,4 @@
 import 'package:discipline_plus/models/diet_food.dart';
-
 import '../services/firebase_global_diet_food_service.dart';
 
 /// A repository for managing global diet food data.
