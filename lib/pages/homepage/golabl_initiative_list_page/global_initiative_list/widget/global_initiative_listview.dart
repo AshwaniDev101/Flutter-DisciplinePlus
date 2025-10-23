@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import '../../../../models/initiative.dart';
-import '../../../../widget/global_helper_widget_functions.dart';
+import '../../../../../models/initiative.dart';
+import '../../../../../widget/global_helper_widget_functions.dart';
 import '../global_list_manager.dart';
 
 class GlobalInitiativeListview extends StatefulWidget {

@@ -7,8 +7,8 @@ import '../../database/repository/weekly_schedule_repository.dart';
 import '../../drawer/drawer.dart';
 import '../../managers/selected_day_manager.dart';
 import 'dialog_helper.dart';
-import 'golabl_initiative_list_page/global_initiative_list_page.dart';
 import '../heatmap_page/heatmap_panel.dart';
+import 'golabl_initiative_list_page/global_initiative_list/global_initiative_list_page.dart';
 
 const double _panelMinHeight = 80;
 const double _panelMaxHeight = 550;

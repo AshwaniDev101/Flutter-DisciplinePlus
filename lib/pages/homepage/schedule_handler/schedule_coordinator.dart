@@ -2,8 +2,7 @@
 import 'package:discipline_plus/pages/homepage/schedule_handler/schedule_manager.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../../../models/initiative.dart';
-
-import '../golabl_initiative_list_page/global_list_manager.dart';
+import '../golabl_initiative_list_page/global_initiative_list/global_list_manager.dart';
 
 
 

@@ -1,8 +1,9 @@
-import 'package:discipline_plus/pages/homepage/golabl_initiative_list_page/widget/global_initiative_listview.dart';
+
+import 'package:discipline_plus/pages/homepage/golabl_initiative_list_page/global_initiative_list/widget/global_initiative_listview.dart';
 import 'package:flutter/material.dart';
-import '../../../../managers/selected_day_manager.dart';
-import '../dialog_helper.dart';
-import '../schedule_handler/schedule_manager.dart';
+import '../../../../../managers/selected_day_manager.dart';
+import '../../dialog_helper.dart';
+import '../../schedule_handler/schedule_manager.dart';
 import 'global_list_manager.dart';
 
 class GlobalInitiativeListPage extends StatefulWidget {
