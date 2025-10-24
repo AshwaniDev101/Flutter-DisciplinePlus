@@ -6,6 +6,7 @@ import '../../../core/utils/app_settings.dart';
 import '../../../database/repository/food_history_repository.dart';
 import '../calorie_counter_page/calories_counter_page.dart';
 
+
 /// Main page displaying calorie history for a month
 class CalorieHistoryPage extends StatefulWidget {
   final DateTime pageDateTime;
@@ -104,7 +105,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CaloriesCounterPage(pageDateTime: cardDateTime),
+                              builder: (context) => CalorieCounterPage(pageDateTime: cardDateTime),
                             ),
                           );
                         },

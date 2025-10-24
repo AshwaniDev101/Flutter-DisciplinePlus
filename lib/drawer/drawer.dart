@@ -41,7 +41,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               Navigator.push(
                 context,
                 // MaterialPageRoute(builder: (context) => DietPage()),
-                MaterialPageRoute(builder: (context) => CaloriesCounterPage(pageDateTime: DateTime.now(),)),
+                MaterialPageRoute(builder: (context) => CalorieCounterPage(pageDateTime: DateTime.now(),)),
               );
 
             },

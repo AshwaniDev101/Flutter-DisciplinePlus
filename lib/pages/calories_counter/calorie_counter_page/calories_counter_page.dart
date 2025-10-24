@@ -1,43 +1,50 @@
-
+import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/viewModel/calorie_counter_view_model.dart';
 import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/widgets/calorie_progress_bar_dashboard.dart';
 import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/widgets/global_food_listview.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../models/diet_food.dart';
 import 'add_edit_diet_food_dialog.dart';
 import 'food_manager.dart';
 
 /// The main page that allows users to view, add, edit, and delete foods,
 /// while tracking their total calorie consumption in real time.
-class CaloriesCounterPage extends StatefulWidget {
+
+class CalorieCounterPage extends StatelessWidget {
   final DateTime pageDateTime;
 
-  const CaloriesCounterPage({super.key, required this.pageDateTime});
-
-  @override
-  State<CaloriesCounterPage> createState() => _CaloriesCounterPageState();
-}
-
-class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
-  String _searchQuery = '';
+  const CalorieCounterPage({super.key, required this.pageDateTime});
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => CalorieCounterViewModel(pageDateTime: pageDateTime),
+      child: _CaloriesCounterPageBody(),
+    );
+  }
+}
+
+class _CaloriesCounterPageBody extends StatelessWidget {
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    final vm = context.watch<CalorieCounterViewModel>();
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
-
-      // ===== BODY =====
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 14),
 
-            //  Displays a progress bar showing how much of the daily calorie goal is consumed.
             CalorieProgressBarDashboard(
-              currentDateTime: widget.pageDateTime,
-              stream: FoodManager.instance.watchConsumedFoodStats(widget.pageDateTime),
+              currentDateTime: vm.pageDateTime,
+              stream: vm.watchConsumedFoodStats,
               onClickAdd: () {
                 AddEditDietFoodDialog.show(context, onDrafted: (DietFood food) {
-                  _addFood(food);
+                  vm.addFood(food);
                 });
               },
               onClickBack: () {
@@ -51,20 +58,17 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
             /// Handles edit and delete actions via callbacks.
             Expanded(
               child: GlobalFoodList(
-                searchQuery: _searchQuery,
-                stream: FoodManager.instance.watchMergedFoodList(widget.pageDateTime),
-
+                searchQuery: vm.searchQuery,
+                stream: FoodManager.instance.watchMergedFoodList(vm.pageDateTime),
                 onEdit: (DietFood food) {
                   AddEditDietFoodDialog.show(context, food: food, onDrafted: (DietFood editedFood) {
-                    _editFood(editedFood);
+                    vm.editFood(editedFood);
                   });
                 },
                 onDeleted: (DietFood food) {
-                  _deleteFood(food);
+                  vm.deleteFood(food);
                 },
-                onQuantityChange: (double oldValue, double newValue, DietFood food) {
-                  FoodManager.instance.changeConsumedCount(newValue - oldValue, food, widget.pageDateTime);
-                },
+                onQuantityChange: vm.onQuantityChange
               ),
             ),
 
@@ -78,9 +82,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onChanged: (value) => setState(() {
-                  _searchQuery = value.toLowerCase();
-                }),
+                onChanged: (value) => vm.updateSearchQuery = value
               ),
             ),
             // searchBar()
@@ -90,35 +92,5 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
     );
   }
 
-  // ===== CRUD OPERATIONS =====
 
-  /// Adds a new [DietFood] item to the database
-  /// and shows a confirmation snackbar.
-  void _addFood(DietFood food) {
-    FoodManager.instance.addToAvailableFood(food);
-    _showSnack('${food.name} added!');
-  }
-
-  /// Updates an existing [DietFood] entry in the database.
-  void _editFood(DietFood editedFood) {
-    FoodManager.instance.updateAvailableFood(editedFood);
-    _showSnack('${editedFood.name} edited!');
-
-    // FoodHistoryRepository.instance.updateFoodStats(editedFood.foodStats, widgets.pageDateTime);
-  }
-
-  /// Removes a [DietFood] item from the database.
-  void _deleteFood(DietFood food) {
-    FoodManager.instance.removeFromAvailableFood(food);
-    _showSnack('${food.name} deleted!');
-  }
-
-  // ===== HELPER METHODS =====
-
-  /// Displays a simple snackbar for user feedback.
-  void _showSnack(String message) {
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(content: Text(message)),
-    // );
-  }
 }
