@@ -38,34 +38,6 @@ class GlobalFoodList extends StatefulWidget {
 class _GlobalFoodListState extends State<GlobalFoodList> {
 
 
-  // void _showItemMenu(BuildContext buttonContext, DietFood food) {
-  //   final RenderBox button = buttonContext.findRenderObject() as RenderBox;
-  //   final RenderBox overlay = Overlay.of(buttonContext).context.findRenderObject() as RenderBox;
-  //
-  //   final RelativeRect position = RelativeRect.fromRect(
-  //     Rect.fromPoints(
-  //       button.localToGlobal(Offset.zero, ancestor: overlay),
-  //       button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
-  //     ),
-  //     Offset.zero & overlay.size,
-  //   );
-  //
-  //   showMenu<String>(
-  //     context: buttonContext,
-  //     position: position,
-  //     items: [
-  //       const PopupMenuItem(value: 'edit', child: Text('Edit')),
-  //       const PopupMenuItem(value: 'delete', child: Text('Delete')),
-  //     ],
-  //   ).then((value) {
-  //     if (value == 'edit') {
-  //       widget.onEdit(food);
-  //     } else if (value == 'delete') {
-  //       widget.onDeleted(food);
-  //     }
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<DietFood>>(

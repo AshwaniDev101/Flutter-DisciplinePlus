@@ -1,5 +1,5 @@
 
-import 'package:discipline_plus/pages/homepage/golabl_initiative_list_page/global_initiative_list/widget/global_initiative_listview.dart';
+import 'package:discipline_plus/pages/homepage/golabl_initiative_list_page/global_initiative_list/widgets/global_initiative_listview.dart';
 import 'package:flutter/material.dart';
 import '../../../../../managers/selected_day_manager.dart';
 import '../../dialog_helper.dart';

@@ -181,10 +181,10 @@ class _TimerPageState extends State<TimerPage> {
   // void _onManualComplete(bool? value) {
   //   setState(() {
   //
-  //     widget.initiative.isComplete = value??false;
+  //     widgets.initiative.isComplete = value??false;
   //
   //   });
-  //   widget.onComplete(isManual: true,isComplete: widget.initiative.isComplete);
+  //   widgets.onComplete(isManual: true,isComplete: widgets.initiative.isComplete);
   // }
 
   void _onManualComplete(bool? value) {

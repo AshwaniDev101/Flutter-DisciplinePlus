@@ -1,6 +1,5 @@
 import 'package:discipline_plus/pages/calories_counter_page/widgets/calorie_progress_bar_dashboard.dart';
 import 'package:discipline_plus/pages/calories_counter_page/widgets/global_food_listview.dart';
-import 'package:discipline_plus/widget/edit_delete_option_menu.dart';
 import 'package:flutter/material.dart';
 import '../../models/diet_food.dart';
 import 'add_edit_diet_food_dialog.dart';
@@ -104,7 +103,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
     FoodManager.instance.updateAvailableFood(editedFood);
     _showSnack('${editedFood.name} edited!');
 
-    // FoodHistoryRepository.instance.updateFoodStats(editedFood.foodStats, widget.pageDateTime);
+    // FoodHistoryRepository.instance.updateFoodStats(editedFood.foodStats, widgets.pageDateTime);
   }
 
   /// Removes a [DietFood] item from the database.
@@ -121,26 +120,4 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
     //   SnackBar(content: Text(message)),
     // );
   }
-
-// Widget searchBar() {
-//   return Padding(
-//     padding: const EdgeInsets.all(0),
-//     child: Material(
-//       elevation: 4, // adds shadow
-//       // borderRadius: BorderRadius.circular(16),
-//       child: TextField(
-//         decoration: InputDecoration(
-//             hintText: 'Search',
-//             filled: true,
-//             fillColor: Colors.grey[100],
-//             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-//             border: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(16),
-//               borderSide: BorderSide.none, // removes the default border
-//             ),
-//             suffixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.add))),
-//       ),
-//     ),
-//   );
-// }
 }
