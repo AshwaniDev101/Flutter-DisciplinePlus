@@ -1,15 +1,11 @@
 import 'dart:async';
-
-// import 'package:rxdart/rxdart.dart';
-
 import 'package:discipline_plus/database/repository/food_history_repository.dart';
 import 'package:discipline_plus/database/repository/global_diet_food_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../database/services/firebase_food_history_service.dart';
-import '../../database/services/firebase_global_diet_food_service.dart';
-import '../../models/diet_food.dart';
-import '../../models/food_stats.dart';
+import '../../../models/diet_food.dart';
+import '../../../models/food_stats.dart';
+
 
 class FoodManager {
   FoodManager._internal();

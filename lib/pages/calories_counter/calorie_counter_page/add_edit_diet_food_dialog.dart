@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../models/diet_food.dart';
-import '../../models/food_stats.dart';
-import '../../core/utils/helper.dart';
+import '../../../models/diet_food.dart';
+import '../../../models/food_stats.dart';
+import '../../../core/utils/helper.dart';
 
 class AddEditDietFoodDialog {
   /// Opens the Add/Edit DietFood Dialog

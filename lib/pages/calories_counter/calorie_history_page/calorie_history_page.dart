@@ -1,9 +1,10 @@
-import 'package:discipline_plus/pages/calories_counter_page/calorie_history_page/widgets/calorie_history_listview.dart';
+
+import 'package:discipline_plus/pages/calories_counter/calorie_history_page/widgets/calorie_history_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import '../../../core/utils/app_settings.dart';
 import '../../../database/repository/food_history_repository.dart';
-import '../calories_counter_page.dart';
+import '../calorie_counter_page/calories_counter_page.dart';
 
 /// Main page displaying calorie history for a month
 class CalorieHistoryPage extends StatefulWidget {

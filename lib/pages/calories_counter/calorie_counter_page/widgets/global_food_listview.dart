@@ -1,9 +1,11 @@
-import 'package:discipline_plus/pages/calories_counter_page/widgets/food_quantity_selector.dart';
+
 import 'package:flutter/material.dart';
-import '../../../core/utils/constants.dart';
-import '../../../models/diet_food.dart';
-import '../../../models/food_stats.dart';
-import '../../../widget/edit_delete_option_menu.dart';
+
+import '../../../../core/utils/constants.dart';
+import '../../../../models/diet_food.dart';
+import '../../../../models/food_stats.dart';
+import '../../../../widget/edit_delete_option_menu.dart';
+import 'food_quantity_selector.dart';
 
 class GlobalFoodList extends StatefulWidget {
   final String searchQuery;

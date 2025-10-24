@@ -1,7 +1,8 @@
-import 'package:discipline_plus/pages/calories_counter_page/widgets/calorie_progress_bar_dashboard.dart';
-import 'package:discipline_plus/pages/calories_counter_page/widgets/global_food_listview.dart';
+
+import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/widgets/calorie_progress_bar_dashboard.dart';
+import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/widgets/global_food_listview.dart';
 import 'package:flutter/material.dart';
-import '../../models/diet_food.dart';
+import '../../../models/diet_food.dart';
 import 'add_edit_diet_food_dialog.dart';
 import 'food_manager.dart';
 

@@ -1,8 +1,11 @@
-import 'package:discipline_plus/pages/calories_counter_page/calorie_history_page/calorie_history_page.dart';
+
 import 'package:flutter/material.dart';
-import '../../../core/utils/helper.dart';
-import '../../../core/utils/app_settings.dart';
-import '../../../models/food_stats.dart';
+
+import '../../../../core/utils/app_settings.dart';
+import '../../../../core/utils/helper.dart';
+import '../../../../models/food_stats.dart';
+import '../../calorie_history_page/calorie_history_page.dart';
+
 
 class CalorieProgressBarDashboard extends StatefulWidget {
   final void Function() onClickAdd;

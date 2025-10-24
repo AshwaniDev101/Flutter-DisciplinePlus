@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../pages/calories_counter_page/calories_counter_page.dart';
+import '../pages/calories_counter/calorie_counter_page/calories_counter_page.dart';
+
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
