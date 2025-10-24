@@ -1,13 +1,14 @@
-import 'package:discipline_plus/pages/homepage/schedule_handler/manager/schedule_manager.dart';
-import 'package:discipline_plus/pages/homepage/schedule_handler/widgets/schedule_listview.dart';
+import 'package:discipline_plus/pages/schedule_page/widgets/schedule_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../database/repository/weekly_schedule_repository.dart';
 import '../../drawer/drawer.dart';
-import 'global_initiative_list_page/global_initiative_list/manager/global_list_manager.dart';
+import '../global_initiative_list_page/global_initiative_list/global_initiative_list_page.dart';
+
+import '../global_initiative_list_page/manager/global_list_manager.dart';
+import '../global_initiative_list_page/new_initiatives/new_initiative_dialog.dart';
 import '../heatmap_page/heatmap_panel.dart';
-import 'global_initiative_list_page/global_initiative_list/global_initiative_list_page.dart';
-import 'global_initiative_list_page/new_initiatives/new_initiative_dialog.dart';
+import 'manager/schedule_manager.dart';
 
 const double _panelMinHeight = 80;
 const double _panelMaxHeight = 550;

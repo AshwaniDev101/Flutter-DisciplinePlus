@@ -1,11 +1,9 @@
-
 import 'package:discipline_plus/_archive/row/widgets/snap_scrolling.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
-import '../../pages/homepage/schedule_handler/manager/schedule_manager.dart';
-
+import '../../pages/schedule_page/manager/schedule_manager.dart';
 
 class HeatmapRow extends StatefulWidget {
   const HeatmapRow({super.key});
@@ -15,14 +13,12 @@ class HeatmapRow extends StatefulWidget {
 }
 
 class _HeatmapRowState extends State<HeatmapRow> {
-
   late DateTime currentDate;
   late DateTime today;
   DateTime? selectedDate;
 
   final ScrollController _scrollController = ScrollController();
   final HeatmapRepository _heatmapRepository = HeatmapRepository.instance;
-
 
   @override
   void initState() {
@@ -37,8 +33,6 @@ class _HeatmapRowState extends State<HeatmapRow> {
     super.dispose();
   }
 
-
-
   Color getColorForHeat(double percentage) {
     percentage = percentage.clamp(0, 100);
     if (percentage == 0) {
@@ -48,56 +42,40 @@ class _HeatmapRowState extends State<HeatmapRow> {
     }
   }
 
-
-
-
   void goToPreviousMonth() => setState(() {
-    currentDate = DateTime(currentDate.year, currentDate.month - 1);
-  });
+        currentDate = DateTime(currentDate.year, currentDate.month - 1);
+      });
 
   void goToNextMonth() => setState(() {
-    currentDate = DateTime(currentDate.year, currentDate.month + 1);
-  });
+        currentDate = DateTime(currentDate.year, currentDate.month + 1);
+      });
 
   void jumpToToday() => setState(() {
-    currentDate = DateTime(today.year, today.month);
-  });
+        currentDate = DateTime(today.year, today.month);
+      });
 
   void _onDateTap(int day) => setState(() {
-    selectedDate = DateTime(currentDate.year, currentDate.month, day);
+        selectedDate = DateTime(currentDate.year, currentDate.month, day);
 
-    var week = getWeekdayName(selectedDate!);
+        var week = getWeekdayName(selectedDate!);
 
-    ScheduleManager.instance.changeDay(week);
-    // Load data for different days
-    ScheduleManager.instance.changeDay(week);
+        ScheduleManager.instance.changeDay(week);
+      });
 
-  });
-
-
-
-  String getWeekdayName(DateTime datetime)
-  {
+  String getWeekdayName(DateTime datetime) {
     return DateFormat('EEEE').format(datetime);
   }
 
-  bool _isToday(int day) =>
-      day == today.day &&
-          currentDate.month == today.month &&
-          currentDate.year == today.year;
+  bool _isToday(int day) => day == today.day && currentDate.month == today.month && currentDate.year == today.year;
 
   bool _isSelected(int day) =>
       selectedDate != null &&
-          selectedDate!.day == day &&
-          selectedDate!.month == currentDate.month &&
-          selectedDate!.year == currentDate.year;
-
-
+      selectedDate!.day == day &&
+      selectedDate!.month == currentDate.month &&
+      selectedDate!.year == currentDate.year;
 
   void moveCursorToCurrent() {
     if (currentDate.year == today.year && currentDate.month == today.month) {
-
-
       int dayOffset = 7;
       int index;
       if (today.day <= dayOffset) {
@@ -106,7 +84,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
         index = today.day - dayOffset; // Show from Today -7
       }
 
-      double itemWidth = 44;  // your ListView items: 40 + 2 margin left + 2 margin right
+      double itemWidth = 44; // your ListView items: 40 + 2 margin left + 2 margin right
       double offset = index * itemWidth;
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -119,14 +97,12 @@ class _HeatmapRowState extends State<HeatmapRow> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final daysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
 
     return Column(
       children: [
-
         // Icon(Icons.menu, color:Colors.pink.shade100,size: 28), // Hamburger icon
         // const SizedBox(width: 12),
         Expanded(child: _buildDaysList(daysInMonth)),
@@ -165,14 +141,13 @@ class _HeatmapRowState extends State<HeatmapRow> {
     return SizedBox(
       height: 80,
       child: StreamBuilder<Map<String, Map<String, dynamic>>>(
-        stream: _heatmapRepository.watchAllHeatmapsInMonth(year: 2025, month: 6,),
+        stream: _heatmapRepository.watchAllHeatmapsInMonth(
+          year: 2025,
+          month: 6,
+        ),
         builder: (context, snapshot) {
-
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox(
-                height: 30,
-                width: 30,
-                child: const CircularProgressIndicator());
+            return SizedBox(height: 30, width: 30, child: const CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -182,19 +157,14 @@ class _HeatmapRowState extends State<HeatmapRow> {
           final allHeatmaps = snapshot.data ?? {};
           final specificActivityMap = allHeatmaps['overall_heatmap'] ?? {};
 
-
-
-
-
           WidgetsBinding.instance.addPostFrameCallback((_) {
             moveCursorToCurrent();
           });
 
-
-
           return ListView.builder(
             controller: _scrollController,
-            physics: SnappingScrollPhysics(itemWidth:44), // Use 44.0 as the item width + margins (matches your ListView items)
+            physics: SnappingScrollPhysics(itemWidth: 44),
+            // Use 44.0 as the item width + margins (matches your ListView items)
             scrollDirection: Axis.horizontal,
             itemCount: daysInMonth,
             itemBuilder: (context, index) {
@@ -223,8 +193,8 @@ class _HeatmapRowState extends State<HeatmapRow> {
                           color: isToday
                               ? Colors.pink[200]
                               : isSelected
-                              ? Colors.pink[800]!
-                              : Colors.black,
+                                  ? Colors.pink[800]!
+                                  : Colors.black,
                         ),
                       ),
                       // it give date from 1 to 31
@@ -236,8 +206,8 @@ class _HeatmapRowState extends State<HeatmapRow> {
                           color: isToday
                               ? Colors.pink[200]
                               : isSelected
-                              ? Colors.pink[800]!
-                              : Colors.black,
+                                  ? Colors.pink[800]!
+                                  : Colors.black,
                           // color: isSelected ? Colors.blue : Colors.black,
                         ),
                       ),
@@ -248,7 +218,7 @@ class _HeatmapRowState extends State<HeatmapRow> {
                         height: 18,
                         decoration: BoxDecoration(
                           // color: getColorForHeat(specificActivityMap[day.toString()]),
-                          color: getColorForHeat((specificActivityMap[day.toString()] ?? 0).toDouble()),//#38d9a9
+                          color: getColorForHeat((specificActivityMap[day.toString()] ?? 0).toDouble()), //#38d9a9
                           // color: hexToColorWithOpacity("#38d9a9", 50),
                           shape: BoxShape.circle,
                           border: Border.all(
@@ -273,7 +243,6 @@ class _HeatmapRowState extends State<HeatmapRow> {
     if (isSelected) return Colors.pink[800]!;
     return Colors.transparent;
   }
-
 
   Widget _buildHeatLegend() {
     return Padding(
@@ -316,4 +285,3 @@ class _HeatmapRowState extends State<HeatmapRow> {
 
   String getMonthName(int month) => DateFormat('MMMM').format(DateTime(0, month));
 }
-

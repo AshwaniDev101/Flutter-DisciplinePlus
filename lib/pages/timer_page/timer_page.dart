@@ -1,7 +1,7 @@
 
 import 'dart:async';
 import 'dart:math';
-import 'package:discipline_plus/pages/timerpage/widgets/pai_chart_painter.dart';
+import 'package:discipline_plus/pages/timer_page/widgets/pai_chart_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';
 import '../../core/utils/constants.dart';

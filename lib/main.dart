@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'firebase_options.dart';
 import 'managers/audio_manager.dart';
-import 'pages/homepage/schedule_page.dart';
+import 'pages/schedule_page/schedule_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../models/initiative.dart';
 import '../../../../../widget/edit_delete_option_menu.dart';
-import '../manager/global_list_manager.dart';
+import '../../manager/global_list_manager.dart';
 
 class GlobalInitiativeListview extends StatefulWidget {
 

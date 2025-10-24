@@ -1,9 +1,11 @@
-import 'package:discipline_plus/pages/homepage/global_initiative_list_page/global_initiative_list/widgets/global_initiative_listview.dart';
+import 'package:discipline_plus/pages/global_initiative_list_page/global_initiative_list/widgets/global_initiative_listview.dart';
 import 'package:flutter/material.dart';
 import '../../../../models/initiative.dart';
-import '../../schedule_handler/manager/schedule_manager.dart';
+
+import '../../schedule_page/manager/schedule_manager.dart';
+import '../manager/global_list_manager.dart';
 import '../new_initiatives/new_initiative_dialog.dart';
-import 'manager/global_list_manager.dart';
+
 
 class GlobalInitiativeListPage extends StatefulWidget {
   const GlobalInitiativeListPage({
@@ -62,8 +64,7 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
             Expanded(
                 child: GlobalInitiativeListview(
               onAdd: (initiative) {
-                ScheduleManager.instance
-                    .addInitiativeIn(ScheduleManager.instance.currentDay, initiative.id);
+                ScheduleManager.instance.addInitiativeIn(ScheduleManager.instance.currentDay, initiative.id);
               },
               onEdit: (initiative) {
                 DialogHelper.showEditInitiativeDialog(

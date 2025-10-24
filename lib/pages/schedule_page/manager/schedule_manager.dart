@@ -2,7 +2,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:intl/intl.dart';
 import '../../../../database/repository/weekly_schedule_repository.dart';
 import '../../../../models/initiative.dart';
-import '../../global_initiative_list_page/global_initiative_list/manager/global_list_manager.dart';
+import '../../global_initiative_list_page/manager/global_list_manager.dart';
 
 /// Singleton class to manage weekly initiatives, active day,
 /// and merging with global initiatives.
