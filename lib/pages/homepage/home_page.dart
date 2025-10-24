@@ -6,9 +6,10 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../database/repository/weekly_schedule_repository.dart';
 import '../../drawer/drawer.dart';
 import '../../managers/selected_day_manager.dart';
-import 'dialog_helper.dart';
+import 'global_initiative_list_page/global_initiative_list/global_list_manager.dart';
 import '../heatmap_page/heatmap_panel.dart';
-import 'golabl_initiative_list_page/global_initiative_list/global_initiative_list_page.dart';
+import 'global_initiative_list_page/global_initiative_list/global_initiative_list_page.dart';
+import 'global_initiative_list_page/new_initiatives/new_initiative_dialog.dart';
 
 const double _panelMinHeight = 80;
 const double _panelMaxHeight = 550;
@@ -81,7 +82,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
               child: ScheduleListview(
                 stream: ScheduleCoordinator.instance.mergedDayInitiatives,
                 onItemEdit: (existingInitiative) {
-                  DialogHelper.showEditInitiativeDialog(context: context, existingInitiative: existingInitiative);
+                  DialogHelper.showEditInitiativeDialog(
+                      context: context,
+                      existingInitiative: existingInitiative,
+                      onEdit: (editedInitiative) {
+                        GlobalListManager.instance.updateInitiative(
+                          editedInitiative,
+                        );
+                      });
                 },
                 onItemDelete: (initiative) {
                   ScheduleManager.instance.deleteInitiativeFrom(

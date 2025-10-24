@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../../models/diet_food.dart';
 import '../../../../models/food_stats.dart';
-import '../food_manager.dart';
+import '../manager/food_manager.dart';
 
 class CalorieCounterViewModel extends ChangeNotifier {
   final DateTime pageDateTime;
@@ -12,6 +12,7 @@ class CalorieCounterViewModel extends ChangeNotifier {
 
 
   Stream<FoodStats?> get watchConsumedFoodStats => FoodManager.instance.watchConsumedFoodStats(pageDateTime);
+  Stream<List<DietFood>> get watchMergedFoodList => FoodManager.instance.watchMergedFoodList(pageDateTime);
 
 
   void onQuantityChange(double oldValue, double newValue, DietFood food) {

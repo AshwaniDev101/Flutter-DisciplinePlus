@@ -4,8 +4,7 @@ import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/widg
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../models/diet_food.dart';
-import 'add_edit_diet_food_dialog.dart';
-import 'food_manager.dart';
+import 'new_diet_food/add_edit_diet_food_dialog.dart';
 
 /// The main page that allows users to view, add, edit, and delete foods,
 /// while tracking their total calorie consumption in real time.
@@ -25,11 +24,8 @@ class CalorieCounterPage extends StatelessWidget {
 }
 
 class _CaloriesCounterPageBody extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
-
     final vm = context.watch<CalorieCounterViewModel>();
 
     return Scaffold(
@@ -42,11 +38,9 @@ class _CaloriesCounterPageBody extends StatelessWidget {
             CalorieProgressBarDashboard(
               currentDateTime: vm.pageDateTime,
               stream: vm.watchConsumedFoodStats,
-              onClickAdd: () {
-                AddEditDietFoodDialog.show(context, onDrafted: (DietFood food) {
-                  vm.addFood(food);
-                });
-              },
+              onClickAdd: () => DietFoodDialog.add(context, (DietFood food) {
+                vm.addFood(food);
+              }),
               onClickBack: () {
                 Navigator.pop(context);
               },
@@ -58,32 +52,33 @@ class _CaloriesCounterPageBody extends StatelessWidget {
             /// Handles edit and delete actions via callbacks.
             Expanded(
               child: GlobalFoodList(
-                searchQuery: vm.searchQuery,
-                stream: FoodManager.instance.watchMergedFoodList(vm.pageDateTime),
-                onEdit: (DietFood food) {
-                  AddEditDietFoodDialog.show(context, food: food, onDrafted: (DietFood editedFood) {
-                    vm.editFood(editedFood);
-                  });
-                },
-                onDeleted: (DietFood food) {
-                  vm.deleteFood(food);
-                },
-                onQuantityChange: vm.onQuantityChange
-              ),
+                  searchQuery: vm.searchQuery,
+                  // stream: FoodManager.instance.watchMergedFoodList(vm.pageDateTime),
+                  stream: vm.watchMergedFoodList,
+                  onEdit: (DietFood food) => DietFoodDialog.edit(
+                        context,
+                        food,
+                        (DietFood food) {
+                          vm.editFood(food);
+                        },
+                      ),
+                  onDeleted: (DietFood food) {
+                    vm.deleteFood(food);
+                  },
+                  onQuantityChange: vm.onQuantityChange),
             ),
 
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search filter',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  decoration: InputDecoration(
+                    hintText: 'Search filter',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ),
-                onChanged: (value) => vm.updateSearchQuery = value
-              ),
+                  onChanged: (value) => vm.updateSearchQuery = value),
             ),
             // searchBar()
           ],
@@ -91,6 +86,4 @@ class _CaloriesCounterPageBody extends StatelessWidget {
       ),
     );
   }
-
-
 }

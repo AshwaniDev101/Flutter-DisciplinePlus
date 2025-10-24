@@ -3,8 +3,8 @@ import 'package:discipline_plus/database/repository/food_history_repository.dart
 import 'package:discipline_plus/database/repository/global_diet_food_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../../models/diet_food.dart';
-import '../../../models/food_stats.dart';
+import '../../../../models/diet_food.dart';
+import '../../../../models/food_stats.dart';
 
 
 class FoodManager {

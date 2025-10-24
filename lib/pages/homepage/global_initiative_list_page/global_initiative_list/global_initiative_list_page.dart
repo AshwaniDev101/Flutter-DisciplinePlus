@@ -1,9 +1,9 @@
-
-import 'package:discipline_plus/pages/homepage/golabl_initiative_list_page/global_initiative_list/widgets/global_initiative_listview.dart';
+import 'package:discipline_plus/pages/homepage/global_initiative_list_page/global_initiative_list/widgets/global_initiative_listview.dart';
 import 'package:flutter/material.dart';
 import '../../../../../managers/selected_day_manager.dart';
-import '../../dialog_helper.dart';
+import '../../../../models/initiative.dart';
 import '../../schedule_handler/schedule_manager.dart';
+import '../new_initiatives/new_initiative_dialog.dart';
 import 'global_list_manager.dart';
 
 class GlobalInitiativeListPage extends StatefulWidget {
@@ -26,7 +26,13 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
               padding: const EdgeInsets.only(right: 10),
               child: TextButton(
                 onPressed: () {
-                  DialogHelper.showAddInitiativeDialog(context: context);
+                  DialogHelper.showAddInitiativeDialog(
+                      context: context,
+                      onNew: (newInitiative) {
+                        GlobalListManager.instance.addInitiative(
+                          newInitiative,
+                        );
+                      });
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -57,10 +63,18 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
             Expanded(
                 child: GlobalInitiativeListview(
               onAdd: (initiative) {
-                ScheduleManager.instance.addInitiativeIn(SelectedDayManager.currentSelectedWeekDay.value, initiative.id);
+                ScheduleManager.instance
+                    .addInitiativeIn(SelectedDayManager.currentSelectedWeekDay.value, initiative.id);
               },
               onEdit: (initiative) {
-                DialogHelper.showEditInitiativeDialog(context: context, existingInitiative: initiative);
+                DialogHelper.showEditInitiativeDialog(
+                    context: context,
+                    existingInitiative: initiative,
+                    onEdit: (Initiative editedInitiative) {
+                      GlobalListManager.instance.updateInitiative(
+                        editedInitiative,
+                      );
+                    });
               },
               onDelete: (initiative) {
                 GlobalListManager.instance.deleteInitiative(initiative.id);
