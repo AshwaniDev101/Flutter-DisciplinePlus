@@ -1,11 +1,9 @@
-import 'package:discipline_plus/pages/homepage/schedule_handler/schedule_coordinator.dart';
 import 'package:discipline_plus/pages/homepage/schedule_handler/manager/schedule_manager.dart';
 import 'package:discipline_plus/pages/homepage/schedule_handler/widgets/schedule_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../database/repository/weekly_schedule_repository.dart';
 import '../../drawer/drawer.dart';
-import '../../managers/selected_day_manager.dart';
 import 'global_initiative_list_page/global_initiative_list/manager/global_list_manager.dart';
 import '../heatmap_page/heatmap_panel.dart';
 import 'global_initiative_list_page/global_initiative_list/global_initiative_list_page.dart';
@@ -40,26 +38,28 @@ class _HomePageState extends State<HomePage> with RouteAware {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: ValueListenableBuilder<String>(
-          valueListenable: SelectedDayManager.currentSelectedWeekDay,
-          builder: (context, value, _) => Text(
-            value,
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+        title: StreamBuilder<String>(
+            stream: ScheduleManager.instance.day$,
+            builder: (context, snapshot) {
+              final day = snapshot.data ?? '';
+              return Text(
+                day,
+                style: TextStyle(color: Colors.white),
+              );
+            }),
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.pink.shade200,
         actions: [
           IconButton(
               onPressed: () {
-                SelectedDayManager.toPreviousDay();
-                ScheduleManager.instance.changeDay(SelectedDayManager.currentSelectedWeekDay.value);
+                ScheduleManager.instance.toPreviousDay();
+                ScheduleManager.instance.changeDay(ScheduleManager.instance.currentDay);
               },
               icon: Icon(Icons.keyboard_arrow_left_rounded)),
           IconButton(
               onPressed: () {
-                SelectedDayManager.toNextDay();
-                ScheduleManager.instance.changeDay(SelectedDayManager.currentSelectedWeekDay.value);
+                ScheduleManager.instance.toNextDay();
+                ScheduleManager.instance.changeDay(ScheduleManager.instance.currentDay);
               },
               icon: Icon(Icons.keyboard_arrow_right_rounded)),
           IconButton(
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
             const Divider(height: 1, thickness: 1),
             Expanded(
               child: ScheduleListview(
-                stream: ScheduleCoordinator.instance.mergedDayInitiatives,
+                stream: ScheduleManager.instance.mergedDayInitiatives,
                 onItemEdit: (existingInitiative) {
                   DialogHelper.showEditInitiativeDialog(
                       context: context,
@@ -93,13 +93,13 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 },
                 onItemDelete: (initiative) {
                   ScheduleManager.instance.deleteInitiativeFrom(
-                    SelectedDayManager.currentSelectedWeekDay.value,
+                    ScheduleManager.instance.currentDay,
                     initiative.id,
                   );
                 },
                 onItemComplete: (initiative, isComplete) {
                   WeeklyScheduleRepository.instance
-                      .completeInitiative(SelectedDayManager.currentSelectedWeekDay.value, initiative.id, isComplete);
+                      .completeInitiative(ScheduleManager.instance.currentDay, initiative.id, isComplete);
                 },
               ),
             ),

@@ -1,6 +1,5 @@
 import 'package:discipline_plus/pages/homepage/global_initiative_list_page/global_initiative_list/widgets/global_initiative_listview.dart';
 import 'package:flutter/material.dart';
-import '../../../../../managers/selected_day_manager.dart';
 import '../../../../models/initiative.dart';
 import '../../schedule_handler/manager/schedule_manager.dart';
 import '../new_initiatives/new_initiative_dialog.dart';
@@ -20,7 +19,7 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Add to '${SelectedDayManager.currentSelectedWeekDay.value}'"),
+          title: Text("Add to '${ScheduleManager.instance.currentDay}'"),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10),
@@ -64,7 +63,7 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
                 child: GlobalInitiativeListview(
               onAdd: (initiative) {
                 ScheduleManager.instance
-                    .addInitiativeIn(SelectedDayManager.currentSelectedWeekDay.value, initiative.id);
+                    .addInitiativeIn(ScheduleManager.instance.currentDay, initiative.id);
               },
               onEdit: (initiative) {
                 DialogHelper.showEditInitiativeDialog(
