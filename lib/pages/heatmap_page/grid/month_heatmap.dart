@@ -12,9 +12,9 @@ class MonthHeatmap extends StatelessWidget {
   final Map<String, dynamic> heatLevelMap;
 
   const MonthHeatmap({
-    Key? key,
+    super.key,
     required this.heatLevelMap,
-  }) : super(key: key);
+  });
 
 
   Color getColorForHeat(double percentage) {
@@ -100,7 +100,7 @@ class MonthHeatmap extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           border: isToday ? Border.all(width: 2, color: Colors.black12) : null,
         ),
-        child: Center(child: Text("${dayNumber}",style: TextStyle(fontSize: 10,color: Colors.grey[600]),)),
+        child: Center(child: Text("$dayNumber",style: TextStyle(fontSize: 10,color: Colors.grey[600]),)),
       );
     });
 
@@ -124,7 +124,7 @@ class MonthHeatmap extends StatelessWidget {
       children: weekColumns,
     );
 
-    return Container(
+    return SizedBox(
       height: height,
       width: double.infinity,
       // padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),

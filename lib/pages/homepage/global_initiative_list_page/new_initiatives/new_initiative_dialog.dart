@@ -40,14 +40,12 @@ class _NewInitiativeDialogWidget extends StatefulWidget {
   final void Function(Initiative newInitiative)? onEditSave;
 
   const _NewInitiativeDialogWidget.save({
-    super.key,
     required this.onNewSave,
   })  : existingInitiative = null,
         onEditSave = null,
         assert(onNewSave != null, "onNewSave is required");
 
   const _NewInitiativeDialogWidget.edit({
-    super.key,
     required this.existingInitiative,
     required this.onEditSave,
   })  : onNewSave = null,

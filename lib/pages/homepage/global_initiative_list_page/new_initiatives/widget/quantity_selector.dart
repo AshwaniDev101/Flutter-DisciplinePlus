@@ -47,6 +47,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
           _RoundButton(
             text: "-${widget.initialStep}",
             onClick: onSubtract,
+            fontSize: 12,
           ),
         SizedBox(
           width: 5,
@@ -93,6 +94,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
         _RoundButton(
           text: "+${widget.initialStep}",
           onClick: onAdd,
+          fontSize: 12,
         ),
       ],
     );
@@ -106,11 +108,10 @@ class _RoundButton extends StatelessWidget {
   final double fontSize;
 
   _RoundButton({
-    super.key,
     required this.text,
     required this.onClick,
-    this.fontSize = 12,
     Color? color,
+    required this.fontSize,
   }) : color = color ?? Colors.blue[300]!;
 
   @override

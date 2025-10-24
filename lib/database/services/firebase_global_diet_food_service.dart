@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/diet_food.dart';
-import 'package:discipline_plus/models/food_stats.dart';
 
 class FirebaseGlobalDietFoodService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;

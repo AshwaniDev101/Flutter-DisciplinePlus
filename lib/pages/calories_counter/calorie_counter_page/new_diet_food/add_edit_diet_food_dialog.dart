@@ -28,13 +28,11 @@ class _DietFoodDialogWidget extends StatelessWidget {
   final void Function(DietFood food)? onNew;
   final void Function(DietFood food)? onEdit;
 
-  const _DietFoodDialogWidget.save({super.key,
-    required BuildContext context,
+  const _DietFoodDialogWidget.save({required BuildContext context,
     required this.onNew,
   }): food=null ,onEdit=null;
 
-  const _DietFoodDialogWidget.edit({super.key,
-    required BuildContext context,
+  const _DietFoodDialogWidget.edit({required BuildContext context,
     required this.food,
     required this.onEdit,
   }): onNew=null;

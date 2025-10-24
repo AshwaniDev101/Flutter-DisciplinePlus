@@ -7,7 +7,6 @@ import 'package:discipline_plus/models/initiative.dart';
 import '../../core/utils/constants.dart';
 import '../../managers/audio_manager.dart';
 import '../../models/app_time.dart';
-import '../homepage/schedule_handler/manager/schedule_manager.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;

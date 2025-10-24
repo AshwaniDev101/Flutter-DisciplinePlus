@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/utils/helper.dart';
-import '../../../database/repository/heatmap_repository.dart';
-import '../../../database/services/firebase_heatmap_service.dart';
 import '../../../models/heatmap_data.dart';
 
 class HeatmapCalender extends StatefulWidget {

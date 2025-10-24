@@ -1,5 +1,4 @@
 // Flutter core and UI libraries
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

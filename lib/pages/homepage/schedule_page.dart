@@ -12,14 +12,14 @@ import 'global_initiative_list_page/new_initiatives/new_initiative_dialog.dart';
 const double _panelMinHeight = 80;
 const double _panelMaxHeight = 550;
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class SchedulePage extends StatefulWidget {
+  const SchedulePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _SchedulePageState createState() => _SchedulePageState();
 }
 
-class _HomePageState extends State<HomePage> with RouteAware {
+class _SchedulePageState extends State<SchedulePage> with RouteAware {
   final DateTime dateTime_now = DateTime.now();
 
   @override

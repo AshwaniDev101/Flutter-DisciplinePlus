@@ -2,10 +2,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'core/utils/constants.dart';
 import 'firebase_options.dart';
 import 'managers/audio_manager.dart';
-import 'pages/homepage/home_page.dart';
+import 'pages/homepage/schedule_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,7 +50,7 @@ class MyApp extends StatelessWidget {
       //     textStyle: TextStyle(color: Colors.grey[400]), // menu text
       //   ),
       // ),
-      home: HomePage(),
+      home: SchedulePage(),
       // home: CaloriesCounterPage()
       // home: CalorieHistoryPage()
     );
