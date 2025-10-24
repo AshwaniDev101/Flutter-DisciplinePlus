@@ -1,7 +1,7 @@
 
 import 'package:discipline_plus/database/repository/global_initiative_list_repository.dart';
 
-import '../../../../models/initiative.dart';
+import '../../../../../models/initiative.dart';
 
 class GlobalListManager {
   GlobalListManager._internal();

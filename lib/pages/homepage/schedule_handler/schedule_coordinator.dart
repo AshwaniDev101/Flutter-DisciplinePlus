@@ -1,8 +1,8 @@
 
-import 'package:discipline_plus/pages/homepage/schedule_handler/schedule_manager.dart';
+import 'package:discipline_plus/pages/homepage/schedule_handler/manager/schedule_manager.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../../../models/initiative.dart';
-import '../global_initiative_list_page/global_initiative_list/global_list_manager.dart';
+import '../global_initiative_list_page/global_initiative_list/manager/global_list_manager.dart';
 
 
 

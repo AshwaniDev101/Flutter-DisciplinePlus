@@ -6,7 +6,7 @@ import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
 import '../../../database/services/firebase_heatmap_service.dart';
 import '../../../managers/selected_day_manager.dart';
-import '../../pages/homepage/schedule_handler/schedule_manager.dart';
+import '../../pages/homepage/schedule_handler/manager/schedule_manager.dart';
 
 
 class HeatmapRow extends StatefulWidget {

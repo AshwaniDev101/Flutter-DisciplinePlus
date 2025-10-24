@@ -2,9 +2,9 @@ import 'package:discipline_plus/pages/homepage/global_initiative_list_page/globa
 import 'package:flutter/material.dart';
 import '../../../../../managers/selected_day_manager.dart';
 import '../../../../models/initiative.dart';
-import '../../schedule_handler/schedule_manager.dart';
+import '../../schedule_handler/manager/schedule_manager.dart';
 import '../new_initiatives/new_initiative_dialog.dart';
-import 'global_list_manager.dart';
+import 'manager/global_list_manager.dart';
 
 class GlobalInitiativeListPage extends StatefulWidget {
   const GlobalInitiativeListPage({
