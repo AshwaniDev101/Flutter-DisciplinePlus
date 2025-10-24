@@ -1,5 +1,6 @@
 import 'package:discipline_plus/pages/calories_counter_page/widgets/calorie_progress_bar_dashboard.dart';
 import 'package:discipline_plus/pages/calories_counter_page/widgets/global_food_listview.dart';
+import 'package:discipline_plus/widget/edit_delete_option_menu.dart';
 import 'package:flutter/material.dart';
 import '../../models/diet_food.dart';
 import 'add_edit_diet_food_dialog.dart';
@@ -35,7 +36,7 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
               currentDateTime: widget.pageDateTime,
               stream: FoodManager.instance.watchConsumedFoodStats(widget.pageDateTime),
               onClickAdd: () {
-                AddEditDietFoodDialog.show(context, onAdd: (DietFood food) {
+                AddEditDietFoodDialog.show(context, onDrafted: (DietFood food) {
                   _addFood(food);
                 });
               },
@@ -52,8 +53,9 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
               child: GlobalFoodList(
                 searchQuery: _searchQuery,
                 stream: FoodManager.instance.watchMergedFoodList(widget.pageDateTime),
+
                 onEdit: (DietFood food) {
-                  AddEditDietFoodDialog.show(context, food: food, onAdd: (DietFood editedFood) {
+                  AddEditDietFoodDialog.show(context, food: food, onDrafted: (DietFood editedFood) {
                     _editFood(editedFood);
                   });
                 },
@@ -61,7 +63,6 @@ class _CaloriesCounterPageState extends State<CaloriesCounterPage> {
                   _deleteFood(food);
                 },
                 onQuantityChange: (double oldValue, double newValue, DietFood food) {
-
                   FoodManager.instance.changeConsumedCount(newValue - oldValue, food, widget.pageDateTime);
                 },
               ),

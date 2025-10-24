@@ -8,7 +8,7 @@ class AddEditDietFoodDialog {
   static void show(
       BuildContext context, {
         DietFood? food,
-        required Function(DietFood dietFood) onAdd,
+        required Function(DietFood dietFood) onDrafted,
       }) {
     final formKey = GlobalKey<FormState>();
 
@@ -174,7 +174,7 @@ class AddEditDietFoodDialog {
                   ),
                 );
 
-                onAdd(updatedDietFood);
+                onDrafted(updatedDietFood);
                 Navigator.of(context).pop();
               }
             },

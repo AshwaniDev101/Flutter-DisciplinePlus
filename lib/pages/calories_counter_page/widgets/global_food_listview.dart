@@ -1,7 +1,9 @@
 import 'package:discipline_plus/pages/calories_counter_page/widgets/food_quantity_selector.dart';
 import 'package:flutter/material.dart';
+import '../../../core/utils/constants.dart';
 import '../../../models/diet_food.dart';
 import '../../../models/food_stats.dart';
+import '../../../widget/edit_delete_option_menu.dart';
 
 class GlobalFoodList extends StatefulWidget {
   final String searchQuery;
@@ -10,14 +12,16 @@ class GlobalFoodList extends StatefulWidget {
   final Function(DietFood food) onDeleted;
   final Function(double oldValue, double newValue, DietFood food) onQuantityChange;
 
-  GlobalFoodList({
-    super.key,
-    this.searchQuery = '',
-    Stream<List<DietFood>>? stream,
-    required this.onEdit,
-    required this.onDeleted,
-    required this.onQuantityChange,
-  }) : stream = stream ?? _defaultDummyStream;
+
+
+  GlobalFoodList(
+      {super.key,
+      this.searchQuery = '',
+      Stream<List<DietFood>>? stream,
+      required this.onEdit,
+      required this.onDeleted,
+      required this.onQuantityChange,})
+      : stream = stream ?? _defaultDummyStream;
 
   static final Stream<List<DietFood>> _defaultDummyStream = Stream.value([
     DietFood(id: '1', name: 'Apple', foodStats: FoodStats.empty(), time: DateTime.now()),
@@ -32,72 +36,35 @@ class GlobalFoodList extends StatefulWidget {
 }
 
 class _GlobalFoodListState extends State<GlobalFoodList> {
-  final List<Color> _colorPalette = const [
-    Color(0xFFF8BBD0),
-    Color(0xFFBBDEFB),
-    Color(0xFFC8E6C9),
-    Color(0xFFE1BEE7),
-    Color(0xFFB2DFDB),
-    Color(0xFFFFECB3),
-    Color(0xFFFFE0B2),
-    Color(0xFFC5CAE9),
-    Color(0xFFB2EBF2),
-    Color(0xFFFFCDD2),
-    Color(0xFFDCEDC8),
-    Color(0xFFFFF9C4),
-    Color(0xFFD1C4E9),
-    Color(0xFFB3E5FC),
-    Color(0xFFFFCCBC),
-    Color(0xFFE6EE9C),
-    Color(0xFFCFD8DC),
-    Color(0xFFF3E5F5),
-    Color(0xFFEF9A9A),
-    Color(0xFFBCAAA4),
-    Color(0xFFFFF3E0),
-    Color(0xFFA1887F),
-    Color(0xFF8D6E63),
-    Color(0xFF6D4C41),
-    Color(0xFFFFE082),
-    Color(0xFFFFCC80),
-    Color(0xFFD7CCC8),
-    Color(0xFFFF5252),
-    Color(0xFFFFA726),
-    Color(0xFFFFEB3B),
-    Color(0xFF26C6DA),
-    Color(0xFF66BB6A),
-    Color(0xFF7E57C2),
-    Color(0xFF29B6F6),
-    Color(0xFFEC407A),
-    Color(0xFFAB47BC),
-  ];
 
-  void _showItemMenu(BuildContext buttonContext, DietFood food) {
-    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
-    final RenderBox overlay = Overlay.of(buttonContext).context.findRenderObject() as RenderBox;
 
-    final RelativeRect position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
-      ),
-      Offset.zero & overlay.size,
-    );
-
-    showMenu<String>(
-      context: buttonContext,
-      position: position,
-      items: [
-        const PopupMenuItem(value: 'edit', child: Text('Edit')),
-        const PopupMenuItem(value: 'delete', child: Text('Delete')),
-      ],
-    ).then((value) {
-      if (value == 'edit') {
-        widget.onEdit(food);
-      } else if (value == 'delete') {
-        widget.onDeleted(food);
-      }
-    });
-  }
+  // void _showItemMenu(BuildContext buttonContext, DietFood food) {
+  //   final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+  //   final RenderBox overlay = Overlay.of(buttonContext).context.findRenderObject() as RenderBox;
+  //
+  //   final RelativeRect position = RelativeRect.fromRect(
+  //     Rect.fromPoints(
+  //       button.localToGlobal(Offset.zero, ancestor: overlay),
+  //       button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+  //     ),
+  //     Offset.zero & overlay.size,
+  //   );
+  //
+  //   showMenu<String>(
+  //     context: buttonContext,
+  //     position: position,
+  //     items: [
+  //       const PopupMenuItem(value: 'edit', child: Text('Edit')),
+  //       const PopupMenuItem(value: 'delete', child: Text('Delete')),
+  //     ],
+  //   ).then((value) {
+  //     if (value == 'edit') {
+  //       widget.onEdit(food);
+  //     } else if (value == 'delete') {
+  //       widget.onDeleted(food);
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -133,15 +100,22 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
           itemBuilder: (context, index) {
             // final food = foods[index];
             final food = filtered[index];
-            final barColor = _colorPalette[index % _colorPalette.length];
+            final barColor = Constants.colorPalette[index % Constants.colorPalette.length];
 
             return _FoodCard(
-              key: ValueKey(food.id),
-              food: food,
-              barColor: barColor,
-              onClickOptionMenu: (context) => _showItemMenu(context, food),
-              onQuantityChange: widget.onQuantityChange,
-            );
+                key: ValueKey(food.id),
+                food: food,
+                barColor: barColor,
+                onQuantityChange: widget.onQuantityChange,
+                editDeleteOptionMenu: EditDeleteOptionMenu(
+                    onEdit: () {
+                      widget.onEdit(food);
+                    },
+                    onDelete: () {
+                      widget.onDeleted(food);
+                    }),
+
+                );
           },
         );
       },
@@ -152,15 +126,14 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
 class _FoodCard extends StatelessWidget {
   final DietFood food;
   final Color barColor;
-  final void Function(BuildContext buttonContext) onClickOptionMenu;
   final Function(double oldValue, double newValue, DietFood dietFood) onQuantityChange;
+  final EditDeleteOptionMenu editDeleteOptionMenu;
 
   const _FoodCard({
     super.key,
     required this.food,
     required this.barColor,
-    required this.onClickOptionMenu,
-    required this.onQuantityChange,
+    required this.onQuantityChange, required this.editDeleteOptionMenu,
   });
 
   @override
@@ -214,16 +187,23 @@ class _FoodCard extends StatelessWidget {
                 ),
               ),
 
-              Builder(
-                builder: (buttonContext) {
-                  return IconButton(
-                    onPressed: () {
-                      onClickOptionMenu(buttonContext);
-                    },
-                    icon: Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
-                  );
-                },
-              ),
+
+
+              editDeleteOptionMenu,
+              // Builder(
+              //   builder: (buttonContext) {
+              //
+              //
+              //     return IconButton(
+              //       onPressed: () {
+              //         onClickOptionMenu(buttonContext);
+              //       },
+              //       icon: Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
+              //     );
+              //
+              //
+              //   },
+              // ),
               FoodQuantitySelector(
                 initialValue: food.count.toDouble(),
                 onChanged: (oldValue, newValue) {
