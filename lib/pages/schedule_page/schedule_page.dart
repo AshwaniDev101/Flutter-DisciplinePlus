@@ -99,6 +99,7 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
                   );
                 },
                 onItemComplete: (initiative, isComplete) {
+
                   WeeklyScheduleRepository.instance
                       .completeInitiative(ScheduleManager.instance.currentDay, initiative.id, isComplete);
                 },

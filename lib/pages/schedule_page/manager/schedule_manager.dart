@@ -10,7 +10,7 @@ class ScheduleManager {
 
   ScheduleManager._internal() {
     // Keep the latest merged initiatives cached
-    // mergedDayInitiatives.listen((list) => _latestMerged = list);
+    mergedDayInitiatives.listen((list) => _latestMerged = list);
   }
   static final ScheduleManager instance = ScheduleManager._internal();
 
@@ -79,19 +79,64 @@ class ScheduleManager {
 
   // ---------------- Merged Initiatives ----------------
   /// Latest merged initiatives (daily + global)
-  // List<Initiative> _latestMerged = [];
+  List<Initiative> _latestMerged = [];
 
   /// Stream combining daily initiatives with global initiative list
+  // Stream<List<Initiative>> get mergedDayInitiatives {
+  //   return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
+  //     schedule$,
+  //     GlobalListManager.instance.watch(),
+  //         (dailyMap, globalList) {
+  //       final merged = globalList
+  //           .where((i) => dailyMap.containsKey(i.id))
+  //           .map((i) => i.copyWith(isComplete: dailyMap[i.id]!.isComplete))
+  //           .toList();
+  //
+  //       _latestMerged = merged; // keep the latest value
+  //       return merged;
+  //     },
+  //   );
+  // }
+
   Stream<List<Initiative>> get mergedDayInitiatives {
     return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
       schedule$,
       GlobalListManager.instance.watch(),
-          (dailyMap, globalList) => globalList
-          .where((i) => dailyMap.containsKey(i.id)) // Only include scheduled initiatives
-          .map((i) => i.copyWith(isComplete: dailyMap[i.id]!.isComplete)) // Update completion status
-          .toList(),
+          (dailyMap, globalList) {
+        final merged = globalList
+            .where((i) => dailyMap.containsKey(i.id))
+            .map((i) => i.copyWith(isComplete: dailyMap[i.id]!.isComplete))
+            .toList();
+
+        _latestMerged = merged; // keep the latest value
+        return merged;
+      },
     );
   }
+
+
+  List<Initiative> get latestMergedList => _latestMerged;
+
+  // /// Get the next initiative after the given index for the current day.
+  // /// Returns null if there is no next initiative.
+  // /// Get the next initiative after the one with given index
+  // Initiative? getNext(int currentIndex) {
+  //   // Find current position in the cached merged list
+  //   final currentPos = _latestMerged.indexWhere((i) => i.index == currentIndex);
+  //
+  //   if (currentPos == -1 || currentPos + 1 >= _latestMerged.length) {
+  //     return null; // no next initiative
+  //   }
+  //
+  //   return _latestMerged[currentPos + 1];
+  // }
+
+  Initiative? getNextByCurrent(Initiative current) {
+    final pos = _latestMerged.indexWhere((i) => i.id == current.id);
+    if (pos == -1 || pos + 1 >= _latestMerged.length) return null;
+    return _latestMerged[pos + 1];
+  }
+
 
   /// Completion percentage of currently cached merged initiatives
   // double get latestCompletionPercentage {

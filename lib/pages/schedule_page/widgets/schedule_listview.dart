@@ -139,18 +139,26 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     MaterialPageRoute(
                       builder: (context) => TimerPage(
                         initiative: initiative,
-                        onComplete: ({bool isComplete = false, bool isManual = false}) {
-                          // handle completion here
-                          print("Completed: $isComplete, Manual: $isManual");
+                        onComplete: (bool isManual) {
+                          widget.onItemComplete(initiative, true);
+                        }),
+                        // onComplete: ({bool isComplete = false}) {
+                        //   // handle completion here
+                        //   print(" ==== Completed: , Manual: $isManual");
+                        //
+                        //   widget.onItemComplete(initiative, isComplete);
+                        //
+                        //
+                        //
+                        //   // widget.onItemComplete(initiative, initiative.isComplete=isComplete);
+                        //   // example: update ScheduleCompletionManager
+                        //   // ScheduleCompletionManager.instance.toggleCompletion(
+                        //   //   init.id,
+                        //   //   isComplete: isComplete,
+                        //   // );
+                        // },
 
-                          // widget.onItemComplete(initiative, initiative.isComplete=isComplete);
-                          // example: update ScheduleCompletionManager
-                          // ScheduleCompletionManager.instance.toggleCompletion(
-                          //   init.id,
-                          //   isComplete: isComplete,
-                          // );
-                        },
-                      ),
+
                     ),
                   );
                 },
