@@ -90,14 +90,22 @@ class _DietFoodDialogWidget extends StatelessWidget {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      backgroundColor: Colors.white,
+      contentPadding: const EdgeInsets.all(14),
       title: Center(
-        child: Text(
-          food == null ? 'Add New Diet Food' : 'Edit Diet Food',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[700],
-          ),
+        child: Row(
+          children: [
+            Icon(Icons.fastfood_rounded,color: Colors.grey[700],),
+            const SizedBox(width: 12),
+            Text(
+              food == null ? 'Add New Diet Food' : 'Edit Diet Food',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
+              ),
+            ),
+          ],
         ),
       ),
       content: SingleChildScrollView(
