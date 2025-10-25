@@ -140,47 +140,46 @@ class _TimerPageState extends State<TimerPage> {
 
   // Move to next initiative or break
   void moveToNextInitiative() {
-    if (isAllDone) return; // everything done
+    if (isAllDone) return;
 
     if (!onBreak) {
-      // Move to break
-      // currentInitiative = Initiative(
-      //   index: -1,
-      //   title: currentInitiative.studyBreak.title,
-      //   completionTime: currentInitiative.studyBreak.completionTime,
-      // );
+      // Switch to break
       currentInitiative = Initiative(
         index: -1,
         title: currentInitiative.studyBreak.title,
         completionTime: currentInitiative.studyBreak.completionTime,
-        id: currentInitiative.id, // keep the same id
+        id: currentInitiative.id, // link break to work initiative
       );
       onBreak = true;
+
+      // Precompute next initiative for UI
+      nextInitiative = ScheduleManager.instance.getNextByCurrent(
+        // Use the previous work initiative to find the next
+          ScheduleManager.instance.latestMergedList.firstWhere(
+                (i) => i.id == currentInitiative.id,
+            orElse: () => currentInitiative,
+          )
+      );
+
     } else {
-      // Fetch next initiative automatically
-      nextInitiative = ScheduleManager.instance.getNextByCurrent(currentInitiative);
-
-
-
+      // Move to next initiative after break
       if (nextInitiative != null) {
         currentInitiative = nextInitiative!;
         onBreak = false;
       } else {
-        // Last initiative + break finished
         isAllDone = true;
         _cancelTimers();
       }
     }
 
-    if (!isAllDone) {
-      setState(() {
+    setState(() {
+      if (!isAllDone) {
         totalTimeSeconds = toSeconds(currentInitiative.completionTime);
         elapsedSeconds = 0;
-      });
-    } else {
-      setState(() {}); // rebuild to show "done" state
-    }
+      }
+    });
   }
+
 
 
   // Called when timer completes
