@@ -137,7 +137,7 @@ class _CalorieProgressBarDashboardState
                                       width: 70,
 
                                       child: CircularProgressIndicator(
-                                        value: caloriesCount / AppSettings.atMostProgress,
+                                        value: caloriesCount / AppSettings.atLeastCalories,
                                         strokeWidth: 10,
                                         backgroundColor: Colors.grey.shade200,
                                         valueColor:
@@ -155,7 +155,7 @@ class _CalorieProgressBarDashboardState
                                               color: Colors.grey[700]!
                                             ),
                                         ),
-                                         Text('/${AppSettings.atMostProgress} kcal',
+                                         Text('/${AppSettings.atLeastCalories} kcal',
                                             style: TextStyle(fontSize: 9)),
                                       ],
                                     ),
@@ -213,7 +213,7 @@ class _CalorieProgressBarDashboardState
 
 
   Widget _getExcessCaloriesLabel(int caloriesCount) {
-    int diff = caloriesCount - AppSettings.atMostProgress;
+    int diff = caloriesCount - AppSettings.atLeastCalories;
 
     // Add "+" sign only for positive numbers
     String formatted = '${diff > 0 ? '+$diff' : '$diff'} kcal';

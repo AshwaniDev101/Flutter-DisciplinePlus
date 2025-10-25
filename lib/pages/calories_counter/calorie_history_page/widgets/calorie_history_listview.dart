@@ -104,45 +104,40 @@ class _DayCard extends StatelessWidget {
                           children: [
                             Text(
                               '${foodStats.calories} kcal',
+
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey[700],
                               ),
                             ),
-                            Text(
-                              '/${AppSettings.atMostProgress}',
-                              style: TextStyle(
-                                fontSize: 10,
-                                // fontWeight: FontWeight.w600,
-                                color: Colors.grey[500],
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                              Text(
+                                '\n/${AppSettings.atLeastCalories}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  // fontWeight: FontWeight.w600,
+                                  color: Colors.grey[500],
+                                ),
                               ),
-                            ),
+                              Text(
+                                'max(${AppSettings.atMaxCalories})',
+                                style: TextStyle(
+                                  fontSize:8,
+                                  // fontWeight: FontWeight.w600,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],)
+
                           ],
                         ),
-                        if (foodStats.calories > AppSettings.atMostProgress)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade700,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.red.withValues(alpha: 0.6),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              '+${foodStats.calories - AppSettings.atMostProgress}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                        // if (foodStats.calories > AppSettings.atMaxCalories)
+
+                        getCautionLabel(foodStats),
+
                       ],
                     ),
 
@@ -172,38 +167,63 @@ class _DayCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressCircle() {
-    final progress = (foodStats.calories / AppSettings.atMostProgress).clamp(0.0, 1.0);
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        SizedBox(
-          height: 36,
-          width: 36,
-          child: CircularProgressIndicator(
-            strokeWidth: 4,
-            value: 1,
-            color: Colors.grey.shade200,
-          ),
-        ),
-        SizedBox(
-          height: 36,
-          width: 36,
-          child: CircularProgressIndicator(
-            strokeWidth: 4,
-            value: progress,
-            color: getProgressColor(foodStats),
-            strokeCap: StrokeCap.round,
-          ),
-        ),
-        Text(
-          "${(progress * 100).toStringAsFixed(0)}%",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-        ),
-      ],
+
+  Widget _buildProgressCircle() {
+    final progress = (foodStats.calories / AppSettings.atMaxCalories).clamp(0.0, double.infinity);
+
+    // Decide color based on progress
+    Color progressColor;
+    if (progress < 0.75) {
+      progressColor = Colors.green;
+    } else if (progress < 1.0) {
+      progressColor = Colors.orange;
+    } else {
+      progressColor = Colors.red;
+    }
+
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 400),
+      tween: Tween(begin: 0, end: progress > 1.0 ? 1.0 : progress),
+      builder: (context, animatedValue, _) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              height: 36,
+              width: 36,
+              child: CircularProgressIndicator(
+                strokeWidth: 4,
+                value: 1,
+                color: Colors.grey.shade200,
+              ),
+            ),
+            SizedBox(
+              height: 36,
+              width: 36,
+              child: CircularProgressIndicator(
+                strokeWidth: 4,
+                value: animatedValue,
+                color: progressColor,
+                strokeCap: StrokeCap.round,
+              ),
+            ),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 300),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                // color: progress >= 1.0 ? Colors.redAccent : Colors.black,
+                color: Colors.black,
+              ),
+              child: Text("${(progress * 100).toStringAsFixed(0)}%"),
+            ),
+          ],
+        );
+      },
     );
   }
+
 
   Widget _buildNutrientChip(String label, int value, Color color) {
     return Container(
@@ -220,6 +240,40 @@ class _DayCard extends StatelessWidget {
           Text(
             '$label: $value',
             style: TextStyle(fontSize: 10, color: Colors.grey.shade800),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getCautionLabel(FoodStats foodStats)
+  {
+
+    bool isMaxed = AppSettings.atMaxCalories-foodStats.calories<0;
+    return  Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+      decoration: BoxDecoration(
+        color: isMaxed?Colors.red.shade700:Colors.green.shade700,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color:  isMaxed?Colors.red.withValues(alpha: 0.6):Colors.green.withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(isMaxed?Icons.arrow_upward_rounded:Icons.arrow_downward_rounded,color: Colors.white,size: 16,),
+          Text(
+
+            '${(foodStats.calories - AppSettings.atMaxCalories).abs()}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

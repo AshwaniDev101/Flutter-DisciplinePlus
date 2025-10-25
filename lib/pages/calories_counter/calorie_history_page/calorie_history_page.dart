@@ -41,12 +41,12 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
     int total = 0; // start from zero
 
     for (var food in monthStats.values) {
-      int allowed = AppSettings.atMostProgress;
-      int diff = food.calories - allowed;
 
-      // add or subtract directly
-      total += diff;
+      total +=  food.calories-AppSettings.atMaxCalories;
+      print("Total ${total} => ${AppSettings.atMaxCalories} - ${food.calories} = ${food.calories - AppSettings.atMaxCalories }");
+
     }
+
 
     return total;
   }
@@ -58,11 +58,11 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
-            "Excess Calories : ",
-            style: TextStyle(fontSize: 16),
+            _excessCalories>0?"Kcal Gained : ": "Kcal Lost : (${_monthStatsMap.length} Days) : ",
+            style: TextStyle(fontSize: 12),
           ),
           Text("$_excessCalories",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: _excessCalories>0?Colors.red:Colors.green)),
           SizedBox(
             width: 10,
           )
