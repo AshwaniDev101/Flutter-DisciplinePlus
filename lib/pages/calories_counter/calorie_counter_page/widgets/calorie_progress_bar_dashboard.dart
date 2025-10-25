@@ -70,22 +70,47 @@ class _CalorieProgressBarDashboardState
                     bottom: 0,
                     right: 0,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200], // background color
-                          shape: BoxShape.circle,  // makes it circular
+                      padding: const EdgeInsets.only(right: 10),
+                      child: TextButton(
+                        onPressed: widget.onClickAdd,
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          // bright background
+                          foregroundColor: Colors.white,
+                          // text color
+                          // padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25), // rounded corners
+                          ),
+                          shadowColor: Colors.blueAccent,
+                          elevation: 1, // gives subtle shadow
                         ),
-                        child: IconButton(
-                          onPressed: widget.onClickAdd,
-                          icon: Icon(
-                            Icons.add,
-                            color: Colors.grey[600],
-                            size: 18,
+                        child: const Text(
+                          'New',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
                           ),
                         ),
                       ),
                     ),
+                    // child: Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: Colors.grey[200], // background color
+                    //       shape: BoxShape.circle,  // makes it circular
+                    //     ),
+                    //     child: IconButton(
+                    //       onPressed: widget.onClickAdd,
+                    //       icon: Icon(
+                    //         Icons.add,
+                    //         color: Colors.grey[600],
+                    //         size: 18,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ),
 
 
