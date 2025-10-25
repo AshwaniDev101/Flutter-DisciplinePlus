@@ -248,6 +248,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     initiative.isComplete = !initiative.isComplete;
                     widget.onItemComplete(initiative, initiative.isComplete);
                   });
+                  Navigator.pop(context);
                 },
 
                 child: Padding(
