@@ -21,7 +21,7 @@ class SchedulePage extends StatefulWidget {
 }
 
 class _SchedulePageState extends State<SchedulePage> with RouteAware {
-  final DateTime dateTime_now = DateTime.now();
+  final DateTime dateTimeNow = DateTime.now();
 
   @override
   void initState() {
@@ -54,13 +54,13 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
           IconButton(
               onPressed: () {
                 ScheduleManager.instance.toPreviousDay();
-                ScheduleManager.instance.changeDay(ScheduleManager.instance.currentDay);
+                // ScheduleManager.instance.changeDay(ScheduleManager.instance.currentDay);
               },
               icon: Icon(Icons.keyboard_arrow_left_rounded)),
           IconButton(
               onPressed: () {
                 ScheduleManager.instance.toNextDay();
-                ScheduleManager.instance.changeDay(ScheduleManager.instance.currentDay);
+                // ScheduleManager.instance.changeDay(ScheduleManager.instance.currentDay);
               },
               icon: Icon(Icons.keyboard_arrow_right_rounded)),
           IconButton(

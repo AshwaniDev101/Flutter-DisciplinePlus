@@ -35,7 +35,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
               stream: widget.stream,
               // stream: ScheduleCoordinator.instance.mergedDayInitiatives,
               builder: (context, snapshot) {
-                // --- Handle errors and loading states ---
+
                 if (snapshot.hasError) {
                   return const Center(child: Text('Something went wrong'));
                 }
@@ -50,24 +50,31 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                   return const Center(child: Text('No data available'));
                 }
 
-                // --- Build the initiative list ---
-                return Column(
-                  children: [
-                    for (int i = 0; i < initiatives.length; i++)
-                      _buildCard(context, initiatives[i], i),
-                  ],
+
+                return ListView.builder(
+                  itemCount: initiatives.length,
+                  itemBuilder: (context, i) => _buildCard(context, initiatives[i], i),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  shrinkWrap: false,
                 );
+
+                // return Column(
+                //   children: [
+                //     for (int i = 0; i < initiatives.length; i++)
+                //       _buildCard(context, initiatives[i], i),
+                //   ],
+                // );
               },
             ),
           ),
-          const SizedBox(height: 100),
+          const SizedBox(height: 180),
         ],
       ),
     );
   }
 
   /// Builds a single schedule card
-  Widget _buildCard(BuildContext context, Initiative init, int index) {
+  Widget _buildCard(BuildContext context, Initiative initiative, int index) {
 
     final key = GlobalKey();
     return Card(
@@ -79,13 +86,13 @@ class _ScheduleListviewState extends State<ScheduleListview> {
       child: Row(
         children: [
           _buildLeadingIcon(
-            isComplete: init.isComplete,
+            isComplete: initiative.isComplete,
             whiteCircleSize: 20,
             iconSize: 24,
           ),
           const SizedBox(width: 4),
 
-          // --- Title and details ---
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +100,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                 Text('02:05',
                     style: TextStyle(fontSize: 12, color: Colors.grey[600])),
                 Text(
-                  init.title,
+                  initiative.title,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.indigo[700],
@@ -104,13 +111,13 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: init.completionTime.remainingTime(),
+                        text: initiative.completionTime.remainingTime(),
                         style: const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
-                      if (init.studyBreak.completionTime.minute != 0)
+                      if (initiative.studyBreak.completionTime.minute != 0)
                         TextSpan(
                           text:
-                          "   ${init.studyBreak.completionTime.minute}m brk",
+                          "   ${initiative.studyBreak.completionTime.minute}m brk",
                           style:
                           const TextStyle(fontSize: 12, color: Colors.red),
                         ),
@@ -131,11 +138,12 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TimerPage(
-                        initiative: init,
+                        initiative: initiative,
                         onComplete: ({bool isComplete = false, bool isManual = false}) {
                           // handle completion here
                           print("Completed: $isComplete, Manual: $isManual");
 
+                          // widget.onItemComplete(initiative, initiative.isComplete=isComplete);
                           // example: update ScheduleCompletionManager
                           // ScheduleCompletionManager.instance.toggleCompletion(
                           //   init.id,
@@ -153,7 +161,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
 
               IconButton(
                 key: key,
-                onPressed: () => _showMenu(context, key, init),
+                onPressed: () => _showMenu(context, key, initiative),
                 icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
                 padding: EdgeInsets.zero,
               ),
