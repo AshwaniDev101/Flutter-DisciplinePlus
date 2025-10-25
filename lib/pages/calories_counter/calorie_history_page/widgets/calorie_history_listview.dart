@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/utils/app_settings.dart';
-import '../../../../core/utils/helper.dart';
 import '../../../../models/food_stats.dart';
 import '../../../../widget/edit_delete_option_menu.dart';
 
@@ -99,8 +98,12 @@ class _DayCard extends StatelessWidget {
                     // Column 2: Calories info
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Row(
+
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
                               '${foodStats.calories} kcal',
@@ -115,7 +118,7 @@ class _DayCard extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                               Text(
-                                '\n/${AppSettings.atLeastCalories}',
+                                '/${AppSettings.atLeastCalories}',
                                 style: TextStyle(
                                   fontSize: 10,
                                   // fontWeight: FontWeight.w600,
@@ -246,18 +249,44 @@ class _DayCard extends StatelessWidget {
     );
   }
 
-  Widget getCautionLabel(FoodStats foodStats)
-  {
 
-    bool isMaxed = AppSettings.atMaxCalories-foodStats.calories<0;
-    return  Container(
+  Widget getCautionLabel(FoodStats foodStats) {
+    final double maxCalories = AppSettings.atMaxCalories.toDouble();
+    final double current = foodStats.calories.toDouble();
+
+    final double ratio = current / maxCalories;
+    final double diff = current - maxCalories;
+
+    Color bgColor;
+    Color shadowColor;
+    IconData icon;
+
+    if (ratio < 0.75) {
+      // Below 75% — green
+      bgColor = Colors.green.shade700;
+      shadowColor = Colors.green.withValues(alpha: 0.3);
+      icon = Icons.arrow_downward_rounded;
+    } else if (ratio < 1.0) {
+      // Between 75% and 100% — yellow
+      bgColor = Colors.amber.shade700;
+      shadowColor = Colors.amber.withValues(alpha: 0.4);
+      // icon = Icons.horizontal_rule_rounded;
+      icon = Icons.arrow_downward_rounded;
+    } else {
+      // Above 100% — red
+      bgColor = Colors.red.shade700;
+      shadowColor = Colors.red.withValues(alpha: 0.6);
+      icon = Icons.arrow_upward_rounded;
+    }
+
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
       decoration: BoxDecoration(
-        color: isMaxed?Colors.red.shade700:Colors.green.shade700,
+        color: bgColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color:  isMaxed?Colors.red.withValues(alpha: 0.6):Colors.green.withValues(alpha: 0.3),
+            color: shadowColor,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -265,13 +294,12 @@ class _DayCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(isMaxed?Icons.arrow_upward_rounded:Icons.arrow_downward_rounded,color: Colors.white,size: 16,),
+          Icon(icon, color: Colors.white, size: 12),
           Text(
-
-            '${(foodStats.calories - AppSettings.atMaxCalories).abs()}',
+            diff.abs().toStringAsFixed(0),
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 12,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -279,4 +307,40 @@ class _DayCard extends StatelessWidget {
       ),
     );
   }
+
+
+// Widget getCautionLabel(FoodStats foodStats)
+  // {
+  //
+  //
+  //   bool isMaxed = AppSettings.atMaxCalories-foodStats.calories<0;
+  //   return  Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+  //     decoration: BoxDecoration(
+  //       color: isMaxed?Colors.red.shade700:Colors.green.shade700,
+  //       borderRadius: BorderRadius.circular(16),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color:  isMaxed?Colors.red.withValues(alpha: 0.6):Colors.green.withValues(alpha: 0.3),
+  //           blurRadius: 8,
+  //           offset: const Offset(0, 2),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Icon(isMaxed?Icons.arrow_upward_rounded:Icons.arrow_downward_rounded,color: Colors.white,size: 12,),
+  //         Text(
+  //
+  //           '${(foodStats.calories - AppSettings.atMaxCalories).abs()}',
+  //           style: const TextStyle(
+  //             color: Colors.white,
+  //             fontSize: 10,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
