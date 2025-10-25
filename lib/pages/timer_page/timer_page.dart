@@ -10,7 +10,7 @@ import '../schedule_page/manager/schedule_manager.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;
-  final Function(bool isManual) onComplete;
+  final Function(Initiative  init, bool isManual) onComplete;
 
   const TimerPage({super.key, required this.initiative, required this.onComplete});
 
@@ -185,7 +185,7 @@ class _TimerPageState extends State<TimerPage> {
   // Called when timer completes
   void _onComplete() {
     _playStopSound();
-    widget.onComplete(false);
+    widget.onComplete(currentInitiative,false);
 
     moveToNextInitiative();
 
@@ -199,7 +199,7 @@ class _TimerPageState extends State<TimerPage> {
   // Manual completion toggle
   void _onManualComplete(bool? value) {
     final newValue = value ?? false;
-    widget.onComplete(true);
+    widget.onComplete(currentInitiative, true);
     setState(() => currentInitiative.isComplete = newValue);
   }
 
