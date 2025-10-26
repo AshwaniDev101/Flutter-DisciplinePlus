@@ -1,8 +1,10 @@
+import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/utils/app_settings.dart';
 import '../../../../models/food_stats.dart';
 import '../../../../widget/edit_delete_option_menu.dart';
+import '../../widget/caution_label_widget.dart';
 
 class CalorieHistoryListview extends StatelessWidget {
   final Map<int, FoodStats> monthStats;
@@ -139,7 +141,7 @@ class _DayCard extends StatelessWidget {
                         ),
                         // if (foodStats.calories > AppSettings.atMaxCalories)
 
-                        getCautionLabel(foodStats),
+                        CationLabelWidget(foodStats: foodStats,)
 
                       ],
                     ),
@@ -173,17 +175,19 @@ class _DayCard extends StatelessWidget {
 
 
   Widget _buildProgressCircle() {
-    final progress = (foodStats.calories / AppSettings.atMaxCalories).clamp(0.0, double.infinity);
+    // final progress = (foodStats.calories / AppSettings.atMaxCalories).clamp(0.0, double.infinity);
+    //
+    // // Decide color based on progress
+    // Color progressCircleColor;
+    // if (progress < 0.75) {
+    //   progressCircleColor = Colors.green;
+    // } else if (progress < 1.0) {
+    //   progressCircleColor = Colors.orange;
+    // } else {
+    //   progressCircleColor = Colors.red;
+    // }
 
-    // Decide color based on progress
-    Color progressColor;
-    if (progress < 0.75) {
-      progressColor = Colors.green;
-    } else if (progress < 1.0) {
-      progressColor = Colors.orange;
-    } else {
-      progressColor = Colors.red;
-    }
+    final progress = getProgress(foodStats);
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 400),
@@ -207,7 +211,7 @@ class _DayCard extends StatelessWidget {
               child: CircularProgressIndicator(
                 strokeWidth: 4,
                 value: animatedValue,
-                color: progressColor,
+                color: getProgressCircleColor(foodStats),
                 strokeCap: StrokeCap.round,
               ),
             ),
@@ -250,78 +254,43 @@ class _DayCard extends StatelessWidget {
   }
 
 
-  Widget getCautionLabel(FoodStats foodStats) {
-    final double maxCalories = AppSettings.atMaxCalories.toDouble();
-    final double current = foodStats.calories.toDouble();
-
-    final double ratio = current / maxCalories;
-    final double diff = current - maxCalories;
-
-    Color bgColor;
-    Color shadowColor;
-    IconData icon;
-
-    if (ratio < 0.75) {
-      // Below 75% — green
-      bgColor = Colors.green.shade700;
-      shadowColor = Colors.green.withValues(alpha: 0.3);
-      icon = Icons.arrow_downward_rounded;
-    } else if (ratio < 1.0) {
-      // Between 75% and 100% — yellow
-      bgColor = Colors.amber.shade700;
-      shadowColor = Colors.amber.withValues(alpha: 0.4);
-      // icon = Icons.horizontal_rule_rounded;
-      icon = Icons.arrow_downward_rounded;
-    } else {
-      // Above 100% — red
-      bgColor = Colors.red.shade700;
-      shadowColor = Colors.red.withValues(alpha: 0.6);
-      icon = Icons.arrow_upward_rounded;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white, size: 12),
-          Text(
-            diff.abs().toStringAsFixed(0),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-// Widget getCautionLabel(FoodStats foodStats)
-  // {
+  // Widget getCautionLabel(FoodStats foodStats) {
+  //   final double maxCalories = AppSettings.atMaxCalories.toDouble();
+  //   final double current = foodStats.calories.toDouble();
   //
+  //   final double ratio = current / maxCalories;
+  //   final double diff = current - maxCalories;
   //
-  //   bool isMaxed = AppSettings.atMaxCalories-foodStats.calories<0;
-  //   return  Container(
+  //   Color bgColor;
+  //   Color shadowColor;
+  //   IconData icon;
+  //
+  //   if (ratio < 0.75) {
+  //     // Below 75% — green
+  //     bgColor = Colors.green.shade700;
+  //     shadowColor = Colors.green.withValues(alpha: 0.3);
+  //     icon = Icons.arrow_downward_rounded;
+  //   } else if (ratio < 1.0) {
+  //     // Between 75% and 100% — yellow
+  //     bgColor = Colors.amber.shade700;
+  //     shadowColor = Colors.amber.withValues(alpha: 0.4);
+  //     // icon = Icons.horizontal_rule_rounded;
+  //     icon = Icons.arrow_downward_rounded;
+  //   } else {
+  //     // Above 100% — red
+  //     bgColor = Colors.red.shade700;
+  //     shadowColor = Colors.red.withValues(alpha: 0.6);
+  //     icon = Icons.arrow_upward_rounded;
+  //   }
+  //
+  //   return Container(
   //     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
   //     decoration: BoxDecoration(
-  //       color: isMaxed?Colors.red.shade700:Colors.green.shade700,
+  //       color: bgColor,
   //       borderRadius: BorderRadius.circular(16),
   //       boxShadow: [
   //         BoxShadow(
-  //           color:  isMaxed?Colors.red.withValues(alpha: 0.6):Colors.green.withValues(alpha: 0.3),
+  //           color: shadowColor,
   //           blurRadius: 8,
   //           offset: const Offset(0, 2),
   //         ),
@@ -329,10 +298,9 @@ class _DayCard extends StatelessWidget {
   //     ),
   //     child: Row(
   //       children: [
-  //         Icon(isMaxed?Icons.arrow_upward_rounded:Icons.arrow_downward_rounded,color: Colors.white,size: 12,),
+  //         Icon(icon, color: Colors.white, size: 12),
   //         Text(
-  //
-  //           '${(foodStats.calories - AppSettings.atMaxCalories).abs()}',
+  //           diff.abs().toStringAsFixed(0),
   //           style: const TextStyle(
   //             color: Colors.white,
   //             fontSize: 10,
@@ -343,4 +311,5 @@ class _DayCard extends StatelessWidget {
   //     ),
   //   );
   // }
+
 }

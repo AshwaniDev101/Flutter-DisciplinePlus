@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 // Importing data model for food statistics
 import '../../models/food_stats.dart';
+import 'app_settings.dart';
 
 /// Converts a HEX color code (e.g. "#FF5733") into a [Color] object.
 ///
@@ -30,31 +31,6 @@ Color hexToColorWithOpacity(String hexCode, [double opacityPercent = 100]) {
 
   // Combine alpha + RGB into a complete ARGB color code
   return Color(int.parse('$alphaHex${hexCode.substring(1)}', radix: 16));
-}
-
-/// Determines the progress color based on the user's calorie intake.
-///
-/// Uses traffic-light style colors:
-/// - **Red** if calories > 2000
-/// - **Orange** if calories between 1600 and 2000
-/// - **GreenAccent** if calories ≤ 1600
-///
-/// Returns grey if [latestStats] is `null` (data not yet available).
-Color getProgressColor(FoodStats? latestStats) {
-  if (latestStats == null) {
-    return Colors.grey; // Default color when no data is available
-  }
-
-  final kcal = latestStats.calories;
-
-  if (kcal > 2000) {
-    // return Colors.red[500]!;
-    return Colors.redAccent;
-  } else if (kcal > 1600) {
-    return Colors.orange[500]!;
-  } else {
-    return Colors.green[400]!;
-  }
 }
 
 /// Returns the current date formatted as "DD/MM/YYYY".
@@ -96,4 +72,43 @@ String getMonthName(DateTime date) {
   return DateFormat.MMMM().format(date);
 }
 
+Color getProgressCircleColor(FoodStats foodStats)
+{
+  final progress  = getProgress(foodStats);
+  Color progressCircleColor;
+  if (progress < 0.75) {
+    progressCircleColor = Colors.green;
+  } else if (progress < 1.0) {
+    progressCircleColor = Colors.orange;
+  } else {
+    progressCircleColor = Colors.red;
+  }
+
+  return progressCircleColor;
+
+}
+
+//
+// Color getProgressColor(FoodStats? latestStats) {
+//   if (latestStats == null) {
+//     return Colors.grey; // Default color when no data is available
+//   }
+//
+//   final kcal = latestStats.calories;
+//
+//   if (kcal > 2000) {
+//     // return Colors.red[500]!;
+//     return Colors.redAccent;
+//   } else if (kcal > 1600) {
+//     return Colors.orange[500]!;
+//   } else {
+//     return Colors.green[400]!;
+//   }
+// }
+
+double getProgress(FoodStats foodStats)
+{
+  final progress = (foodStats.calories / AppSettings.atMaxCalories).clamp(0.0, double.infinity);
+  return progress;
+}
 
