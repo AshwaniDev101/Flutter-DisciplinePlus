@@ -188,11 +188,26 @@ class FirebaseFoodHistoryService {
   /// such as deleting a mistakenly added food record. It ensures complete
   /// removal of that day’s document without affecting other data in the
   /// month or year collections.
-  Future<void> deleteFoodStats({
-    required DateTime cardDateTime,
-  }) async {
+  // Future<void> deleteFoodStats({
+  //   required DateTime cardDateTime,
+  // }) async {
+  //
+  //   var ref = _db
+  //       .collection(_root)
+  //       .doc(_userId)
+  //       .collection('history')
+  //       .doc(cardDateTime.year.toString())
+  //       .collection(cardDateTime.month.toString())
+  //       .doc(cardDateTime.day.toString());
+  //
+  //   // print("============ Deleting ${ref.path.toString()}");
+  //   await ref.delete();
+  // }
 
-    var ref = _db
+
+  Future<void> deleteFoodStats({required DateTime cardDateTime}) async {
+    // Reference to the day document
+    final docRef = _db
         .collection(_root)
         .doc(_userId)
         .collection('history')
@@ -200,8 +215,27 @@ class FirebaseFoodHistoryService {
         .collection(cardDateTime.month.toString())
         .doc(cardDateTime.day.toString());
 
-    print("============ Deleting ${ref.path.toString()}");
-    await ref.delete();
+    // Delete subcollection 'food_consumed_list' efficiently
+    final subColRef = docRef.collection('food_consumed_list');
+    const int batchSize = 20; // delete in small batches to save memory and cost
+
+    Future<void> deleteSubcollectionBatch() async {
+      var snapshot = await subColRef.limit(batchSize).get();
+      while (snapshot.docs.isNotEmpty) {
+        final batch = _db.batch();
+        for (var doc in snapshot.docs) {
+          batch.delete(doc.reference);
+        }
+        await batch.commit();
+        snapshot = await subColRef.limit(batchSize).get();
+      }
+    }
+
+    // Delete subcollection first
+    await deleteSubcollectionBatch();
+
+    // Then delete the main day document
+    await docRef.delete();
   }
 
 
