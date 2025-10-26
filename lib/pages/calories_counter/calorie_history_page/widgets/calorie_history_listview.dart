@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/utils/app_settings.dart';
 import '../../../../models/food_stats.dart';
 import '../../../../widget/edit_delete_option_menu.dart';
+import '../../helper/progress_visuals_helper.dart';
 import '../../widget/caution_label_widget.dart';
 
 class CalorieHistoryListview extends StatelessWidget {
@@ -175,19 +176,10 @@ class _DayCard extends StatelessWidget {
 
 
   Widget _buildProgressCircle() {
-    // final progress = (foodStats.calories / AppSettings.atMaxCalories).clamp(0.0, double.infinity);
-    //
-    // // Decide color based on progress
-    // Color progressCircleColor;
-    // if (progress < 0.75) {
-    //   progressCircleColor = Colors.green;
-    // } else if (progress < 1.0) {
-    //   progressCircleColor = Colors.orange;
-    // } else {
-    //   progressCircleColor = Colors.red;
-    // }
 
-    final progress = getProgress(foodStats);
+
+
+    final progress = getProgressRatio(foodStats);
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 400),
@@ -253,63 +245,5 @@ class _DayCard extends StatelessWidget {
     );
   }
 
-
-  // Widget getCautionLabel(FoodStats foodStats) {
-  //   final double maxCalories = AppSettings.atMaxCalories.toDouble();
-  //   final double current = foodStats.calories.toDouble();
-  //
-  //   final double ratio = current / maxCalories;
-  //   final double diff = current - maxCalories;
-  //
-  //   Color bgColor;
-  //   Color shadowColor;
-  //   IconData icon;
-  //
-  //   if (ratio < 0.75) {
-  //     // Below 75% — green
-  //     bgColor = Colors.green.shade700;
-  //     shadowColor = Colors.green.withValues(alpha: 0.3);
-  //     icon = Icons.arrow_downward_rounded;
-  //   } else if (ratio < 1.0) {
-  //     // Between 75% and 100% — yellow
-  //     bgColor = Colors.amber.shade700;
-  //     shadowColor = Colors.amber.withValues(alpha: 0.4);
-  //     // icon = Icons.horizontal_rule_rounded;
-  //     icon = Icons.arrow_downward_rounded;
-  //   } else {
-  //     // Above 100% — red
-  //     bgColor = Colors.red.shade700;
-  //     shadowColor = Colors.red.withValues(alpha: 0.6);
-  //     icon = Icons.arrow_upward_rounded;
-  //   }
-  //
-  //   return Container(
-  //     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-  //     decoration: BoxDecoration(
-  //       color: bgColor,
-  //       borderRadius: BorderRadius.circular(16),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: shadowColor,
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Row(
-  //       children: [
-  //         Icon(icon, color: Colors.white, size: 12),
-  //         Text(
-  //           diff.abs().toStringAsFixed(0),
-  //           style: const TextStyle(
-  //             color: Colors.white,
-  //             fontSize: 10,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
 }

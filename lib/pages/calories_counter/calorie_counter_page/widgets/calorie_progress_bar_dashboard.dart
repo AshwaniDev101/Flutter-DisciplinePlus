@@ -5,6 +5,7 @@ import '../../../../core/utils/app_settings.dart';
 import '../../../../core/utils/helper.dart';
 import '../../../../models/food_stats.dart';
 import '../../calorie_history_page/calorie_history_page.dart';
+import '../../helper/progress_visuals_helper.dart';
 
 class CalorieProgressBarDashboard extends StatefulWidget {
   final void Function() onClickAdd;
@@ -194,39 +195,4 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
       },
     );
   }
-
-//
-// Widget _getExcessCaloriesLabel(int caloriesCount) {
-//   int diff = caloriesCount - AppSettings.atLeastCalories;
-//
-//   // Add "+" sign only for positive numbers
-//   String formatted = '${diff > 0 ? '+$diff' : '$diff'} kcal';
-//   // String formatted = '+${diff} kcal';
-//
-//
-//   return   Container(
-//     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-//     decoration: BoxDecoration(
-//       color: diff > 0 ?Colors.red.shade700:Colors.green.shade700,
-//       borderRadius: BorderRadius.circular(16),
-//       boxShadow: [
-//         BoxShadow(
-//           color: diff > 0?Colors.red.withValues(alpha: 0.6):Colors.green.withValues(alpha: 0.6),
-//           blurRadius: 8,
-//           offset: const Offset(0, 2),
-//         ),
-//       ],
-//     ),
-//     child: Text(
-//       formatted,
-//       style: const TextStyle(
-//         color: Colors.white,
-//         fontSize: 12,
-//         fontWeight: FontWeight.bold,
-//       ),
-//     ),
-//   );
-//
-//
-// }
 }
