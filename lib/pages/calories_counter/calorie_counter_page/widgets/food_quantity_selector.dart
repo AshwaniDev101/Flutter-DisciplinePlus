@@ -117,6 +117,12 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
 
   @override
   Widget build(BuildContext context) {
+
+    final iconColor = Colors.grey.shade500;
+    final backgroundColor = Colors.grey.shade200;
+    final activeButtonColor = Colors.greenAccent.shade400;
+    final activeIconColor = Colors.white;
+
     return Semantics(
       label: 'Quantity selector',
       value: _format(_value),
@@ -127,7 +133,8 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
         children: [
           CircularIconButton(
             icon: Icons.remove,
-            color: Colors.grey.shade200,
+            backgroundColor: backgroundColor,
+            iconColor: iconColor,
             onTap: () => _changeBy(-widget.step),
           ),
           const SizedBox(width: 1),
@@ -163,25 +170,29 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
           const SizedBox(width: 1),
           CircularIconButton(
             icon: Icons.add,
-            color: _value > 0 ? Colors.greenAccent.shade400 : Colors.grey.shade200,
+            backgroundColor: _value > 0 ? activeButtonColor : backgroundColor,
+            iconColor: _value > 0 ? activeIconColor : iconColor,
             onTap: () => _changeBy(widget.step),
           ),
         ],
       ),
     );
   }
+
 }
 
 class CircularIconButton extends StatelessWidget {
   final VoidCallback onTap;
-  final Color color;
+  final Color backgroundColor;
+  final Color iconColor;
   final IconData icon;
   final double size;
 
   const CircularIconButton({
     super.key,
     required this.onTap,
-    required this.color,
+    required this.backgroundColor,
+    required this.iconColor,
     required this.icon,
     this.size = 14,
   });
@@ -189,16 +200,16 @@ class CircularIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 24,
-      height: 24,
+      width: 28,
+      height: 28,
       child: Material(
-        color: color,
+        color: backgroundColor,
         shape: const CircleBorder(),
         child: InkWell(
           onTap: onTap,
           customBorder: const CircleBorder(),
           child: Center(
-            child: Icon(icon, color: Colors.white, size: size),
+            child: Icon(icon, color: iconColor, size: size),
           ),
         ),
       ),
