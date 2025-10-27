@@ -21,7 +21,7 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Add to '${ScheduleManager.instance.currentDay}'"),
+          title: Text("Add to '${ScheduleManager.instance.currentWeekDay}'"),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10),
@@ -64,7 +64,7 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
             Expanded(
                 child: GlobalInitiativeListview(
               onAdd: (initiative) {
-                ScheduleManager.instance.addInitiativeIn(ScheduleManager.instance.currentDay, initiative.id);
+                ScheduleManager.instance.addInitiativeIn(ScheduleManager.instance.currentWeekDay, initiative.id);
               },
               onEdit: (initiative) {
                 DialogHelper.showEditInitiativeDialog(

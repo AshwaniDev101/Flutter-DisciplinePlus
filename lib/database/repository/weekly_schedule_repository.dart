@@ -9,9 +9,9 @@ class WeeklyScheduleRepository {
 
   static final WeeklyScheduleRepository instance = WeeklyScheduleRepository._internal();
 
-  /// Listen to all initiatives for a given [day]
-  Stream<Map<String, InitiativeCompletion>> watchDay(String day) {
-    return _service.watchDay(day);
+  /// Listen to all initiatives for a given [weekDayName]
+  Stream<Map<String, InitiativeCompletion>> watchWeekDay(String weekDayName) {
+    return _service.watchWeekDay(weekDayName);
   }
 
   /// Add a new initiative to [day]

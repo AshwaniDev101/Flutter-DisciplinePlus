@@ -16,7 +16,7 @@ class FirebaseWeeklyScheduleService {
   CollectionReference get _initiativeCollection => _db.collection(_root).doc(_userId).collection('schedule');
 
   /// Stream all initiatives for [day] (e.g. "Sunday") ordered by index.
-  Stream<Map<String, InitiativeCompletion>> watchDay(String day) {
+  Stream<Map<String, InitiativeCompletion>> watchWeekDay(String day) {
     return _initiativeCollection
         .doc(day)
         .collection(_initiative_list)

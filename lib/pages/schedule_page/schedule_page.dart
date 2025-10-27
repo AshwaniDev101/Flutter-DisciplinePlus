@@ -1,3 +1,4 @@
+import 'package:discipline_plus/database/repository/heatmap_repository.dart';
 import 'package:discipline_plus/pages/schedule_page/widgets/schedule_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -40,7 +41,7 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
     return Scaffold(
       appBar: AppBar(
         title: StreamBuilder<String>(
-            stream: ScheduleManager.instance.day$,
+            stream: ScheduleManager.instance.weekDayName$,
             builder: (context, snapshot) {
               final day = snapshot.data ?? '';
               return Text(
@@ -74,7 +75,7 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
       body: SlidingUpPanel(
         minHeight: _panelMinHeight,
         maxHeight: _panelMaxHeight,
-        panel: const HeatmapPanel(),
+        panel: HeatmapPanel(currentDateTime: dateTimeNow,),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -94,14 +95,20 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
                 },
                 onItemDelete: (initiative) {
                   ScheduleManager.instance.deleteInitiativeFrom(
-                    ScheduleManager.instance.currentDay,
+                    ScheduleManager.instance.currentWeekDay,
                     initiative.id,
                   );
                 },
                 onItemComplete: (initiative, isComplete) {
 
                   WeeklyScheduleRepository.instance
-                      .completeInitiative(ScheduleManager.instance.currentDay, initiative.id, isComplete);
+                      .completeInitiative(ScheduleManager.instance.currentWeekDay, initiative.id, isComplete);
+
+
+                  var latest = ScheduleManager.instance.latestCompletionPercentage;
+                  // Updating heatmap
+                  HeatmapRepository.instance.updateEntry(heatmapID: HeatmapID.overallInitiative, date: dateTimeNow, value: latest);
+
 
                 },
               ),

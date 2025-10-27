@@ -178,7 +178,6 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
       ),
     );
   }
-
 }
 
 class CircularIconButton extends StatelessWidget {

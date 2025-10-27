@@ -141,10 +141,10 @@ class _HeatmapRowState extends State<HeatmapRow> {
     return SizedBox(
       height: 80,
       child: StreamBuilder<Map<String, Map<String, dynamic>>>(
-        stream: _heatmapRepository.watchAllHeatmapsInMonth(
-          year: 2025,
-          month: 6,
-        ),
+        stream:  null,//_heatmapRepository.watchAllHeatmapsInMonth(
+        //   year: 2025,
+        //   month: 6,
+        // ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SizedBox(height: 30, width: 30, child: const CircularProgressIndicator());

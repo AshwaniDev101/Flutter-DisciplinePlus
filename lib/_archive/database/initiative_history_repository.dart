@@ -1,4 +1,4 @@
-import 'package:discipline_plus/database/services/firebase_initiative_history_service.dart';
+import 'package:discipline_plus/_archive/database/firebase_initiative_history_service.dart';
 
 /// Repository layer for initiative completion logic.
 /// This class abstracts away all Firebase logic,

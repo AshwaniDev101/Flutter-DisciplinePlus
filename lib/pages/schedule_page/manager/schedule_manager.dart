@@ -17,7 +17,7 @@ class ScheduleManager {
   final _repository = WeeklyScheduleRepository.instance;
 
   // ---------------- Day Management ----------------
-  static const List<String> _days = [
+  static const List<String> _weekDayNames = [
     'Monday', 'Tuesday', 'Wednesday', 'Thursday',
     'Friday', 'Saturday', 'Sunday'
   ];
@@ -27,28 +27,28 @@ class ScheduleManager {
   BehaviorSubject.seeded(DateFormat('EEEE').format(DateTime.now()));
 
   /// Stream of current active day (for reactive widgets)
-  Stream<String> get day$ => _daySubject.stream;
+  Stream<String> get weekDayName$ => _daySubject.stream;
 
   /// Current active day (synchronous)
-  String get currentDay => _daySubject.value;
+  String get currentWeekDay => _daySubject.value;
 
   /// Set active day if valid
   void changeDay(String day) {
-    if (_daySubject.value != day && _days.contains(day)) {
+    if (_daySubject.value != day && _weekDayNames.contains(day)) {
       _daySubject.add(day);
     }
   }
 
   /// Move to next day of the week (wraps around)
   void toNextDay() {
-    final index = _days.indexOf(_daySubject.value);
-    _daySubject.add(_days[(index + 1) % _days.length]);
+    final index = _weekDayNames.indexOf(_daySubject.value);
+    _daySubject.add(_weekDayNames[(index + 1) % _weekDayNames.length]);
   }
 
   /// Move to previous day of the week (wraps around)
   void toPreviousDay() {
-    final index = _days.indexOf(_daySubject.value);
-    _daySubject.add(_days[(index - 1 + _days.length) % _days.length]);
+    final index = _weekDayNames.indexOf(_daySubject.value);
+    _daySubject.add(_weekDayNames[(index - 1 + _weekDayNames.length) % _weekDayNames.length]);
   }
 
   // ---------------- Schedule Management ----------------
@@ -59,7 +59,7 @@ class ScheduleManager {
   late final Stream<Map<String, InitiativeCompletion>> schedule$ =
   _daySubject.stream
       .distinct()
-      .switchMap((day) => _repository.watchDay(day))
+      .switchMap((weekDayName) => _repository.watchWeekDay(weekDayName))
       .map((list) {
     // _cache = list; // Update cache
     return list;
@@ -81,23 +81,7 @@ class ScheduleManager {
   /// Latest merged initiatives (daily + global)
   List<Initiative> _latestMerged = [];
 
-  /// Stream combining daily initiatives with global initiative list
-  // Stream<List<Initiative>> get mergedDayInitiatives {
-  //   return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
-  //     schedule$,
-  //     GlobalListManager.instance.watch(),
-  //         (dailyMap, globalList) {
-  //       final merged = globalList
-  //           .where((i) => dailyMap.containsKey(i.id))
-  //           .map((i) => i.copyWith(isComplete: dailyMap[i.id]!.isComplete))
-  //           .toList();
-  //
-  //       _latestMerged = merged; // keep the latest value
-  //       return merged;
-  //     },
-  //   );
-  // }
-
+  /// Stream combining daily initiatives with schedule initiative
   Stream<List<Initiative>> get mergedDayInitiatives {
     return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
       schedule$,
@@ -117,19 +101,6 @@ class ScheduleManager {
 
   List<Initiative> get latestMergedList => _latestMerged;
 
-  // /// Get the next initiative after the given index for the current day.
-  // /// Returns null if there is no next initiative.
-  // /// Get the next initiative after the one with given index
-  // Initiative? getNext(int currentIndex) {
-  //   // Find current position in the cached merged list
-  //   final currentPos = _latestMerged.indexWhere((i) => i.index == currentIndex);
-  //
-  //   if (currentPos == -1 || currentPos + 1 >= _latestMerged.length) {
-  //     return null; // no next initiative
-  //   }
-  //
-  //   return _latestMerged[currentPos + 1];
-  // }
 
   Initiative? getNextByCurrent(Initiative current) {
     final pos = _latestMerged.indexWhere((i) => i.id == current.id);
@@ -139,9 +110,9 @@ class ScheduleManager {
 
 
   /// Completion percentage of currently cached merged initiatives
-  // double get latestCompletionPercentage {
-  //   if (_latestMerged.isEmpty) return 0.0;
-  //   final completed = _latestMerged.where((i) => i.isComplete).length;
-  //   return (completed / _latestMerged.length) * 100;
-  // }
+  double get latestCompletionPercentage {
+    if (_latestMerged.isEmpty) return 0.0;
+    final completed = _latestMerged.where((i) => i.isComplete).length;
+    return (completed / _latestMerged.length) * 100;
+  }
 }

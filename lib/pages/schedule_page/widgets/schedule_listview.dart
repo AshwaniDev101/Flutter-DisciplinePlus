@@ -58,12 +58,6 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                   shrinkWrap: false,
                 );
 
-                // return Column(
-                //   children: [
-                //     for (int i = 0; i < initiatives.length; i++)
-                //       _buildCard(context, initiatives[i], i),
-                //   ],
-                // );
               },
             ),
           ),
@@ -141,7 +135,6 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                         initiative: initiative,
                         onComplete: (Initiative  init, bool isManual) {
                           widget.onItemComplete(init, true);
-
 
                         }),
 
