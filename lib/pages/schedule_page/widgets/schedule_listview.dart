@@ -1,4 +1,5 @@
 import 'package:discipline_plus/pages/timer_page/timer_page.dart';
+import 'package:discipline_plus/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../../../models/initiative.dart';
 
@@ -221,14 +222,27 @@ class _ScheduleListviewState extends State<ScheduleListview> {
     showMenu(
       context: context,
       position: position,
+      color: AppColors.optionMenuBackground,
       items: [
         PopupMenuItem(
           value: 'edit',
-          child: const Text('Edit', style: TextStyle(fontSize: 14)),
+          child: Row(
+            children: [
+              Icon(Icons.edit_note_rounded, size: 16, color: AppColors.optionMenuContent),
+              const SizedBox(width: 6),
+              Text('Edit', style: AppStyle.optionMenuTextStyle),
+            ],
+          ),
         ),
         PopupMenuItem(
           value: 'delete',
-          child: const Text('Delete', style: TextStyle(fontSize: 14)),
+          child: Row(
+            children: [
+              Icon(Icons.delete_outline, size: 16, color: AppColors.optionMenuContent),
+              const SizedBox(width: 6),
+              Text('Delete', style: AppStyle.optionMenuTextStyle),
+            ],
+          ),
         ),
         PopupMenuItem(
           value: 'complete',
@@ -250,7 +264,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     children: [
                       Icon(initiative.isComplete?Icons.check_box:Icons.check_box_outline_blank_rounded, color: initiative.isComplete?Colors.blue:Colors.grey),
                       SizedBox(width: 4,),
-                      Text(initiative.isComplete?'Completed!':'Complete?', style: TextStyle(fontSize: 14)),
+                      Text(initiative.isComplete?'Completed!':'Complete?', style: AppStyle.optionMenuTextStyle),
                     ]
                   ),
                 ),

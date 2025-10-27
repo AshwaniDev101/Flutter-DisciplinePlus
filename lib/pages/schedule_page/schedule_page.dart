@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../database/repository/weekly_schedule_repository.dart';
 import '../../drawer/drawer.dart';
+import '../../theme/app_colors.dart';
 import '../global_initiative_list_page/global_initiative_list/global_initiative_list_page.dart';
 
 import '../global_initiative_list_page/manager/global_list_manager.dart';
@@ -27,7 +28,17 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
   @override
   void initState() {
     super.initState();
+
   }
+
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //
+  //   final isDark = Theme.of(context).brightness == Brightness.dark;
+  //   print("Current theme is Dark: $isDark");
+  // }
 
   @override
   void dispose() {
@@ -46,11 +57,11 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
               final day = snapshot.data ?? '';
               return Text(
                 day,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: AppColors.appbarTitle),
               );
             }),
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.pink.shade200,
+        iconTheme: IconThemeData(color: AppColors.appbarIcon),
+        backgroundColor: AppColors.appbar,
         actions: [
           IconButton(
               onPressed: () {

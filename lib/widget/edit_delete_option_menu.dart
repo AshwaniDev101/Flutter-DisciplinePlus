@@ -1,4 +1,5 @@
 
+import 'package:discipline_plus/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class EditDeleteOptionMenu extends StatelessWidget {
@@ -14,6 +15,7 @@ class EditDeleteOptionMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final key = GlobalKey();
+
 
     return GestureDetector(
       key: key,
@@ -32,15 +34,16 @@ class EditDeleteOptionMenu extends StatelessWidget {
 
         final selected = await showMenu<String>(
           context: context,
+          color: AppColors.optionMenuBackground,
           position: position,
-          items: const [
+          items: [
             PopupMenuItem<String>(
               value: 'edit',
               child: Row(
                 children: [
-                  Icon(Icons.edit, size: 16, color: Colors.blue),
-                  SizedBox(width: 6),
-                  Text('Edit', style: TextStyle(fontSize: 13)),
+                  Icon(Icons.edit_note_rounded, size: 16, color: AppColors.optionMenuContent),
+                  const SizedBox(width: 6),
+                  Text('Edit', style: AppStyle.optionMenuTextStyle),
                 ],
               ),
             ),
@@ -48,9 +51,9 @@ class EditDeleteOptionMenu extends StatelessWidget {
               value: 'delete',
               child: Row(
                 children: [
-                  Icon(Icons.delete_outline, size: 16, color: Colors.red),
-                  SizedBox(width: 6),
-                  Text('Delete', style: TextStyle(fontSize: 13)),
+                  Icon(Icons.delete_outline, size: 16, color: AppColors.optionMenuContent),
+                  const SizedBox(width: 6),
+                  Text('Delete', style: AppStyle.optionMenuTextStyle),
                 ],
               ),
             ),

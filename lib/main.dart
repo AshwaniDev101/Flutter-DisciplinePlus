@@ -1,4 +1,5 @@
 
+import 'package:discipline_plus/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -42,14 +43,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'DisciplinePlus',
       debugShowCheckedModeBanner: false,
-      // theme: ThemeData(
-      //   // colorScheme: ColorScheme.fromSeed(seedColor: Constants.background_color),
-      //   useMaterial3: true,
-      //   popupMenuTheme: PopupMenuThemeData(
-      //     color: Colors.grey[50], // menu background
-      //     textStyle: TextStyle(color: Colors.grey[400]), // menu text
-      //   ),
-      // ),
+
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light,
+      // themeMode: ThemeMode.system,
+
       home: SchedulePage(),
       // home: CaloriesCounterPage()
       // home: CalorieHistoryPage()
