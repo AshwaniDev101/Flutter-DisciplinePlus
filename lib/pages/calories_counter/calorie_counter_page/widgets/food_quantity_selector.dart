@@ -22,7 +22,7 @@ class FoodQuantitySelector extends StatefulWidget {
     this.precision = 0,
     this.onChanged,
     this.buttonSize = 28.0,
-    this.buttonColor=Colors.grey,
+    this.buttonColor = Colors.grey,
     this.enableHoldToRepeat = true,
   })  : assert(min <= max),
         assert(precision >= 0);
@@ -76,13 +76,6 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
     _setValue((_value + delta), notify: notify);
   }
 
-  void _startAutoRepeat(double delta) {
-    if (!widget.enableHoldToRepeat) return;
-    _autoTimer?.cancel();
-    _changeBy(delta);
-    _autoTimer = Timer.periodic(const Duration(milliseconds: 150), (_) => _changeBy(delta));
-  }
-
   void _stopAutoRepeat() {
     _autoTimer?.cancel();
     _autoTimer = null;
@@ -122,37 +115,8 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
     super.dispose();
   }
 
-  Widget _buildButton({
-    required IconData icon,
-    required VoidCallback onTap,
-    required double repeatDelta,
-    bool enabled = true,
-  }) {
-    final color = widget.buttonColor ?? Theme.of(context).primaryColor;
-
-    return GestureDetector(
-      onTap: enabled ? onTap : null,
-      onLongPressStart: enabled && widget.enableHoldToRepeat ? (_) => _startAutoRepeat(repeatDelta) : null,
-      onLongPressEnd: enabled && widget.enableHoldToRepeat ? (_) => _stopAutoRepeat() : null,
-      onLongPressCancel: enabled && widget.enableHoldToRepeat ? () => _stopAutoRepeat() : null,
-      child: Container(
-        width: widget.buttonSize,
-        height: widget.buttonSize,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: enabled ? color.withValues(alpha: 0.2): Colors.grey.withValues(alpha: 0.05),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, size: widget.buttonSize * 0.55, color: enabled ? color : Colors.grey),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final minusEnabled = _value > widget.min;
-    final plusEnabled = _value < widget.max;
-
     return Semantics(
       label: 'Quantity selector',
       value: _format(_value),
@@ -161,22 +125,22 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildButton(
+          CircularIconButton(
             icon: Icons.remove,
-            enabled: minusEnabled,
+            color: Colors.grey.shade200,
             onTap: () => _changeBy(-widget.step),
-            repeatDelta: -widget.step,
           ),
           const SizedBox(width: 1),
           SizedBox(
             width: 30,
             height: 30,
             child: TextField(
-              enabled: false,// remove this to enable editing
+              enabled: false,
+              // remove this to enable editing
               style: TextStyle(
-                color: widget.initialValue>0?Colors.grey:Colors.grey,
+                color: widget.initialValue > 0 ? Colors.grey : Colors.grey,
                 fontSize: 14.0,
-                fontWeight: widget.initialValue>0?FontWeight.w600 : FontWeight.normal,
+                fontWeight: widget.initialValue > 0 ? FontWeight.w600 : FontWeight.normal,
               ),
               controller: _controller,
               focusNode: _focusNode,
@@ -197,13 +161,46 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
             ),
           ),
           const SizedBox(width: 1),
-          _buildButton(
+          CircularIconButton(
             icon: Icons.add,
-            enabled: plusEnabled,
+            color: _value > 0 ? Colors.greenAccent.shade400 : Colors.grey.shade200,
             onTap: () => _changeBy(widget.step),
-            repeatDelta: widget.step,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CircularIconButton extends StatelessWidget {
+  final VoidCallback onTap;
+  final Color color;
+  final IconData icon;
+  final double size;
+
+  const CircularIconButton({
+    super.key,
+    required this.onTap,
+    required this.color,
+    required this.icon,
+    this.size = 14,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 24,
+      height: 24,
+      child: Material(
+        color: color,
+        shape: const CircleBorder(),
+        child: InkWell(
+          onTap: onTap,
+          customBorder: const CircleBorder(),
+          child: Center(
+            child: Icon(icon, color: Colors.white, size: size),
+          ),
+        ),
       ),
     );
   }

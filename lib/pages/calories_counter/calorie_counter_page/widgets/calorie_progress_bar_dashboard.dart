@@ -77,12 +77,18 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
                           shadowColor: Colors.blueAccent,
                           elevation: 1, // gives subtle shadow
                         ),
-                        child: const Text(
-                          'New',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.add_circle_outline_rounded),
+                            SizedBox(width: 5,),
+                            const Text(
+                              'New',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

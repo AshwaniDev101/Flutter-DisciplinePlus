@@ -42,7 +42,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
 
     for (var food in monthStats.values) {
       total += food.calories - AppSettings.atMaxCalories;
-      print("Total ${total} => ${AppSettings.atMaxCalories} - ${food.calories} = ${food.calories - AppSettings.atMaxCalories}");
+      // print("Total ${total} => ${AppSettings.atMaxCalories} - ${food.calories} = ${food.calories - AppSettings.atMaxCalories}");
     }
     return total;
   }
@@ -100,7 +100,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
                   // Run test
                   FoodHistoryRepository.instance.changeConsumedCount(count++, 
                       DietFood(id: '-1', name: 'Test $count', time: DateTime.now(), 
-                          foodStats: FoodStats(proteins: 0, carbohydrates: 0, fats: 0, vitamins: 0, minerals: 0, calories: 1)), DateTime(2025, 10, 31));
+                          foodStats: FoodStats(proteins: 0, carbohydrates: 0, fats: 0, vitamins: 0, minerals: 0, calories: 1)), DateTime(2025, 10, 25));
 
 
 
@@ -153,7 +153,9 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
                             MaterialPageRoute(
                               builder: (context) => CalorieCounterPage(pageDateTime: cardDateTime),
                             ),
-                          );
+                          ).then((_){
+                            _loadMonthStats();
+                          });
                         },
                         onDelete: (DateTime cardDateTime) async {
                           await FoodHistoryRepository.instance.deleteFoodStats(date: cardDateTime);
