@@ -1,9 +1,11 @@
 import 'package:discipline_plus/pages/calories_counter/widget/caution_label_widget.dart';
+import 'package:discipline_plus/widget/new_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/utils/app_settings.dart';
 import '../../../../core/utils/helper.dart';
 import '../../../../models/food_stats.dart';
+import '../../../../theme/app_colors.dart';
 import '../../calorie_history_page/calorie_history_page.dart';
 import '../../helper/progress_visuals_helper.dart';
 
@@ -48,9 +50,9 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
         final foodStats = snapshot.data ?? FoodStats.empty();
         final caloriesCount = foodStats.calories;
 
-        return SizedBox(
+        return Container(
           height: 100,
-          // color:Colors.white,
+          color:AppColors.appbar,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,34 +65,7 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
                     right: 0,
                     child: Padding(
                       padding: const EdgeInsets.only(right: 10),
-                      child: TextButton(
-                        onPressed: widget.onClickAdd,
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          // bright background
-                          foregroundColor: Colors.white,
-                          // text color
-                          // padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25), // rounded corners
-                          ),
-                          shadowColor: Colors.blueAccent,
-                          elevation: 1, // gives subtle shadow
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.add_circle_outline_rounded),
-                            SizedBox(width: 5,),
-                            const Text(
-                              'New',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      child: NewButton(label: 'New', onPressed: widget.onClickAdd)
                     ),
                   ),
 
@@ -149,10 +124,10 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
                                         Text(
                                           '$caloriesCount',
                                           style: TextStyle(
-                                              fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[700]!),
+                                              fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
                                         ),
-                                        Text('/${AppSettings.atLeastCalories} kcal', style: TextStyle(fontSize: 8)),
-                                        Text('Max(${AppSettings.atMaxCalories})', style: TextStyle(fontSize: 6)),
+                                        Text('/${AppSettings.atLeastCalories} kcal', style: TextStyle(fontSize: 8,color: Colors.white)),
+                                        Text('Max(${AppSettings.atMaxCalories})', style: TextStyle(fontSize: 6,color: Colors.white)),
                                       ],
                                     ),
                                   ],

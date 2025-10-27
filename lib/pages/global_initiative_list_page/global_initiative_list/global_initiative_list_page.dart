@@ -2,6 +2,8 @@ import 'package:discipline_plus/pages/global_initiative_list_page/global_initiat
 import 'package:flutter/material.dart';
 import '../../../../models/initiative.dart';
 
+import '../../../theme/app_colors.dart';
+import '../../../widget/new_button.dart';
 import '../../schedule_page/manager/schedule_manager.dart';
 import '../manager/global_list_manager.dart';
 import '../new_initiatives/new_initiative_dialog.dart';
@@ -21,40 +23,53 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Add to '${ScheduleManager.instance.currentWeekDay}'"),
+          title: Text("Add to '${ScheduleManager.instance.currentWeekDay}'",style: AppStyle.appBarTextStyle,),
+          iconTheme: IconThemeData(color: AppColors.appbarIcon),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10),
-              child: TextButton(
+              child: NewButton(
+                label: 'New',
                 onPressed: () {
                   DialogHelper.showAddInitiativeDialog(
-                      context: context,
-                      onNew: (newInitiative) {
-                        GlobalListManager.instance.addInitiative(
-                          newInitiative,
-                        );
-                      });
+                    context: context,
+                    onNew: (newInitiative) {
+                      GlobalListManager.instance.addInitiative(newInitiative);
+                    },
+                  );
                 },
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  // bright background
-                  foregroundColor: Colors.white,
-                  // text color
-                  // padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25), // rounded corners
-                  ),
-                  shadowColor: Colors.blueAccent,
-                  elevation: 1, // gives subtle shadow
-                ),
-                child: const Text(
-                  'New',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
               ),
+
+              // child: TextButton(
+              //   onPressed: () {
+              //     DialogHelper.showAddInitiativeDialog(
+              //       context: context,
+              //       onNew: (newInitiative) {
+              //         GlobalListManager.instance.addInitiative(newInitiative);
+              //       },
+              //     );
+              //   },
+              //   style: TextButton.styleFrom(
+              //     backgroundColor: Colors.tealAccent.shade400,
+              //     foregroundColor: Colors.white,
+              //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //     shadowColor: Colors.tealAccent.shade100,
+              //     elevation: 3,
+              //   ),
+              //   child: const Text(
+              //     'New',
+              //     style: TextStyle(
+              //       fontWeight: FontWeight.w600,
+              //       fontSize: 14,
+              //       letterSpacing: 0.5,
+              //     ),
+              //   ),
+              // ),
+
+
             )
           ],
         ),

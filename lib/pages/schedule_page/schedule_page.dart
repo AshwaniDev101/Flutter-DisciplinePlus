@@ -57,7 +57,7 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
               final day = snapshot.data ?? '';
               return Text(
                 day,
-                style: TextStyle(color: AppColors.appbarTitle),
+                style: AppStyle.appBarTextStyle,
               );
             }),
         iconTheme: IconThemeData(color: AppColors.appbarIcon),

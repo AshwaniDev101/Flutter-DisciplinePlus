@@ -72,6 +72,15 @@ class _ScheduleListviewState extends State<ScheduleListview> {
   Widget _buildCard(BuildContext context, Initiative initiative, int index) {
 
     final key = GlobalKey();
+
+
+
+    TextStyle scheduleTitle = TextStyle(fontSize: 16, color: Colors.grey.shade700 ,fontWeight: FontWeight.w400);
+    TextStyle scheduleTime  = TextStyle(fontSize: 12, color: Colors.grey );
+    TextStyle scheduleBrake = TextStyle(fontSize: 12, color: Colors.amber.shade700 );
+
+    Icon playIcon = Icon(Icons.play_arrow_rounded,color: Colors.greenAccent.shade400,);
+
     return Card(
       elevation: 0,
       color: Colors.grey[100],
@@ -96,25 +105,20 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     style: TextStyle(fontSize: 12, color: Colors.grey[600])),
                 Text(
                   initiative.title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.indigo[700],
-                    fontWeight: FontWeight.w400,
-                  ),
+                  style: scheduleTitle
                 ),
                 RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
                         text: initiative.completionTime.remainingTime(),
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        style: scheduleTime,
                       ),
                       if (initiative.studyBreak.completionTime.minute != 0)
                         TextSpan(
                           text:
                           "   ${initiative.studyBreak.completionTime.minute}m brk",
-                          style:
-                          const TextStyle(fontSize: 12, color: Colors.red),
+                          style: scheduleBrake,
                         ),
                     ],
                   ),
@@ -144,7 +148,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     ),
                   );
                 },
-                icon: Icon(Icons.play_arrow_rounded, color: Colors.green[300]),
+                icon: playIcon,
                 padding: EdgeInsets.zero,
               ),
 

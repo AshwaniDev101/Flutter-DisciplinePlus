@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'app_colors.dart';
+
 class AppTheme {
   // LIGHT THEME
   static ThemeData lightTheme = ThemeData(
@@ -12,7 +14,7 @@ class AppTheme {
       surface: Colors.white,
     ),
     appBarTheme:  AppBarTheme(
-      backgroundColor: Colors.pink[200],
+      backgroundColor: AppColors.appbar,
       elevation: 0,
       foregroundColor: Colors.black87,
     ),

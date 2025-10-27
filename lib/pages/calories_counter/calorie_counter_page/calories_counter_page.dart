@@ -2,8 +2,10 @@ import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/view
 import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/widgets/calorie_progress_bar_dashboard.dart';
 import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/widgets/global_food_listview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../models/diet_food.dart';
+import '../../../theme/app_colors.dart';
 import 'new_diet_food/add_edit_diet_food_dialog.dart';
 
 /// The main page that allows users to view, add, edit, and delete foods,
@@ -28,12 +30,21 @@ class _CaloriesCounterPageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<CalorieCounterViewModel>();
 
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: AppColors.appbar, // top area color
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
+
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 14),
+            // const SizedBox(height: 14),
 
             CalorieProgressBarDashboard(
               currentDateTime: vm.pageDateTime,

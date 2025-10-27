@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../pages/calories_counter/calorie_counter_page/calories_counter_page.dart';
+import '../theme/app_colors.dart';
 
 
 class CustomDrawer extends StatefulWidget {
@@ -21,7 +22,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.pink[200],
+              color: AppColors.appbar,
             ),
             child: Text(
               'Ashwani Yadav',

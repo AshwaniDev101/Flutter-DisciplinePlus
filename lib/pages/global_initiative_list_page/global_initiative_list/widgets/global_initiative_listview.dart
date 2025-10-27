@@ -68,18 +68,26 @@ class _GlobalInitiativeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+    TextStyle scheduleTitle = TextStyle(fontSize: 16, color: Colors.grey.shade700 ,fontWeight: FontWeight.w400);
+    TextStyle scheduleTime  = TextStyle(fontSize: 12, color: Colors.grey );
+    TextStyle scheduleBrake = TextStyle(fontSize: 12, color: Colors.amber.shade700 );
+
     return SizedBox(
       key: key,
       width: double.infinity, // forces full width
       child: Card(
-        // margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        margin: const EdgeInsets.symmetric(vertical:0.5, horizontal: 10),
         child: IntrinsicHeight(
           // helps with better vertical alignment
           child: SizedBox(
-            height: 60,
+            height: 70,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                SizedBox(width: 10,),
+
                 EditDeleteOptionMenu(onDelete: ()=> onDelete(initiative), onEdit: ()=>onEdit(initiative)),
 
                 SizedBox(width: 10,),
@@ -90,33 +98,30 @@ class _GlobalInitiativeCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(height: 5,),
                       Text('02:05',
                           style: TextStyle(fontSize: 12, color: Colors.grey[600])),
                       Text(
                         initiative.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.indigo[700],
-                          fontWeight: FontWeight.w400,
-                        ),
+                        style: scheduleTitle
                       ),
                       RichText(
                         text: TextSpan(
                           children: [
                             TextSpan(
                               text: initiative.completionTime.remainingTime(),
-                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              style: scheduleTime,
                             ),
                             if (initiative.studyBreak.completionTime.minute != 0)
                               TextSpan(
                                 text:
                                 "   ${initiative.studyBreak.completionTime.minute}m brk",
-                                style:
-                                const TextStyle(fontSize: 12, color: Colors.red),
+                                style: scheduleBrake,
                               ),
                           ],
                         ),
                       ),
+                      SizedBox(height: 5,),
                     ],
                   ),
                 ),
@@ -152,7 +157,7 @@ class _GlobalInitiativeCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
-      backgroundColor: Colors.blue,         // change color if you want
+      backgroundColor: Colors.grey[700],         // change color if you want
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
