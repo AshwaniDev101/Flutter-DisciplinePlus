@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/food_stats.dart';
 import '../../../core/utils/app_settings.dart';
 import '../../../database/repository/food_history_repository.dart';
+import '../../../theme/app_colors.dart';
 import '../calorie_counter_page/calories_counter_page.dart';
 
 /// Main page displaying calorie history for a month
@@ -85,7 +86,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
           ),
           centerTitle: true,
           elevation: 2,
-          backgroundColor: Colors.pink[300],
+          backgroundColor: AppColors.appbar,
           iconTheme: const IconThemeData(color: Colors.white),
           actions: [
             PopupMenuButton<String>(

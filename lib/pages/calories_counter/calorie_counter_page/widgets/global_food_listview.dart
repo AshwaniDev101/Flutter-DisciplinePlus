@@ -1,4 +1,5 @@
 
+import 'package:discipline_plus/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/utils/constants.dart';
@@ -74,7 +75,7 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
           itemBuilder: (context, index) {
             // final food = foods[index];
             final food = filtered[index];
-            final barColor = Constants.colorPalette[index % Constants.colorPalette.length];
+            final barColor = AppColors.colorPalette[index % AppColors.colorPalette.length];
 
             return _FoodCard(
                 key: ValueKey(food.id),
@@ -114,13 +115,17 @@ class _FoodCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 0.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Card(
-          margin: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          color: Colors.white,
-          elevation: 5,
+      child: Card(
+        margin: EdgeInsets.zero,
+        color: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+
+        child: ClipRRect(
+
+          borderRadius: BorderRadius.circular(16),
           child: Row(
             children: [
               // colored bar

@@ -1,7 +1,9 @@
 
+import 'package:discipline_plus/theme/app_colors.dart';
 import 'package:discipline_plus/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'firebase_options.dart';
 import 'managers/audio_manager.dart';
@@ -26,6 +28,15 @@ Future<void> main() async {
   //     : FirebaseInitiativeService();
 
   // final repo = InitiativeRepository(service);
+
+
+  // Pre-set a base UI overlay before anything paints
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   SystemUiOverlayStyle(
+  //     statusBarColor: AppColors.appbar,
+  //     statusBarIconBrightness: Brightness.light,
+  //   ),
+  // );
 
   await AudioManager().init();
   runApp(const MyApp());

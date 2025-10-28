@@ -221,10 +221,12 @@ class _TimerPageState extends State<TimerPage> {
   // UI
   @override
   Widget build(BuildContext context) {
+
+    final backgroundColor = Colors.blueGrey;
     return Scaffold(
-      backgroundColor: Constants.background_color,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: Constants.background_color,
+        backgroundColor: backgroundColor,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
@@ -252,7 +254,7 @@ class _TimerPageState extends State<TimerPage> {
                         backgroundColor: Colors.white,
                         child: CircleAvatar(
                           radius: circleRadius - ringThickness,
-                          backgroundColor: Constants.background_color,
+                          backgroundColor: backgroundColor,
                           child: CustomPaint(
                             size: Size(
                               circleRadius * 2 - pieGraphGap,

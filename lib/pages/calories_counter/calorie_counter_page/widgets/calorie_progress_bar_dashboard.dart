@@ -36,13 +36,15 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
+    final textColor = Colors.grey[800];
+
     return StreamBuilder<FoodStats?>(
       stream: widget.stream,
       initialData: FoodStats.empty(),
       builder: (context, snapshot) {
-        // Safely handle null or loading states
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -50,130 +52,282 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
         final foodStats = snapshot.data ?? FoodStats.empty();
         final caloriesCount = foodStats.calories;
 
-        return Container(
-          height: 100,
-          color:AppColors.appbar,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: [
-                  // Add button
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: NewButton(label: 'New', onPressed: widget.onClickAdd)
+        return Card(
+          margin: const EdgeInsets.all(12),
+          elevation: 3,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Stack(
+              children: [
+                /// Back button (top-left)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: IconButton(
+                    onPressed: widget.onClickBack,
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.grey.shade100,
+                    ),
+                    icon: const Icon(Icons.arrow_back, color: Colors.grey, size: 24),
+                  ),
+                ),
+
+                /// Add Button (bottom-right)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8, right: 8),
+                    child: NewButton(
+                      label: 'New',
+                      onPressed: widget.onClickAdd,
                     ),
                   ),
+                ),
 
-                  // Top-left Back Icon
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200], // background color
-                          shape: BoxShape.circle, // makes it circular
-                        ),
-                        child: IconButton(
-                          onPressed: widget.onClickBack,
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.grey,
-                            size: 26,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                /// Main Content
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 8),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // SizedBox(width: 20,),
-                      // Progress Bar
-                      Stack(
-                        children: [
-                          // Main Center Row
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                    /// Progress + Details Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Circular Progress
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SizedBox(
+                              height: 90,
+                              width: 90,
+                              child: CircularProgressIndicator(
+                                value: caloriesCount / AppSettings.atMaxCalories,
+                                strokeWidth: 8,
+                                backgroundColor: Colors.grey.shade200,
+                                valueColor: AlwaysStoppedAnimation(
+                                  getProgressCircleColor(foodStats),
+                                ),
+                              ),
+                            ),
+                            Column(
                               children: [
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 70,
-                                      width: 70,
-                                      child: CircularProgressIndicator(
-                                        value: caloriesCount / AppSettings.atMaxCalories,
-                                        strokeWidth: 10,
-                                        backgroundColor: Colors.grey.shade200,
-                                        valueColor: AlwaysStoppedAnimation(getProgressCircleColor(foodStats)),
-                                      ),
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          '$caloriesCount',
-                                          style: TextStyle(
-                                              fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                                        ),
-                                        Text('/${AppSettings.atLeastCalories} kcal', style: TextStyle(fontSize: 8,color: Colors.white)),
-                                        Text('Max(${AppSettings.atMaxCalories})', style: TextStyle(fontSize: 6,color: Colors.white)),
-                                      ],
-                                    ),
-                                  ],
+                                Text(
+                                  '$caloriesCount',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
+                                  ),
+                                ),
+                                Text(
+                                  '/${AppSettings.atLeastCalories} kcal',
+                                  style: TextStyle(fontSize: 10, color: textColor),
+                                ),
+                                Text(
+                                  'Max (${AppSettings.atMaxCalories})',
+                                  style: TextStyle(fontSize: 8, color: textColor),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      // Elevated button and Excess Label
-                      Column(
-                        children: [
-                          _getTitle(),
+                          ],
+                        ),
 
-                          ElevatedButton(
-                            onPressed: !isSameDate(widget.currentDateTime, DateTime.now())
-                                ? null
-                                : () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => CalorieHistoryPage(pageDateTime: widget.currentDateTime),
-                                      ),
-                                    );
-                                  },
-                            child: Text(getCurrentDateFormatted(widget.currentDateTime)),
-                          ),
+                        const SizedBox(width: 30),
 
-                          SizedBox(
-                            height: 4,
-                          ),
-                          // _getExcessCaloriesLabel(caloriesCount)
-                          CationLabelWidget(foodStats: foodStats)
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+                        // Right Side Info
+                        Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: !isSameDate(widget.currentDateTime, DateTime.now())
+                                  ? null
+                                  : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CalorieHistoryPage(
+                                      pageDateTime: widget.currentDateTime,
+                                    ),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                getCurrentDateFormatted(widget.currentDateTime),
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            CationLabelWidget(foodStats: foodStats),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
+
+// @override
+  // Widget build(BuildContext context) {
+  //
+  //   final textColor = Colors.grey[800];
+  //
+  //   return StreamBuilder<FoodStats?>(
+  //     stream: widget.stream,
+  //     initialData: FoodStats.empty(),
+  //     builder: (context, snapshot) {
+  //       // Safely handle null or loading states
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       }
+  //
+  //       final foodStats = snapshot.data ?? FoodStats.empty();
+  //       final caloriesCount = foodStats.calories;
+  //
+  //       return Card(
+  //         margin: const EdgeInsets.all(10),
+  //         elevation: 2,
+  //         child: Padding(
+  //           padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 8),
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.start,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Stack(
+  //                 children: [
+  //                   // Add button
+  //                   Positioned(
+  //                     bottom: 0,
+  //                     right: 0,
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.only(right: 10),
+  //                       child: NewButton(label: 'New', onPressed: widget.onClickAdd)
+  //                     ),
+  //                   ),
+  //
+  //                   // Top-left Back Icon
+  //                   Positioned(
+  //                     top: 0,
+  //                     left: 0,
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.all(4.0),
+  //                       child: Container(
+  //                         decoration: BoxDecoration(
+  //                           color: Colors.grey[200], // background color
+  //                           shape: BoxShape.circle, // makes it circular
+  //                         ),
+  //                         child: IconButton(
+  //                           onPressed: widget.onClickBack,
+  //                           icon: const Icon(
+  //                             Icons.arrow_back,
+  //                             color: Colors.grey,
+  //                             size: 26,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //
+  //                   Row(
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     children: [
+  //                       // SizedBox(width: 20,),
+  //                       // Progress Bar
+  //                       Stack(
+  //                         children: [
+  //                           // Main Center Row
+  //                           Center(
+  //                             child: Row(
+  //                               mainAxisAlignment: MainAxisAlignment.center,
+  //                               crossAxisAlignment: CrossAxisAlignment.center,
+  //                               children: [
+  //                                 Stack(
+  //                                   alignment: Alignment.center,
+  //                                   children: [
+  //                                     SizedBox(
+  //                                       height: 70,
+  //                                       width: 70,
+  //                                       child: CircularProgressIndicator(
+  //                                         value: caloriesCount / AppSettings.atMaxCalories,
+  //                                         strokeWidth: 10,
+  //                                         backgroundColor: Colors.grey.shade200,
+  //                                         valueColor: AlwaysStoppedAnimation(getProgressCircleColor(foodStats)),
+  //                                       ),
+  //                                     ),
+  //                                     Column(
+  //                                       mainAxisSize: MainAxisSize.min,
+  //                                       children: [
+  //                                         Text(
+  //                                           '$caloriesCount',
+  //                                           style: TextStyle(
+  //                                               fontSize: 14, fontWeight: FontWeight.bold, color: textColor),
+  //                                         ),
+  //                                         Text('/${AppSettings.atLeastCalories} kcal', style: TextStyle(fontSize: 8,color: textColor)),
+  //                                         Text('Max(${AppSettings.atMaxCalories})', style: TextStyle(fontSize: 6,color: textColor)),
+  //                                       ],
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       SizedBox(
+  //                         width: 20,
+  //                       ),
+  //                       // Elevated button and Excess Label
+  //                       Column(
+  //                         children: [
+  //                           // _getTitle(),
+  //                           SizedBox(
+  //                             height: 10,
+  //                           ),
+  //
+  //                           ElevatedButton(
+  //                             onPressed: !isSameDate(widget.currentDateTime, DateTime.now())
+  //                                 ? null
+  //                                 : () {
+  //                                     Navigator.push(
+  //                                       context,
+  //                                       MaterialPageRoute(
+  //                                         builder: (_) => CalorieHistoryPage(pageDateTime: widget.currentDateTime),
+  //                                       ),
+  //                                     );
+  //                                   },
+  //                             child: Text(getCurrentDateFormatted(widget.currentDateTime)),
+  //                           ),
+  //
+  //                           SizedBox(
+  //                             height: 4,
+  //                           ),
+  //                           // _getExcessCaloriesLabel(caloriesCount)
+  //                           CationLabelWidget(foodStats: foodStats)
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
