@@ -68,6 +68,8 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
 
         return ListView.separated(
           key: ValueKey(foods.length),
+          // padding: EdgeInsets.all(8),
+          padding: EdgeInsets.only(top: 50,left: 8,right: 8,bottom: 50),
           physics: const BouncingScrollPhysics(),
           // itemCount: foods.length,
           itemCount: filtered.length,

@@ -29,6 +29,11 @@ class AppTheme {
     useMaterial3: true,
   );
 
+
+
+
+
+
   // DARK THEME
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
@@ -43,6 +48,7 @@ class AppTheme {
       backgroundColor: Color(0xFF1E1E1E),
       elevation: 0,
       foregroundColor: Colors.white,
+      // scrolledUnderElevation: 0,
     ),
     popupMenuTheme: PopupMenuThemeData(
       color: Color(0xFF2A2A2A),

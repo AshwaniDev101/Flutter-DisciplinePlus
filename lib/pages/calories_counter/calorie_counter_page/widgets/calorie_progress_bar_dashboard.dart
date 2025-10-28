@@ -54,7 +54,10 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
 
         return Card(
           margin: const EdgeInsets.all(12),
-          elevation: 3,
+          elevation: 2,
+
+          clipBehavior: Clip.antiAlias,
+          surfaceTintColor: Colors.transparent,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.all(16),

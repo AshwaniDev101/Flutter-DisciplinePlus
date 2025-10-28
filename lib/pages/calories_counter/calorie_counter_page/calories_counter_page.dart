@@ -28,79 +28,180 @@ class _CaloriesCounterPageBody extends StatelessWidget {
   
 
   @override
+  @override
   Widget build(BuildContext context) {
     final vm = context.watch<CalorieCounterViewModel>();
 
-
-
-
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.grey[100],
 
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(40),
-
-
-
-        child: _getAppBar(context)
+        child: _getAppBar(context),
       ),
 
-      body: SafeArea(
-        child: Column(
-          children: [
-            // const SizedBox(height: 14),
-
-            CalorieProgressBarDashboard(
-              currentDateTime: vm.pageDateTime,
-              stream: vm.watchConsumedFoodStats,
-              onClickAdd: () => DietFoodDialog.add(context, (DietFood food) {
-                vm.addFood(food);
-              }),
-              onClickBack: () {
-                Navigator.pop(context);
-              },
-            ),
-
-            // const SizedBox(height: 14),
-
-            /// Displays all available and consumed foods in a unified list.
-            /// Handles edit and delete actions via callbacks.
-            Expanded(
-              child: GlobalFoodList(
+      body: Stack(
+        children: [
+          /// Scrollable list behind the dashboard
+          Positioned.fill(
+            child: Container(
+              color: Colors.grey[50],
+              child: Padding(
+                // leave space at the top so items don't overlap dashboard
+                padding: const EdgeInsets.only(top: 120,bottom: 20), // tweak to match dashboard height
+                child: GlobalFoodList(
                   searchQuery: vm.searchQuery,
-                  // stream: FoodManager.instance.watchMergedFoodList(vm.pageDateTime),
                   stream: vm.watchMergedFoodList,
                   onEdit: (DietFood food) => DietFoodDialog.edit(
-                        context,
-                        food,
-                        (DietFood food) {
-                          vm.editFood(food);
-                        },
-                      ),
-                  onDeleted: (DietFood food) {
-                    vm.deleteFood(food);
-                  },
-                  onQuantityChange: vm.onQuantityChange),
+                    context,
+                    food,
+                        (DietFood food) => vm.editFood(food),
+                  ),
+                  onDeleted: vm.deleteFood,
+                  onQuantityChange: vm.onQuantityChange,
+                ),
+              ),
             ),
+          ),
 
-            Padding(
+          /// Fixed dashboard overlay
+          CalorieProgressBarDashboard(
+            currentDateTime: vm.pageDateTime,
+            stream: vm.watchConsumedFoodStats,
+            onClickAdd: () => DietFoodDialog.add(context, (DietFood food) {
+              vm.addFood(food);
+            }),
+            onClickBack: () {
+              Navigator.pop(context);
+            },
+          ),
+
+          /// Search bar fixed at bottom
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search filter',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: 'Search filter',
+                  hintStyle: TextStyle(color: Colors.grey[500]),
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade300, width: 1.2),
                   ),
-                  onChanged: (value) => vm.updateSearchQuery = value),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade400, width: 1.2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade500, width: 1.5),
+                  ),
+                ),
+                style: const TextStyle(color: Colors.black),
+                onChanged: (value) => vm.updateSearchQuery = value,
+              ),
             ),
-            // searchBar()
-          ],
-        ),
+          ),
+
+
+        ],
       ),
     );
   }
+
+  // Widget build(BuildContext context) {
+  //   final vm = context.watch<CalorieCounterViewModel>();
+  //
+  //
+  //
+  //
+  //   return Scaffold(
+  //     backgroundColor: Colors.grey[50],
+  //
+  //     appBar: PreferredSize(
+  //       preferredSize: const Size.fromHeight(40),
+  //
+  //
+  //
+  //
+  //
+  //       child: _getAppBar(context)
+  //     ),
+  //
+  //     body: Column(
+  //
+  //       children: [
+  //         // const SizedBox(height: 14),
+  //
+  //
+  //
+  //         // const SizedBox(height: 14),
+  //
+  //         /// Displays all available and consumed foods in a unified list.
+  //         /// Handles edit and delete actions via callbacks.
+  //         Stack(
+  //           children: [
+  //
+  //
+  //
+  //             CalorieProgressBarDashboard(
+  //               currentDateTime: vm.pageDateTime,
+  //               stream: vm.watchConsumedFoodStats,
+  //               onClickAdd: () => DietFoodDialog.add(context, (DietFood food) {
+  //                 vm.addFood(food);
+  //               }),
+  //               onClickBack: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             ),
+  //
+  //
+  //             Expanded(
+  //               child: Container(
+  //                 color: Colors.red,
+  //                 child: GlobalFoodList(
+  //                     searchQuery: vm.searchQuery,
+  //                     // stream: FoodManager.instance.watchMergedFoodList(vm.pageDateTime),
+  //                     stream: vm.watchMergedFoodList,
+  //                     onEdit: (DietFood food) => DietFoodDialog.edit(
+  //                       context,
+  //                       food,
+  //                           (DietFood food) {
+  //                         vm.editFood(food);
+  //                       },
+  //                     ),
+  //                     onDeleted: (DietFood food) {
+  //                       vm.deleteFood(food);
+  //                     },
+  //                     onQuantityChange: vm.onQuantityChange),
+  //               ),
+  //             ),
+  //           ],
+  //
+  //         ),
+  //
+  //         Padding(
+  //           padding: const EdgeInsets.all(8.0),
+  //           child: TextField(
+  //               decoration: InputDecoration(
+  //                 hintText: 'Search filter',
+  //                 prefixIcon: const Icon(Icons.search),
+  //                 border: OutlineInputBorder(
+  //                   borderRadius: BorderRadius.circular(12),
+  //                 ),
+  //               ),
+  //               onChanged: (value) => vm.updateSearchQuery = value),
+  //         ),
+  //         // searchBar()
+  //       ],
+  //     ),
+  //   );
+  // }
 
 
 
@@ -109,6 +210,8 @@ class _CaloriesCounterPageBody extends StatelessWidget {
     return  AppBar(
       backgroundColor: Colors.grey[50],
       // elevation: 2, // subtle shadow if you want it to stand out
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
       title: const Text(
         'Today',
         style: TextStyle(
