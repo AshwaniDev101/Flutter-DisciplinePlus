@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/utils/helper.dart';
 import '../../../database/repository/heatmap_repository.dart';
-import '../../pages/schedule_page/manager/schedule_view_model.dart';
 
 class HeatmapRow extends StatefulWidget {
   const HeatmapRow({super.key});

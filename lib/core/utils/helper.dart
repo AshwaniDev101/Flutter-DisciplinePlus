@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 // Importing data model for food statistics
-import '../../models/food_stats.dart';
-import 'app_settings.dart';
 
 /// Converts a HEX color code (e.g. "#FF5733") into a [Color] object.
 ///

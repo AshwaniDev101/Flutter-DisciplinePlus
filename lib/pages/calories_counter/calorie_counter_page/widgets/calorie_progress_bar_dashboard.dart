@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/utils/app_settings.dart';
 import '../../../../core/utils/helper.dart';
 import '../../../../models/food_stats.dart';
-import '../../../../theme/app_colors.dart';
 import '../../calorie_history_page/calorie_history_page.dart';
 import '../../helper/progress_visuals_helper.dart';
 

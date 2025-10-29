@@ -1,4 +1,5 @@
-import 'package:discipline_plus/pages/schedule_page/manager/schedule_view_model.dart';
+
+import 'package:discipline_plus/pages/schedule_page/viewModel/schedule_view_model.dart';
 import 'package:discipline_plus/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

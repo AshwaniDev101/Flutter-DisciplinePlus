@@ -24,7 +24,6 @@ class CalorieCounterPage extends StatelessWidget {
 }
 
 
-
 class _CaloriesCounterPageBody extends StatelessWidget {
 
   @override

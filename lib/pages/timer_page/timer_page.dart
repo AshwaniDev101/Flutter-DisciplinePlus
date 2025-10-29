@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:discipline_plus/models/app_time.dart';
 import 'package:discipline_plus/pages/timer_page/widgets/pai_chart_painter.dart';
-import 'package:provider/provider.dart';
 import '../../managers/audio_manager.dart';
-import '../schedule_page/manager/schedule_view_model.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;

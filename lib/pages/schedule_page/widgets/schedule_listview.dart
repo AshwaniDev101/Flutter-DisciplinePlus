@@ -1,4 +1,3 @@
-import 'package:discipline_plus/pages/timer_page/timer_page.dart';
 import 'package:discipline_plus/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../../../models/initiative.dart';

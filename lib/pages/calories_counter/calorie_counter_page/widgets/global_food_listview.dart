@@ -2,7 +2,6 @@
 import 'package:discipline_plus/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/utils/constants.dart';
 import '../../../../models/diet_food.dart';
 import '../../../../models/food_stats.dart';
 import '../../../../widget/edit_delete_option_menu.dart';

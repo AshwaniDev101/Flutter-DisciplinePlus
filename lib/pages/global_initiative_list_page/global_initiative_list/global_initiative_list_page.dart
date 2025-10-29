@@ -1,11 +1,8 @@
 import 'package:discipline_plus/pages/global_initiative_list_page/global_initiative_list/widgets/global_initiative_listview.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../../models/initiative.dart';
-
 import '../../../theme/app_colors.dart';
 import '../../../widget/new_button.dart';
-import '../../schedule_page/manager/schedule_view_model.dart';
 import '../manager/global_list_manager.dart';
 import '../new_initiatives/new_initiative_dialog.dart';
 
