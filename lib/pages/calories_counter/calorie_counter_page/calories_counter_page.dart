@@ -23,11 +23,10 @@ class CalorieCounterPage extends StatelessWidget {
   }
 }
 
+
+
 class _CaloriesCounterPageBody extends StatelessWidget {
 
-  
-
-  @override
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<CalorieCounterViewModel>();
@@ -113,96 +112,6 @@ class _CaloriesCounterPageBody extends StatelessWidget {
       ),
     );
   }
-
-  // Widget build(BuildContext context) {
-  //   final vm = context.watch<CalorieCounterViewModel>();
-  //
-  //
-  //
-  //
-  //   return Scaffold(
-  //     backgroundColor: Colors.grey[50],
-  //
-  //     appBar: PreferredSize(
-  //       preferredSize: const Size.fromHeight(40),
-  //
-  //
-  //
-  //
-  //
-  //       child: _getAppBar(context)
-  //     ),
-  //
-  //     body: Column(
-  //
-  //       children: [
-  //         // const SizedBox(height: 14),
-  //
-  //
-  //
-  //         // const SizedBox(height: 14),
-  //
-  //         /// Displays all available and consumed foods in a unified list.
-  //         /// Handles edit and delete actions via callbacks.
-  //         Stack(
-  //           children: [
-  //
-  //
-  //
-  //             CalorieProgressBarDashboard(
-  //               currentDateTime: vm.pageDateTime,
-  //               stream: vm.watchConsumedFoodStats,
-  //               onClickAdd: () => DietFoodDialog.add(context, (DietFood food) {
-  //                 vm.addFood(food);
-  //               }),
-  //               onClickBack: () {
-  //                 Navigator.pop(context);
-  //               },
-  //             ),
-  //
-  //
-  //             Expanded(
-  //               child: Container(
-  //                 color: Colors.red,
-  //                 child: GlobalFoodList(
-  //                     searchQuery: vm.searchQuery,
-  //                     // stream: FoodManager.instance.watchMergedFoodList(vm.pageDateTime),
-  //                     stream: vm.watchMergedFoodList,
-  //                     onEdit: (DietFood food) => DietFoodDialog.edit(
-  //                       context,
-  //                       food,
-  //                           (DietFood food) {
-  //                         vm.editFood(food);
-  //                       },
-  //                     ),
-  //                     onDeleted: (DietFood food) {
-  //                       vm.deleteFood(food);
-  //                     },
-  //                     onQuantityChange: vm.onQuantityChange),
-  //               ),
-  //             ),
-  //           ],
-  //
-  //         ),
-  //
-  //         Padding(
-  //           padding: const EdgeInsets.all(8.0),
-  //           child: TextField(
-  //               decoration: InputDecoration(
-  //                 hintText: 'Search filter',
-  //                 prefixIcon: const Icon(Icons.search),
-  //                 border: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.circular(12),
-  //                 ),
-  //               ),
-  //               onChanged: (value) => vm.updateSearchQuery = value),
-  //         ),
-  //         // searchBar()
-  //       ],
-  //     ),
-  //   );
-  // }
-
 
 
   Widget _getAppBar(context)

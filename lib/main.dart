@@ -1,17 +1,15 @@
-
-import 'package:discipline_plus/theme/app_colors.dart';
+import 'package:discipline_plus/pages/schedule_page/manager/schedule_view_model.dart';
 import 'package:discipline_plus/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'managers/audio_manager.dart';
 import 'pages/schedule_page/schedule_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -29,7 +27,6 @@ Future<void> main() async {
 
   // final repo = InitiativeRepository(service);
 
-
   // Pre-set a base UI overlay before anything paints
   // SystemChrome.setSystemUIOverlayStyle(
   //   SystemUiOverlayStyle(
@@ -40,8 +37,6 @@ Future<void> main() async {
 
   await AudioManager().init();
   runApp(const MyApp());
-
-
 }
 
 class MyApp extends StatelessWidget {
@@ -50,25 +45,22 @@ class MyApp extends StatelessWidget {
   // This widgets is the root of your application.
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
-      title: 'DisciplinePlus',
-      debugShowCheckedModeBanner: false,
+        title: 'DisciplinePlus',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.light,
+        // themeMode: ThemeMode.system,
 
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
-      // themeMode: ThemeMode.system,
+        home: ChangeNotifierProvider(
+          create: (_) => ScheduleViewModel(),
+          child: SchedulePage(),
+        )
 
-      home: SchedulePage(),
-      // home: CaloriesCounterPage()
-      // home: CalorieHistoryPage()
-    );
-
-
-
-
-
+        // home: SchedulePage(),
+        // home: CaloriesCounterPage()
+        // home: CalorieHistoryPage()
+        );
   }
 }
-

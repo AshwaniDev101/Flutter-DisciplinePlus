@@ -1,17 +1,25 @@
 import 'package:discipline_plus/pages/global_initiative_list_page/global_initiative_list/widgets/global_initiative_listview.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../models/initiative.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../widget/new_button.dart';
-import '../../schedule_page/manager/schedule_manager.dart';
+import '../../schedule_page/manager/schedule_view_model.dart';
 import '../manager/global_list_manager.dart';
 import '../new_initiatives/new_initiative_dialog.dart';
 
 
 class GlobalInitiativeListPage extends StatefulWidget {
+
+  final String currentWeekDay;
+
+  final Function(Initiative) onAdd;
+
   const GlobalInitiativeListPage({
     super.key,
+    required this.currentWeekDay,
+    required this.onAdd
   });
 
   @override
@@ -21,9 +29,13 @@ class GlobalInitiativeListPage extends StatefulWidget {
 class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
   @override
   Widget build(BuildContext context) {
+
+
+    // final vm = context.watch<ScheduleViewModel>();
+
     return Scaffold(
         appBar: AppBar(
-          title: Text("Add to '${ScheduleManager.instance.currentWeekDay}'",style: AppStyle.appBarTextStyle,),
+          title: Text("Add to '${widget.currentWeekDay}'",style: AppStyle.appBarTextStyle,),
           iconTheme: IconThemeData(color: AppColors.appbarIcon),
           actions: [
             Padding(
@@ -40,35 +52,6 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
                 },
               ),
 
-              // child: TextButton(
-              //   onPressed: () {
-              //     DialogHelper.showAddInitiativeDialog(
-              //       context: context,
-              //       onNew: (newInitiative) {
-              //         GlobalListManager.instance.addInitiative(newInitiative);
-              //       },
-              //     );
-              //   },
-              //   style: TextButton.styleFrom(
-              //     backgroundColor: Colors.tealAccent.shade400,
-              //     foregroundColor: Colors.white,
-              //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(20),
-              //     ),
-              //     shadowColor: Colors.tealAccent.shade100,
-              //     elevation: 3,
-              //   ),
-              //   child: const Text(
-              //     'New',
-              //     style: TextStyle(
-              //       fontWeight: FontWeight.w600,
-              //       fontSize: 14,
-              //       letterSpacing: 0.5,
-              //     ),
-              //   ),
-              // ),
-
 
             )
           ],
@@ -78,9 +61,7 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
           children: [
             Expanded(
                 child: GlobalInitiativeListview(
-              onAdd: (initiative) {
-                ScheduleManager.instance.addInitiativeIn(ScheduleManager.instance.currentWeekDay, initiative.id);
-              },
+              onAdd: widget.onAdd,
               onEdit: (initiative) {
                 DialogHelper.showEditInitiativeDialog(
                     context: context,

@@ -11,6 +11,7 @@ class ScheduleListview extends StatefulWidget {
   final void Function(Initiative) onItemEdit;
   final void Function(Initiative) onItemDelete;
   final void Function(Initiative, bool) onItemComplete;
+  final void Function(Initiative,) onPlay;
 
   const ScheduleListview({
     super.key,
@@ -18,6 +19,8 @@ class ScheduleListview extends StatefulWidget {
     required this.onItemEdit,
     required this.onItemDelete,
     required this.onItemComplete,
+    required this.onPlay,
+
   });
 
   @override
@@ -132,22 +135,26 @@ class _ScheduleListviewState extends State<ScheduleListview> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TimerPage(
-                        initiative: initiative,
-                        onComplete: (Initiative  init, bool isManual) {
-                          widget.onItemComplete(init, true);
 
-                        }),
+              onPressed: () => widget.onPlay(initiative),
 
-
-
-                    ),
-                  );
-                },
+        // onPressed: () {
+        //           Navigator.push(
+        //             context,
+        //             MaterialPageRoute(
+        //               builder: (context) => TimerPage(
+        //                 initiative: initiative,
+        //                 initiativeList: vm.,
+        //                 onComplete: (Initiative  init, bool isManual) {
+        //                   widget.onItemComplete(init, true);
+        //
+        //                 }),
+        //
+        //
+        //
+        //             ),
+        //           );
+        //         },
                 icon: playIcon,
                 padding: EdgeInsets.zero,
               ),

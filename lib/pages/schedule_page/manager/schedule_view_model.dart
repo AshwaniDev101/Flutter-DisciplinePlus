@@ -1,18 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:intl/intl.dart';
 import '../../../../database/repository/weekly_schedule_repository.dart';
 import '../../../../models/initiative.dart';
+import '../../../database/repository/heatmap_repository.dart';
 import '../../global_initiative_list_page/manager/global_list_manager.dart';
 
 /// Singleton class to manage weekly initiatives, active day,
 /// and merging with global initiatives.
-class ScheduleManager {
+class ScheduleViewModel extends ChangeNotifier {
 
-  ScheduleManager._internal() {
+  ScheduleViewModel() {
     // Keep the latest merged initiatives cached
     mergedDayInitiatives.listen((list) => _latestMerged = list);
   }
-  static final ScheduleManager instance = ScheduleManager._internal();
+  // static final ScheduleViewModel instance = ScheduleViewModel._internal();
+
+  final DateTime dateTimeNow = DateTime.now();
 
   final _repository = WeeklyScheduleRepository.instance;
 
@@ -30,6 +34,7 @@ class ScheduleManager {
   Stream<String> get weekDayName$ => _daySubject.stream;
 
   /// Current active day (synchronous)
+  /// ? used by two widget
   String get currentWeekDay => _daySubject.value;
 
   /// Set active day if valid
@@ -82,18 +87,16 @@ class ScheduleManager {
   List<Initiative> _latestMerged = [];
 
   /// Stream combining daily initiatives with schedule initiative
+
   Stream<List<Initiative>> get mergedDayInitiatives {
     return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
       schedule$,
       GlobalListManager.instance.watch(),
           (dailyMap, globalList) {
-        final merged = globalList
+        return globalList
             .where((i) => dailyMap.containsKey(i.id))
             .map((i) => i.copyWith(isComplete: dailyMap[i.id]!.isComplete))
             .toList();
-
-        _latestMerged = merged; // keep the latest value
-        return merged;
       },
     );
   }
@@ -102,11 +105,11 @@ class ScheduleManager {
   List<Initiative> get latestMergedList => _latestMerged;
 
 
-  Initiative? getNextByCurrent(Initiative current) {
-    final pos = _latestMerged.indexWhere((i) => i.id == current.id);
-    if (pos == -1 || pos + 1 >= _latestMerged.length) return null;
-    return _latestMerged[pos + 1];
-  }
+  // Initiative? getNextByCurrent(Initiative current) {
+  //   final pos = _latestMerged.indexWhere((i) => i.id == current.id);
+  //   if (pos == -1 || pos + 1 >= _latestMerged.length) return null;
+  //   return _latestMerged[pos + 1];
+  // }
 
 
   /// Completion percentage of currently cached merged initiatives
@@ -114,5 +117,18 @@ class ScheduleManager {
     if (_latestMerged.isEmpty) return 0.0;
     final completed = _latestMerged.where((i) => i.isComplete).length;
     return (completed / _latestMerged.length) * 100;
+  }
+
+
+
+  void onComplete(Initiative initiative, bool isComplete)
+  {
+    WeeklyScheduleRepository.instance.completeInitiative(currentWeekDay, initiative.id, isComplete);
+
+    var latest = latestCompletionPercentage;
+    // Updating heatmap
+    HeatmapRepository.instance.updateEntry(heatmapID: HeatmapID.overallInitiative, date: dateTimeNow, value: latest);
+
+
   }
 }

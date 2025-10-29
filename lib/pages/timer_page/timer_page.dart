@@ -4,15 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:discipline_plus/models/app_time.dart';
 import 'package:discipline_plus/pages/timer_page/widgets/pai_chart_painter.dart';
-import '../../core/utils/constants.dart';
+import 'package:provider/provider.dart';
 import '../../managers/audio_manager.dart';
-import '../schedule_page/manager/schedule_manager.dart';
+import '../schedule_page/manager/schedule_view_model.dart';
 
 class TimerPage extends StatefulWidget {
   final Initiative initiative;
+  final List<Initiative> initiativeList;
   final Function(Initiative  init, bool isManual) onComplete;
 
-  const TimerPage({super.key, required this.initiative, required this.onComplete});
+  const TimerPage({super.key, required this.initiative, required this.initiativeList, required this.onComplete});
 
   @override
   State<TimerPage> createState() => _TimerPageState();
@@ -64,11 +65,14 @@ class _TimerPageState extends State<TimerPage> {
 
   double get progress => totalTimeSeconds > 0 ? remainingSeconds / totalTimeSeconds : 0;
 
+
+
   
   // Lifecycle Methods
   @override
   void initState() {
     super.initState();
+
 
     // Initialize current initiative
     currentInitiative = widget.initiative;
@@ -153,13 +157,15 @@ class _TimerPageState extends State<TimerPage> {
       onBreak = true;
 
       // Precompute next initiative for UI
-      nextInitiative = ScheduleManager.instance.getNextByCurrent(
-        // Use the previous work initiative to find the next
-          ScheduleManager.instance.latestMergedList.firstWhere(
-                (i) => i.id == currentInitiative.id,
-            orElse: () => currentInitiative,
-          )
-      );
+
+      nextInitiative = getNextByCurrent(currentInitiative);
+      // nextInitiative = vm.getNextByCurrent(
+      //   // Use the previous work initiative to find the next
+      //     vm.latestMergedList.firstWhere(
+      //           (i) => i.id == currentInitiative.id,
+      //       orElse: () => currentInitiative,
+      //     )
+      // );
 
     } else {
       // Move to next initiative after break
@@ -179,6 +185,13 @@ class _TimerPageState extends State<TimerPage> {
       }
     });
   }
+
+  Initiative? getNextByCurrent(Initiative current) {
+    final pos = widget.initiativeList.indexWhere((i) => i.id == current.id);
+    if (pos == -1 || pos + 1 >= widget.initiativeList.length) return null;
+    return widget.initiativeList[pos + 1];
+  }
+
 
 
 
