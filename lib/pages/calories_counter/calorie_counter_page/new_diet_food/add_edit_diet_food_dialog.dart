@@ -175,15 +175,15 @@ class _DietFoodDialogWidget extends StatelessWidget {
               final updatedDietFood = DietFood(
                 id: food?.id ?? generateReadableTimestamp(),
                 name: name,
-                count: 0,
+                count: 0.0,
                 time: DateTime.now(),
                 foodStats: FoodStats(
-                  proteins: int.tryParse(proteins) ?? 0,
-                  carbohydrates: int.tryParse(carbohydrates) ?? 0,
-                  fats: int.tryParse(fats) ?? 0,
-                  vitamins: int.tryParse(vitamins) ?? 0,
-                  minerals: int.tryParse(minerals) ?? 0,
-                  calories: int.tryParse(calories) ?? 0,
+                  proteins: double.tryParse(proteins) ?? 0.0,
+                  carbohydrates: double.tryParse(carbohydrates) ?? 0.0,
+                  fats: double.tryParse(fats) ?? 0.0,
+                  vitamins: double.tryParse(vitamins) ?? 0.0,
+                  minerals: double.tryParse(minerals) ?? 0.0,
+                  calories: double.tryParse(calories) ?? 0.0,
                 ),
               );
 

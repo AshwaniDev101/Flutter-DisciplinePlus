@@ -223,7 +223,7 @@ class _DayCard extends StatelessWidget {
   }
 
 
-  Widget _buildNutrientChip(String label, int value, Color color) {
+  Widget _buildNutrientChip(String label, double value, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(

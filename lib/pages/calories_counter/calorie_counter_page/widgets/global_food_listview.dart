@@ -2,6 +2,7 @@
 import 'package:discipline_plus/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/helper.dart';
 import '../../../../models/diet_food.dart';
 import '../../../../models/food_stats.dart';
 import '../../../../widget/edit_delete_option_menu.dart';
@@ -49,7 +50,10 @@ class _GlobalFoodListState extends State<GlobalFoodList> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Error: ${snapshot.error}; snapshot: ${snapshot.data}'),
+          ));
         }
         final List<DietFood>? foods = snapshot.data;
         if (foods == null || foods.isEmpty) {
@@ -148,14 +152,14 @@ class _FoodCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            '${food.foodStats.calories} kcal',
+                            '${formatNumber(food.foodStats.calories)} kcal',
                             style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
                           if (food.count > 1)
                             Text(
-                              ' (total:${(food.foodStats.calories * food.count).toInt()})',
+                              ' (total:${formatNumber(food.foodStats.calories * food.count)})',
                               style: TextStyle(fontSize: 13, color: Colors.grey[500]),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -185,7 +189,7 @@ class _FoodCard extends StatelessWidget {
               //   },
               // ),
               FoodQuantitySelector(
-                initialValue: food.count.toDouble(),
+                initialValue: food.count,
                 onChanged: (oldValue, newValue) {
                   onQuantityChange(oldValue, newValue, food);
                 },

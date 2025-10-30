@@ -1,10 +1,10 @@
 class FoodStats {
-  final int proteins;
-  final int carbohydrates;
-  final int fats;
-  final int vitamins;
-  final int minerals;
-  final int calories;
+  final double proteins;
+  final double carbohydrates;
+  final double fats;
+  final double vitamins;
+  final double minerals;
+  final double calories;
 
   FoodStats({
     required this.proteins,
@@ -15,18 +15,14 @@ class FoodStats {
     required this.calories,
   });
 
-  // static FoodStats empty() {
-  //   return FoodStats(
-  //     proteins: 0,
-  //     carbohydrates: 0,
-  //     fats: 0,
-  //     vitamins: 0,
-  //     minerals: 0,
-  //     calories: 0,
-  //   );
-  // }
-
-  FoodStats.empty():proteins=0, carbohydrates=0,fats=0,vitamins=0,minerals=0,calories=0;
+  // A const constructor for an empty object is more idiomatic.
+  const FoodStats.empty() : 
+    proteins = 0.0,
+    carbohydrates = 0.0,
+    fats = 0.0,
+    vitamins = 0.0,
+    minerals = 0.0,
+    calories = 0.0;
 
 
   FoodStats sum(FoodStats other) {
@@ -63,14 +59,22 @@ class FoodStats {
     };
   }
 
+  /// A factory constructor that can safely parse both int and double values from Firestore.
   factory FoodStats.fromMap(Map<String, dynamic> map) {
+    // Helper to safely convert a num (int or double) to a double.
+    double toDouble(dynamic value) {
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      return 0.0; // Default value if null or wrong type
+    }
+
     return FoodStats(
-      proteins: map['proteins'] as int,
-      carbohydrates: map['carbohydrates'] as int,
-      fats: map['fats'] as int,
-      vitamins: map['vitamins'] as int,
-      minerals: map['minerals'] as int,
-      calories: map['calories'] as int,
+      proteins: toDouble(map['proteins']),
+      carbohydrates: toDouble(map['carbohydrates']),
+      fats: toDouble(map['fats']),
+      vitamins: toDouble(map['vitamins']),
+      minerals: toDouble(map['minerals']),
+      calories: toDouble(map['calories']),
     );
   }
 }

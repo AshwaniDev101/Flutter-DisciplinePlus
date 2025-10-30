@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -56,7 +57,7 @@ class _FoodQuantitySelectorState extends State<FoodQuantitySelector> {
 
   double _clamp(double v) => v.isNaN ? widget.min : v.clamp(widget.min, widget.max);
 
-  String _format(double v) => v.toStringAsFixed(widget.precision);
+  String _format(double v) => formatNumber(v);
 
   void _setValue(double v, {bool notify = true}) {
     final next = _clamp(v);

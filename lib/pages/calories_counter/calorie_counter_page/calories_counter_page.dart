@@ -12,7 +12,8 @@ import 'new_diet_food/add_edit_diet_food_dialog.dart';
 class CalorieCounterPage extends StatelessWidget {
   final DateTime pageDateTime;
 
-  const CalorieCounterPage({super.key, required this.pageDateTime});
+  CalorieCounterPage({Key? key, required this.pageDateTime})
+      : super(key: key ?? ValueKey(pageDateTime));
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +24,17 @@ class CalorieCounterPage extends StatelessWidget {
   }
 }
 
-
 class _CaloriesCounterPageBody extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<CalorieCounterViewModel>();
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
-
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(40),
         child: _getAppBar(context),
       ),
-
       body: Stack(
         children: [
           /// Scrollable list behind the dashboard
@@ -46,14 +43,15 @@ class _CaloriesCounterPageBody extends StatelessWidget {
               color: Colors.grey[50],
               child: Padding(
                 // leave space at the top so items don't overlap dashboard
-                padding: const EdgeInsets.only(top: 120,bottom: 20), // tweak to match dashboard height
+                padding:
+                    const EdgeInsets.only(top: 120, bottom: 20), // tweak to match dashboard height
                 child: GlobalFoodList(
                   searchQuery: vm.searchQuery,
                   stream: vm.watchMergedFoodList,
                   onEdit: (DietFood food) => DietFoodDialog.edit(
                     context,
                     food,
-                        (DietFood food) => vm.editFood(food),
+                    (DietFood food) => vm.editFood(food),
                   ),
                   onDeleted: vm.deleteFood,
                   onQuantityChange: vm.onQuantityChange,
@@ -86,18 +84,22 @@ class _CaloriesCounterPageBody extends StatelessWidget {
                   hintText: 'Search filter',
                   hintStyle: TextStyle(color: Colors.grey[500]),
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade300, width: 1.2),
+                    borderSide:
+                        BorderSide(color: Colors.grey.shade300, width: 1.2),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade400, width: 1.2),
+                    borderSide:
+                        BorderSide(color: Colors.grey.shade400, width: 1.2),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade500, width: 1.5),
+                    borderSide:
+                        BorderSide(color: Colors.grey.shade500, width: 1.5),
                   ),
                 ),
                 style: const TextStyle(color: Colors.black),
@@ -105,17 +107,13 @@ class _CaloriesCounterPageBody extends StatelessWidget {
               ),
             ),
           ),
-
-
         ],
       ),
     );
   }
 
-
-  Widget _getAppBar(context)
-  {
-    return  AppBar(
+  Widget _getAppBar(context) {
+    return AppBar(
       backgroundColor: Colors.grey[50],
       // elevation: 2, // subtle shadow if you want it to stand out
       elevation: 0,
@@ -131,7 +129,8 @@ class _CaloriesCounterPageBody extends StatelessWidget {
 
       // left icon
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.blueGrey),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded,
+            color: Colors.blueGrey),
         onPressed: () {
           Navigator.pop(context); // or custom logic
         },

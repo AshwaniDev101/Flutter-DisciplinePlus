@@ -1,6 +1,8 @@
+import 'package:discipline_plus/pages/calories_counter/calorie_history_page/viewModel/calorie_history_view_model.dart';
 import 'package:discipline_plus/pages/calories_counter/widget/caution_label_widget.dart';
 import 'package:discipline_plus/widget/new_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/utils/app_settings.dart';
 import '../../../../core/utils/helper.dart';
@@ -149,8 +151,10 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => CalorieHistoryPage(
-                                      pageDateTime: widget.currentDateTime,
+                                    builder: (_) => ChangeNotifierProvider(
+                                      create:(_)=> CalorieHistoryViewModel(  pageDateTime: widget.currentDateTime,),
+
+                                      child: CalorieHistoryPage(),
                                     ),
                                   ),
                                 );
