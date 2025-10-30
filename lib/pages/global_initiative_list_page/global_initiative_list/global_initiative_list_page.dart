@@ -32,8 +32,8 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Add to '${widget.currentWeekDay}'",style: AppStyle.appBarTextStyle,),
-          iconTheme: IconThemeData(color: AppColors.appbarIcon),
+          title: Text("Add to '${widget.currentWeekDay}'",style: AppTextStyle.appBarTextStyle,),
+          iconTheme: IconThemeData(color: AppColors.appbarContent),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10),

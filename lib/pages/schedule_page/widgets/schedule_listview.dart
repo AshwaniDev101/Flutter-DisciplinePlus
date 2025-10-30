@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../models/initiative.dart';
 
 
+
 /// Displays a list of daily schedules using real-time stream updates
 class ScheduleListview extends StatefulWidget {
 
@@ -93,8 +94,8 @@ class _ScheduleListviewState extends State<ScheduleListview> {
         children: [
           _buildLeadingIcon(
             isComplete: initiative.isComplete,
-            whiteCircleSize: 20,
-            iconSize: 24,
+            whiteCircleSize: 14,
+            iconSize: 18,
           ),
           const SizedBox(width: 4),
 
@@ -119,7 +120,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                       if (initiative.studyBreak.completionTime.minute != 0)
                         TextSpan(
                           text:
-                          "   ${initiative.studyBreak.completionTime.minute}m brk",
+                          "   ${initiative.studyBreak.completionTime.minute}m break",
                           style: scheduleBrake,
                         ),
                     ],
@@ -137,23 +138,6 @@ class _ScheduleListviewState extends State<ScheduleListview> {
 
               onPressed: () => widget.onPlay(initiative),
 
-        // onPressed: () {
-        //           Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (context) => TimerPage(
-        //                 initiative: initiative,
-        //                 initiativeList: vm.,
-        //                 onComplete: (Initiative  init, bool isManual) {
-        //                   widget.onItemComplete(init, true);
-        //
-        //                 }),
-        //
-        //
-        //
-        //             ),
-        //           );
-        //         },
                 icon: playIcon,
                 padding: EdgeInsets.zero,
               ),
@@ -240,7 +224,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
             children: [
               Icon(Icons.edit_note_rounded, size: 16, color: AppColors.optionMenuContent),
               const SizedBox(width: 6),
-              Text('Edit', style: AppStyle.optionMenuTextStyle),
+              Text('Edit', style: AppTextStyle.optionMenuTextStyle),
             ],
           ),
         ),
@@ -250,7 +234,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
             children: [
               Icon(Icons.delete_outline, size: 16, color: AppColors.optionMenuContent),
               const SizedBox(width: 6),
-              Text('Delete', style: AppStyle.optionMenuTextStyle),
+              Text('Delete', style: AppTextStyle.optionMenuTextStyle),
             ],
           ),
         ),
@@ -274,7 +258,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
                     children: [
                       Icon(initiative.isComplete?Icons.check_box:Icons.check_box_outline_blank_rounded, color: initiative.isComplete?Colors.blue:Colors.grey),
                       SizedBox(width: 4,),
-                      Text(initiative.isComplete?'Completed!':'Complete?', style: AppStyle.optionMenuTextStyle),
+                      Text(initiative.isComplete?'Completed!':'Complete?', style: AppTextStyle.optionMenuTextStyle),
                     ]
                   ),
                 ),

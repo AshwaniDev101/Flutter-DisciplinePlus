@@ -15,7 +15,7 @@ class NewButton extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.borderRadius = 20,
-    this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    this.padding = const EdgeInsets.symmetric(horizontal:4, vertical: 4),
   });
 
   @override
@@ -23,7 +23,7 @@ class NewButton extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final bgColor = backgroundColor ?? (isDark ? Colors.tealAccent.shade200 : Colors.tealAccent.shade400);
+    final bgColor = backgroundColor ?? (isDark ? Colors.grey[200]: Colors.grey[800]);
     final txtColor = textColor ?? (isDark ? Colors.black87 : Colors.white);
 
     return TextButton(

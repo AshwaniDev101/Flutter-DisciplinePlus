@@ -166,7 +166,7 @@ class HeatmapGrid extends StatelessWidget {
   }
 }
 
-/// 🔲 Single day cell widget
+/// Single day cell widget
 class HeatmapCell extends StatelessWidget {
   final int day;
   final Color color;

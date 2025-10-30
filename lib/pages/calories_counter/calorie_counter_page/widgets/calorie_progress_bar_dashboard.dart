@@ -3,7 +3,6 @@ import 'package:discipline_plus/pages/calories_counter/widget/caution_label_widg
 import 'package:discipline_plus/widget/new_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../core/utils/app_settings.dart';
 import '../../../../core/utils/helper.dart';
 import '../../../../models/food_stats.dart';
@@ -29,14 +28,14 @@ class CalorieProgressBarDashboard extends StatefulWidget {
 }
 
 class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboard> {
-  Widget _getTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child:
-      Text('Calorie Counter', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey[800])),
-    );
-  }
 
+  // Widget _getTitle() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(2.0),
+  //     child:
+  //     Text('Calorie Counter', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey[800])),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +54,13 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
 
         return Card(
           margin: const EdgeInsets.all(12),
-          elevation: 2,
-
+          elevation: 1,
+          color: Colors.grey[50],
           clipBehavior: Clip.antiAlias,
           surfaceTintColor: Colors.transparent,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(4),
             child: Stack(
               children: [
 
@@ -111,7 +110,7 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
                               child: CircularProgressIndicator(
                                 value: caloriesCount / AppSettings.atMaxCalories,
                                 strokeWidth: 8,
-                                backgroundColor: Colors.grey.shade200,
+                                backgroundColor: Colors.grey[300],
                                 valueColor: AlwaysStoppedAnimation(
                                   getProgressCircleColor(foodStats),
                                 ),

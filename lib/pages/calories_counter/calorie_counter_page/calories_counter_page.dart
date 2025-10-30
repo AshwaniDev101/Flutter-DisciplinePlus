@@ -4,9 +4,10 @@ import 'package:discipline_plus/pages/calories_counter/calorie_counter_page/widg
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../models/diet_food.dart';
+import '../../../theme/app_colors.dart';
 import 'new_diet_food/add_edit_diet_food_dialog.dart';
 
-/// The main page that allows users to view, add, edit, and delete foods,
+/// The main page that allows users to view, add, edit, and delete foods.
 /// while tracking their total calorie consumption in real time.
 
 class CalorieCounterPage extends StatelessWidget {
@@ -30,17 +31,17 @@ class _CaloriesCounterPageBody extends StatelessWidget {
     final vm = context.watch<CalorieCounterViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(40),
-        child: _getAppBar(context),
-      ),
+      backgroundColor: Colors.grey[200],
+
+      // appBar: PreferredSize(preferredSize: const Size.fromHeight(40), child: _getAppBar(context),),
+      appBar: _getAppBar(context),
+
       body: Stack(
         children: [
           /// Scrollable list behind the dashboard
           Positioned.fill(
             child: Container(
-              color: Colors.grey[50],
+              // color: Colors.grey[50],
               child: Padding(
                 // leave space at the top so items don't overlap dashboard
                 padding:
@@ -73,58 +74,83 @@ class _CaloriesCounterPageBody extends StatelessWidget {
           ),
 
           /// Search bar fixed at bottom
+
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: 'Search filter',
-                  hintStyle: TextStyle(color: Colors.grey[500]),
-                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: Colors.grey.shade300, width: 1.2),
+              child: Material(
+                elevation: 6,
+                borderRadius: BorderRadius.circular(16),
+                shadowColor: Colors.black.withValues(alpha: 0.15),
+                child: TextField(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Search filter',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: Colors.grey.shade400, width: 1.2),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: Colors.grey.shade500, width: 1.5),
-                  ),
+                  style: const TextStyle(color: Colors.black),
+                  onChanged: (value) => vm.updateSearchQuery = value,
                 ),
-                style: const TextStyle(color: Colors.black),
-                onChanged: (value) => vm.updateSearchQuery = value,
               ),
             ),
-          ),
+          )
+
+          // Align(
+          //   alignment: Alignment.bottomCenter,
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(8.0),
+          //     child: TextField(
+          //       decoration: InputDecoration(
+          //         filled: true,
+          //         fillColor: Colors.grey[50],
+          //         hintText: 'Search filter',
+          //         hintStyle: TextStyle(color: Colors.grey[500]),
+          //         prefixIcon: const Icon(Icons.search, color: Colors.grey),
+          //         contentPadding:
+          //             const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+          //         border: OutlineInputBorder(
+          //           borderRadius: BorderRadius.circular(12),
+          //           borderSide:
+          //               BorderSide(color: Colors.grey.shade300, width: 1.2),
+          //         ),
+          //         enabledBorder: OutlineInputBorder(
+          //           borderRadius: BorderRadius.circular(12),
+          //           borderSide:
+          //               BorderSide(color: Colors.grey.shade400, width: 1.2),
+          //         ),
+          //         focusedBorder: OutlineInputBorder(
+          //           borderRadius: BorderRadius.circular(12),
+          //           borderSide:
+          //               BorderSide(color: Colors.grey.shade500, width: 1.5),
+          //         ),
+          //       ),
+          //       style: const TextStyle(color: Colors.black),
+          //       onChanged: (value) => vm.updateSearchQuery = value,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
   }
 
-  Widget _getAppBar(context) {
+  AppBar _getAppBar(context) {
     return AppBar(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.appbar,
       // elevation: 2, // subtle shadow if you want it to stand out
       elevation: 0,
       surfaceTintColor: Colors.transparent,
-      title: const Text(
+      title: Text(
         'Today',
-        style: TextStyle(
-          color: Colors.blueGrey,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
+        style: AppTextStyle.appBarTextStyle
       ),
 
       // left icon

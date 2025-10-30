@@ -37,11 +37,12 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
               final day = snapshot.data ?? '';
               return Text(
                 day,
-                style: AppStyle.appBarTextStyle,
+                style: AppTextStyle.appBarTextStyle,
               );
             }),
-        iconTheme: IconThemeData(color: AppColors.appbarIcon),
+        iconTheme: IconThemeData(color: AppColors.appbarContent),
         backgroundColor: AppColors.appbar,
+        surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
               onPressed: () {
@@ -72,13 +73,16 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
       body: SlidingUpPanel(
         minHeight: _panelMinHeight,
         maxHeight: _panelMaxHeight,
+        boxShadow: const <BoxShadow>[],
+        color: Colors.grey[100]!,
+
         panel: HeatmapPanel(
           currentDateTime: vm.dateTimeNow,
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Divider(height: 1, thickness: 1),
+            // const Divider(height: 1, thickness: 1),
             Expanded(
               child: ScheduleListview(
                 stream: vm.mergedDayInitiatives,

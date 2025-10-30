@@ -2,6 +2,8 @@
 import 'package:discipline_plus/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
+
+
 class EditDeleteOptionMenu extends StatelessWidget {
   final Function() onEdit;
   final Function() onDelete;
@@ -43,7 +45,7 @@ class EditDeleteOptionMenu extends StatelessWidget {
                 children: [
                   Icon(Icons.edit_note_rounded, size: 16, color: AppColors.optionMenuContent),
                   const SizedBox(width: 6),
-                  Text('Edit', style: AppStyle.optionMenuTextStyle),
+                  Text('Edit', style: AppTextStyle.optionMenuTextStyle),
                 ],
               ),
             ),
@@ -53,7 +55,7 @@ class EditDeleteOptionMenu extends StatelessWidget {
                 children: [
                   Icon(Icons.delete_outline, size: 16, color: AppColors.optionMenuContent),
                   const SizedBox(width: 6),
-                  Text('Delete', style: AppStyle.optionMenuTextStyle),
+                  Text('Delete', style: AppTextStyle.optionMenuTextStyle),
                 ],
               ),
             ),

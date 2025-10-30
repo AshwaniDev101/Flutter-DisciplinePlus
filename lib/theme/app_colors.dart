@@ -1,34 +1,28 @@
 import 'package:flutter/material.dart';
 
-
 class AppColors {
-
   // Color Palette
-  // static Color primary       = Color(0xFF016B61);
-  // static Color secondary     = Color(0xFF70B2B2);
-  // static Color third        = Color(0xFF9ECFD4);
-  // static Color fourth        = Color(0xFFE5E9C5);
-
-  static Color primary       = Color(0xFFFFA4A4);
-  static Color secondary     = Color(0xFF70B2B2);
-  static Color third        = Color(0xFF9ECFD4);
-  static Color fourth        = Color(0xFFE5E9C5);
-
+  static const Color primary = Color(0xFFFFA4A4);
+  static const Color secondary = Color(0xFF70B2B2);
+  static const Color third = Color(0xFF9ECFD4);
+  static const Color fourth = Color(0xFFE5E9C5);
 
 
   // App bar
-  static Color appbar       = primary;
-  static Color appbarTitle  = Colors.white;
-  static Color appbarIcon   = Colors.white;
+  static  Color appbar = Colors.grey[100]!;
+
+  // Value for Colors.blueGrey.shade50
+  static  Color appbarContent = Colors.blueGrey[300]!;
+  // static const Color appbarContent = Color(0xFFECEFF1);
 
   // Option Menu
-  static Color optionMenuBackground = Colors.grey.shade50;
-  static Color optionMenuContent    = Colors.blueGrey.shade600;
+  // Value for Colors.grey.shade50
+  static const Color optionMenuBackground = Color(0xFFFAFAFA);
 
+  // Value for Colors.blueGrey.shade600
+  static const Color optionMenuContent = Color(0xFF546E7A);
 
-
-
-  static final List<Color> colorPalette = const [
+  static const List<Color> colorPalette = [
     Color(0xFFF8BBD0),
     Color(0xFFBBDEFB),
     Color(0xFFC8E6C9),
@@ -66,14 +60,14 @@ class AppColors {
     Color(0xFFEC407A),
     Color(0xFFAB47BC),
   ];
-
-
 }
 
-class AppStyle {
+
+
+class AppTextStyle {
   // Option Menu
   static TextStyle optionMenuTextStyle = TextStyle(fontSize: 14, color: AppColors.optionMenuContent);
-  static TextStyle appBarTextStyle = TextStyle(color: AppColors.appbarTitle);
-
-
+  static TextStyle appBarTextStyle = TextStyle(fontSize: 18,fontWeight: FontWeight.bold, color: AppColors.appbarContent);
 }
+
+
