@@ -1,3 +1,4 @@
+import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/utils/app_settings.dart';
@@ -108,7 +109,7 @@ class _DayCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              '${foodStats.calories} kcal',
+                              '${formatNumber(foodStats.calories)} kcal',
 
                               style: TextStyle(
                                 fontSize: 14,
@@ -236,7 +237,7 @@ class _DayCard extends StatelessWidget {
           CircleAvatar(radius: 2.5, backgroundColor: color),
           const SizedBox(width: 2),
           Text(
-            '$label: $value',
+            '$label: ${formatNumber(value)}',
             style: TextStyle(fontSize: 10, color: Colors.grey.shade800),
           ),
         ],

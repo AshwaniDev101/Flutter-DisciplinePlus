@@ -1,12 +1,9 @@
 
-import 'package:discipline_plus/models/diet_food.dart';
+import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:discipline_plus/pages/calories_counter/calorie_history_page/viewModel/calorie_history_view_model.dart';
 import 'package:discipline_plus/pages/calories_counter/calorie_history_page/widgets/calorie_history_listview.dart';
 import 'package:flutter/material.dart';
-import 'package:discipline_plus/models/food_stats.dart';
 import 'package:provider/provider.dart';
-import '../../../core/utils/app_settings.dart';
-import '../../../database/repository/food_history_repository.dart';
 import '../../../theme/app_colors.dart';
 import '../calorie_counter_page/calories_counter_page.dart';
 
@@ -66,7 +63,7 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
             vm.excessCalories > 0 ? "Kcal Gained : " : "Kcal Lost : (${vm.monthStatsMap.length} Days) : ",
             style: TextStyle(fontSize: 12),
           ),
-          Text("${vm.excessCalories}",
+          Text("${formatNumber(vm.excessCalories)} Kcal",
               style: TextStyle(
                   fontSize: 14, fontWeight: FontWeight.bold, color: vm.excessCalories > 0 ? Colors.red : Colors.green)),
           SizedBox(
