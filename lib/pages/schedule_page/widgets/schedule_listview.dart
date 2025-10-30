@@ -31,7 +31,7 @@ class _ScheduleListviewState extends State<ScheduleListview> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[100],
+      color: AppColors.backgroundColor,
       child: Column(
         children: [
           Expanded(

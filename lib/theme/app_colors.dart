@@ -12,9 +12,12 @@ class AppColors {
   static  Color appbar = Colors.grey[100]!;
 
   // Value for Colors.blueGrey.shade50
-  static  Color appbarContent = Colors.blueGrey[300]!;
+  static  Color appbarContent = Colors.cyan[900]!;
   // static const Color appbarContent = Color(0xFFECEFF1);
 
+
+  static  Color backgroundColor = Colors.grey[100]!;
+  static  Color slideUpPanelColor = Colors.grey[100]!;
   // Option Menu
   // Value for Colors.grey.shade50
   static const Color optionMenuBackground = Color(0xFFFAFAFA);

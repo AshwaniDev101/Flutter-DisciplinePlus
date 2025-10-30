@@ -1,4 +1,3 @@
-
 import 'package:discipline_plus/core/utils/helper.dart';
 import 'package:discipline_plus/pages/calories_counter/calorie_history_page/viewModel/calorie_history_view_model.dart';
 import 'package:discipline_plus/pages/calories_counter/calorie_history_page/widgets/calorie_history_listview.dart';
@@ -9,8 +8,6 @@ import '../calorie_counter_page/calories_counter_page.dart';
 
 /// Main page displaying calorie history for a month
 class CalorieHistoryPage extends StatefulWidget {
-
-
   const CalorieHistoryPage({super.key});
 
   @override
@@ -18,40 +15,14 @@ class CalorieHistoryPage extends StatefulWidget {
 }
 
 class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
-  // Map<int, FoodStats> _monthStatsMap = {};
-  // int _excessCalories = 0;
-
-
-
   @override
   void initState() {
     super.initState();
-
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CalorieHistoryViewModel>().loadMonthStats();
     });
   }
-
-  // Future<void> _loadMonthStats() async {
-  //   _monthStatsMap = await FoodHistoryRepository.instance.getMonthStats(
-  //     year: widget.pageDateTime.year,
-  //     month: widget.pageDateTime.month,
-  //   );
-  //
-  //   _excessCalories = _calculateNetExcess(_monthStatsMap);
-  //   setState(() {}); // Rebuild after loading
-  // }
-  //
-  // int _calculateNetExcess(Map<int, FoodStats> monthStats) {
-  //   int total = 0; // start from zero
-  //
-  //   for (var food in monthStats.values) {
-  //     total += food.calories - AppSettings.atMaxCalories;
-  //     // print("Total ${total} => ${AppSettings.atMaxCalories} - ${food.calories} = ${food.calories - AppSettings.atMaxCalories}");
-  //   }
-  //   return total;
-  // }
 
   Widget _buildExcessLabel(vm) {
     return Padding(
@@ -76,26 +47,19 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-
-
-     final vm = context.watch<CalorieHistoryViewModel>();
-
+    final vm = context.watch<CalorieHistoryViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-          title: const Text(
+          title: Text(
             'Calorie History',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.white,
-            ),
+            style: AppTextStyle.appBarTextStyle,
           ),
           centerTitle: true,
-          elevation: 2,
+          // elevation: 2,
           backgroundColor: AppColors.appbar,
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: AppColors.appbarContent),
           actions: [
             PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert),
@@ -103,41 +67,43 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
                 if (value == 'settings') {
                   print('Settings selected');
                 } else if (value == 'add') {
-
-
                   vm.runTest();
                   // Run test
-
-
-
                 } else if (value == 'test2') {
                   print('Test 2 selected');
                 }
               },
               itemBuilder: (BuildContext context) => [
-
                 const PopupMenuItem(
                   value: 'add',
                   child: Row(
                     children: [
                       Icon(Icons.add_circle_outline_rounded, color: Colors.pink),
-                      SizedBox(width: 10,),
-                      Text('Add', style: TextStyle(color: Colors.pink),),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Add',
+                        style: TextStyle(color: Colors.pink),
+                      ),
                     ],
                   ),
                 ),
-
                 PopupMenuItem(
                   value: 'settings',
                   child: Row(
                     children: [
                       Icon(Icons.settings, color: Colors.grey[600]),
-                      const SizedBox(width: 10,),
-                      Text('Settings', style: TextStyle(color: Colors.grey[600]),),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Settings',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
                     ],
                   ),
                 ),
-
               ],
             ),
           ]),
@@ -159,8 +125,8 @@ class _CalorieHistoryPageState extends State<CalorieHistoryPage> {
                             MaterialPageRoute(
                               builder: (context) => CalorieCounterPage(pageDateTime: cardDateTime),
                             ),
-                          ).then((_){
-                           vm.loadMonthStats();
+                          ).then((_) {
+                            vm.loadMonthStats();
                           });
                         },
                         onDelete: (DateTime cardDateTime) {

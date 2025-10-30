@@ -31,7 +31,7 @@ class _CaloriesCounterPageBody extends StatelessWidget {
     final vm = context.watch<CalorieCounterViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor:  AppColors.backgroundColor,
 
       // appBar: PreferredSize(preferredSize: const Size.fromHeight(40), child: _getAppBar(context),),
       appBar: _getAppBar(context),
@@ -40,23 +40,20 @@ class _CaloriesCounterPageBody extends StatelessWidget {
         children: [
           /// Scrollable list behind the dashboard
           Positioned.fill(
-            child: Container(
-              // color: Colors.grey[50],
-              child: Padding(
-                // leave space at the top so items don't overlap dashboard
-                padding:
-                    const EdgeInsets.only(top: 120, bottom: 20), // tweak to match dashboard height
-                child: GlobalFoodList(
-                  searchQuery: vm.searchQuery,
-                  stream: vm.watchMergedFoodList,
-                  onEdit: (DietFood food) => DietFoodDialog.edit(
-                    context,
-                    food,
-                    (DietFood food) => vm.editFood(food),
-                  ),
-                  onDeleted: vm.deleteFood,
-                  onQuantityChange: vm.onQuantityChange,
+            child: Padding(
+              // leave space at the top so items don't overlap dashboard
+              padding:
+                  const EdgeInsets.only(top: 120, bottom: 20), // tweak to match dashboard height
+              child: GlobalFoodList(
+                searchQuery: vm.searchQuery,
+                stream: vm.watchMergedFoodList,
+                onEdit: (DietFood food) => DietFoodDialog.edit(
+                  context,
+                  food,
+                  (DietFood food) => vm.editFood(food),
                 ),
+                onDeleted: vm.deleteFood,
+                onQuantityChange: vm.onQuantityChange,
               ),
             ),
           ),
@@ -103,40 +100,7 @@ class _CaloriesCounterPageBody extends StatelessWidget {
             ),
           )
 
-          // Align(
-          //   alignment: Alignment.bottomCenter,
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(8.0),
-          //     child: TextField(
-          //       decoration: InputDecoration(
-          //         filled: true,
-          //         fillColor: Colors.grey[50],
-          //         hintText: 'Search filter',
-          //         hintStyle: TextStyle(color: Colors.grey[500]),
-          //         prefixIcon: const Icon(Icons.search, color: Colors.grey),
-          //         contentPadding:
-          //             const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-          //         border: OutlineInputBorder(
-          //           borderRadius: BorderRadius.circular(12),
-          //           borderSide:
-          //               BorderSide(color: Colors.grey.shade300, width: 1.2),
-          //         ),
-          //         enabledBorder: OutlineInputBorder(
-          //           borderRadius: BorderRadius.circular(12),
-          //           borderSide:
-          //               BorderSide(color: Colors.grey.shade400, width: 1.2),
-          //         ),
-          //         focusedBorder: OutlineInputBorder(
-          //           borderRadius: BorderRadius.circular(12),
-          //           borderSide:
-          //               BorderSide(color: Colors.grey.shade500, width: 1.5),
-          //         ),
-          //       ),
-          //       style: const TextStyle(color: Colors.black),
-          //       onChanged: (value) => vm.updateSearchQuery = value,
-          //     ),
-          //   ),
-          // ),
+
         ],
       ),
     );

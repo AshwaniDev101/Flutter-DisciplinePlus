@@ -33,6 +33,7 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text("Add to '${widget.currentWeekDay}'",style: AppTextStyle.appBarTextStyle,),
+          surfaceTintColor: Colors.transparent,
           iconTheme: IconThemeData(color: AppColors.appbarContent),
           actions: [
             Padding(
@@ -57,22 +58,25 @@ class _GlobalInitiativeListPageState extends State<GlobalInitiativeListPage> {
             child: Column(
           children: [
             Expanded(
-                child: GlobalInitiativeListview(
-              onAdd: widget.onAdd,
-              onEdit: (initiative) {
-                DialogHelper.showEditInitiativeDialog(
-                    context: context,
-                    existingInitiative: initiative,
-                    onEdit: (Initiative editedInitiative) {
-                      GlobalListManager.instance.updateInitiative(
-                        editedInitiative,
-                      );
-                    });
-              },
-              onDelete: (initiative) {
-                GlobalListManager.instance.deleteInitiative(initiative.id);
-              },
-            ))
+                child: Padding(
+                  padding: const EdgeInsets.only(top:0,bottom: 0,left: 4,right: 4),
+                  child: GlobalInitiativeListview(
+                                onAdd: widget.onAdd,
+                                onEdit: (initiative) {
+                  DialogHelper.showEditInitiativeDialog(
+                      context: context,
+                      existingInitiative: initiative,
+                      onEdit: (Initiative editedInitiative) {
+                        GlobalListManager.instance.updateInitiative(
+                          editedInitiative,
+                        );
+                      });
+                                },
+                                onDelete: (initiative) {
+                  GlobalListManager.instance.deleteInitiative(initiative.id);
+                                },
+                              ),
+                ))
           ],
         )));
   }

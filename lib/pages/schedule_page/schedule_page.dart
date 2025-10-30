@@ -74,7 +74,7 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
         minHeight: _panelMinHeight,
         maxHeight: _panelMaxHeight,
         boxShadow: const <BoxShadow>[],
-        color: Colors.grey[100]!,
+        color: AppColors.slideUpPanelColor,
 
         panel: HeatmapPanel(
           currentDateTime: vm.dateTimeNow,
@@ -84,50 +84,53 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
           children: [
             // const Divider(height: 1, thickness: 1),
             Expanded(
-              child: ScheduleListview(
-                stream: vm.mergedDayInitiatives,
-                onItemEdit: (existingInitiative) {
-                  DialogHelper.showEditInitiativeDialog(
-                      context: context,
-                      existingInitiative: existingInitiative,
-                      onEdit: (editedInitiative) {
-                        GlobalListManager.instance.updateInitiative(
-                          editedInitiative,
-                        );
-                      });
-                },
-                onItemDelete: (initiative) {
-                  vm.deleteInitiativeFrom(
-                    vm.currentWeekDay,
-                    initiative.id,
-                  );
-                },
-                onItemComplete: (initiative, isComplete) {
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ScheduleListview(
+                  stream: vm.mergedDayInitiatives,
+                  onItemEdit: (existingInitiative) {
+                    DialogHelper.showEditInitiativeDialog(
+                        context: context,
+                        existingInitiative: existingInitiative,
+                        onEdit: (editedInitiative) {
+                          GlobalListManager.instance.updateInitiative(
+                            editedInitiative,
+                          );
+                        });
+                  },
+                  onItemDelete: (initiative) {
+                    vm.deleteInitiativeFrom(
+                      vm.currentWeekDay,
+                      initiative.id,
+                    );
+                  },
+                  onItemComplete: (initiative, isComplete) {
 
-                  vm.onComplete(initiative, isComplete);
-                  // WeeklyScheduleRepository.instance.completeInitiative(vm.currentWeekDay, initiative.id, isComplete);
-                  //
-                  // var latest = vm.latestCompletionPercentage;
-                  // // Updating heatmap
-                  // HeatmapRepository.instance
-                  //     .updateEntry(heatmapID: HeatmapID.overallInitiative, date: dateTimeNow, value: latest);
-                  //
+                    vm.onComplete(initiative, isComplete);
+                    // WeeklyScheduleRepository.instance.completeInitiative(vm.currentWeekDay, initiative.id, isComplete);
+                    //
+                    // var latest = vm.latestCompletionPercentage;
+                    // // Updating heatmap
+                    // HeatmapRepository.instance
+                    //     .updateEntry(heatmapID: HeatmapID.overallInitiative, date: dateTimeNow, value: latest);
+                    //
 
-                },
-                onPlay: (initiative) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TimerPage(
-                          initiative: initiative,
-                          initiativeList: vm.latestMergedList,
-                          onComplete: (Initiative initiative, bool isManual) {
-                            vm.onComplete(initiative, true);
-                            // widget.onItemComplete(init, true);
-                          }),
-                    ),
-                  );
-                },
+                  },
+                  onPlay: (initiative) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TimerPage(
+                            initiative: initiative,
+                            initiativeList: vm.latestMergedList,
+                            onComplete: (Initiative initiative, bool isManual) {
+                              vm.onComplete(initiative, true);
+                              // widget.onItemComplete(init, true);
+                            }),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
