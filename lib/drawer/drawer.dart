@@ -23,7 +23,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
-              color: AppColors.appbar,
+              color: AppColors.appbarContent,
             ),
             child: Text(
               'Ashwani Yadav',

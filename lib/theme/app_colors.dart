@@ -12,9 +12,8 @@ class AppColors {
   static  Color appbar = Colors.grey[100]!;
 
   // Value for Colors.blueGrey.shade50
-  static  Color appbarContent = Colors.cyan[900]!;
+  static  Color appbarContent = Color(0xFF546E7A);
   // static const Color appbarContent = Color(0xFFECEFF1);
-
 
   static  Color backgroundColor = Colors.grey[100]!;
   static  Color slideUpPanelColor = Colors.grey[100]!;

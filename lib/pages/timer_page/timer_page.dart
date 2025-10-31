@@ -1,24 +1,38 @@
-import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:discipline_plus/models/app_time.dart';
+import 'package:discipline_plus/pages/timer_page/viewModel/timer_view_model.dart';
 import 'package:discipline_plus/pages/timer_page/widgets/pai_chart_painter.dart';
-import '../../managers/audio_manager.dart';
+import 'package:provider/provider.dart';
 
-class TimerPage extends StatefulWidget {
+class TimerPage extends StatelessWidget {
   final Initiative initiative;
   final List<Initiative> initiativeList;
-  final Function(Initiative  init, bool isManual) onComplete;
+  final Function(Initiative init, bool isManual) onComplete;
 
-  const TimerPage({super.key, required this.initiative, required this.initiativeList, required this.onComplete});
+  const TimerPage({
+    super.key,
+    required this.initiative,
+    required this.initiativeList,
+    required this.onComplete,
+  });
 
   @override
-  State<TimerPage> createState() => _TimerPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => TimerViewModel(
+        initialInitiative: initiative,
+        initiativeList: initiativeList,
+        onComplete: onComplete,
+      ),
+      child: const _TimerPageBody(),
+    );
+  }
 }
 
-class _TimerPageState extends State<TimerPage> {
-  
+class _TimerPageBody extends StatelessWidget {
+  const _TimerPageBody();
+
   // UI Constants
   final double circleRadius = 150.0;
   final double ringThickness = 10.0;
@@ -30,210 +44,11 @@ class _TimerPageState extends State<TimerPage> {
   final Color numberColor = Colors.white;
   final double numberDistanceOffset = 30;
 
-  
-  // Timer & Test Settings
-  final int? clockSpeed = 80; // null = real-time, >1 = faster for testing
-  late int totalTimeSeconds;
-  int elapsedSeconds = 0;
-  Timer? _timer;
-  Timer? _restartDelayTimer;
-  bool isPaused = true;
-
-  
-  // Initiative State
-  late Initiative currentInitiative;
-  Initiative? nextInitiative;
-  bool onBreak = false;
-
-  // Flags
-  bool isNextAvailable = false;
-  bool isAllDone = false;
-
-  
-  // Derived getters
-  int get remainingSeconds => max(0, totalTimeSeconds - elapsedSeconds);
-
-  String get formattedTime {
-    final m = (remainingSeconds ~/ 60).toString().padLeft(2, '0');
-    final s = (remainingSeconds % 60).toString().padLeft(2, '0');
-    return '$m:$s';
-  }
-
-  int get totalTicks => (totalTimeSeconds / 60).ceil();
-
-  double get progress => totalTimeSeconds > 0 ? remainingSeconds / totalTimeSeconds : 0;
-
-
-
-  
-  // Lifecycle Methods
-  @override
-  void initState() {
-    super.initState();
-
-
-    // Initialize current initiative
-    currentInitiative = widget.initiative;
-
-    // Set total time for the initiative
-    totalTimeSeconds = toSeconds(currentInitiative.completionTime);
-
-    // Start timer after small delay
-    _restartDelayTimer = Timer(const Duration(milliseconds: 2000), () {
-      if (mounted) _startTimer();
-    });
-  }
-
-  @override
-  void dispose() {
-    _cancelTimers();
-    super.dispose();
-  }
-
-  
-  // Helper Methods
-  int toSeconds(AppTime time) => Duration(hours: time.hour, minutes: time.minute).inSeconds;
-
-  void _cancelTimers() {
-    _timer?.cancel();
-    _restartDelayTimer?.cancel();
-  }
-
-  // Start the timer
-  Future<void> _startTimer() async {
-    debugPrint("current=>${currentInitiative.title}, next=>${nextInitiative?.title}");
-
-    _cancelTimers();
-    setState(() => isPaused = false);
-
-    final intervalMs = clockSpeed != null
-        ? (1000 / clockSpeed!).floor().clamp(1, 1000)
-        : 1000;
-
-    _timer = Timer.periodic(Duration(milliseconds: intervalMs), (timer) {
-      if (!mounted) return;
-
-      setState(() {
-        if (elapsedSeconds < totalTimeSeconds) {
-          elapsedSeconds++;
-        } else {
-          timer.cancel();
-          _onComplete();
-        }
-      });
-    });
-  }
-
-  // Pause the timer
-  void _pauseTimer() {
-    _cancelTimers();
-    setState(() => isPaused = true);
-  }
-
-  // Restart timer from zero
-  void _restartTimer() {
-    _cancelTimers();
-    setState(() {
-      elapsedSeconds = 0;
-      isPaused = true;
-    });
-    _startTimer();
-  }
-
-  // Move to next initiative or break
-  void moveToNextInitiative() {
-    if (isAllDone) return;
-
-    if (!onBreak) {
-      // Switch to break
-      currentInitiative = Initiative(
-        index: -1,
-        title: currentInitiative.studyBreak.title,
-        completionTime: currentInitiative.studyBreak.completionTime,
-        id: currentInitiative.id, // link break to work initiative
-      );
-      onBreak = true;
-
-      // Precompute next initiative for UI
-
-      nextInitiative = getNextByCurrent(currentInitiative);
-      // nextInitiative = vm.getNextByCurrent(
-      //   // Use the previous work initiative to find the next
-      //     vm.latestMergedList.firstWhere(
-      //           (i) => i.id == currentInitiative.id,
-      //       orElse: () => currentInitiative,
-      //     )
-      // );
-
-    } else {
-      // Move to next initiative after break
-      if (nextInitiative != null) {
-        currentInitiative = nextInitiative!;
-        onBreak = false;
-      } else {
-        isAllDone = true;
-        _cancelTimers();
-      }
-    }
-
-    setState(() {
-      if (!isAllDone) {
-        totalTimeSeconds = toSeconds(currentInitiative.completionTime);
-        elapsedSeconds = 0;
-      }
-    });
-  }
-
-  Initiative? getNextByCurrent(Initiative current) {
-    final pos = widget.initiativeList.indexWhere((i) => i.id == current.id);
-    if (pos == -1 || pos + 1 >= widget.initiativeList.length) return null;
-    return widget.initiativeList[pos + 1];
-  }
-
-
-
-
-  // Called when timer completes
-  void _onComplete() {
-    _playStopSound();
-    widget.onComplete(currentInitiative,false);
-
-    moveToNextInitiative();
-
-    if (!isPaused && !isAllDone) {
-      _restartDelayTimer = Timer(const Duration(milliseconds: 2000), () {
-        if (mounted) _startTimer();
-      });
-    }
-  }
-
-  // Manual completion toggle
-  void _onManualComplete(bool? value) {
-    final newValue = value ?? false;
-    widget.onComplete(currentInitiative, true);
-    setState(() => currentInitiative.isComplete = newValue);
-  }
-
-  // Play completion sound
-  void _playStopSound() {
-    if (_timer?.isActive != true)
-    {
-      AudioManager().play(SoundEffect.success);
-    }
-  }
-
-  // Add time manually
-  void increaseTime(AppTime appTime) {
-    final addedSeconds = (appTime.hour * 60 + appTime.minute) * 60;
-    setState(() => totalTimeSeconds += addedSeconds);
-  }
-
-  
-  // UI
   @override
   Widget build(BuildContext context) {
-
+    final vm = context.watch<TimerViewModel>();
     final backgroundColor = Colors.blueGrey;
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -246,17 +61,18 @@ class _TimerPageState extends State<TimerPage> {
           children: [
             // Initiative or break title
             Text(
-              isAllDone
+              vm.isAllDone
                   ? "All tasks completed!"
-                  : (!onBreak ? currentInitiative.title : currentInitiative.studyBreak.title),
+                  : vm.currentInitiative.title,
               style: const TextStyle(color: Colors.white, fontSize: 32),
+              textAlign: TextAlign.center,
             ),
 
             // Timer circle
             Expanded(
               child: Center(
                 child: GestureDetector(
-                  onTap: isPaused ? _startTimer : _pauseTimer,
+                  onTap: vm.isPaused ? vm.startTimer : vm.pauseTimer,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -272,14 +88,16 @@ class _TimerPageState extends State<TimerPage> {
                               circleRadius * 2 - pieGraphGap,
                             ),
                             painter: PieChartPainter(
-                              color: isPaused
+                              color: vm.isPaused
                                   ? const Color.fromRGBO(255, 255, 255, 0.5)
                                   : Colors.white,
                               tickLength: tickLength,
-                              tickDistanceFromCenter: circleRadius - ringThickness - 15,
-                              numberDistanceFromCenter: circleRadius - ringThickness + numberDistanceOffset,
-                              progress: progress,
-                              totalNumberOfTicks: totalTicks,
+                              tickDistanceFromCenter:
+                                  circleRadius - ringThickness - 15,
+                              numberDistanceFromCenter:
+                                  circleRadius - ringThickness + numberDistanceOffset,
+                              progress: vm.progress,
+                              totalNumberOfTicks: vm.totalTicks,
                               showNumbers: showNumbers,
                               tickColor: tickColor,
                               numberColor: numberColor,
@@ -288,7 +106,7 @@ class _TimerPageState extends State<TimerPage> {
                           ),
                         ),
                       ),
-                      if (isPaused)
+                      if (vm.isPaused && !vm.isAllDone)
                         const Icon(Icons.pause, size: 100, color: Colors.white),
                     ],
                   ),
@@ -300,23 +118,23 @@ class _TimerPageState extends State<TimerPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
-                isAllDone ? "" : formattedTime,
+                vm.isAllDone ? "" : vm.formattedTime,
                 style: const TextStyle(color: Colors.white, fontSize: 32),
               ),
             ),
 
             // Controls (only when paused and tasks remain)
-            if (!isAllDone && isPaused) ...[
+            if (!vm.isAllDone && vm.isPaused) ...[
               ElevatedButton(
-                onPressed: () => increaseTime(AppTime(0, 5)),
+                onPressed: () => vm.increaseTime(AppTime(0, 5)),
                 child: const Text('+5'),
               ),
               ElevatedButton(
-                onPressed: moveToNextInitiative,
+                onPressed: vm.moveToNextInitiative,
                 child: const Text('Next'),
               ),
               ElevatedButton(
-                onPressed: _restartTimer,
+                onPressed: vm.restartTimer,
                 child: const Text('Restart'),
               ),
               Row(
@@ -324,8 +142,8 @@ class _TimerPageState extends State<TimerPage> {
                 children: [
                   const Text('Complete?', style: TextStyle(color: Colors.white)),
                   Checkbox(
-                    value: currentInitiative.isComplete,
-                    onChanged: _onManualComplete,
+                    value: vm.currentInitiative.isComplete,
+                    onChanged: vm.handleManualComplete,
                     activeColor: Colors.white,
                     checkColor: Colors.black,
                   ),
@@ -337,7 +155,9 @@ class _TimerPageState extends State<TimerPage> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                "next: ${onBreak ? (nextInitiative != null ? nextInitiative!.title : "No Initiative left") : currentInitiative.studyBreak.title}",
+                "next: ${vm.onBreak
+                    ? (vm.nextInitiative != null ? vm.nextInitiative!.title : "No Initiative left")
+                    : vm.currentInitiative.studyBreak.title}",
                 style: const TextStyle(color: Colors.white70, fontSize: 16),
               ),
             ),
