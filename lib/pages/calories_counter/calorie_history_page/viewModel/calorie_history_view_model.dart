@@ -19,23 +19,31 @@ class CalorieHistoryViewModel extends ChangeNotifier
   double excessCalories = 0;
 
 
-
-
-
-
-
   Future<void> loadMonthStats() async {
     await _loadMonthStats();
   }
 
 
-  //
 
   Future<void> _loadMonthStats() async {
     monthStatsMap = await FoodHistoryRepository.instance.getMonthStats(
       year: pageDateTime.year,
       month: pageDateTime.month,
     );
+
+
+
+    // final data = await FoodHistoryRepository.instance.getYearStats(year: pageDateTime.year);
+    // final Map<int, FoodStats> flattened = {};
+    //
+    // data.forEach((month, days) {
+    //   days.forEach((day, stats) {
+    //     final combinedKey = month * 100 + day; // e.g., 305 → March 5
+    //     flattened[combinedKey] = stats;
+    //   });
+    // });
+
+    // monthStatsMap = flattened;
 
     excessCalories = _calculateNetExcess(monthStatsMap);
 

@@ -5,6 +5,9 @@ import 'package:discipline_plus/pages/timer_page/viewModel/timer_view_model.dart
 import 'package:discipline_plus/pages/timer_page/widgets/pai_chart_painter.dart';
 import 'package:provider/provider.dart';
 
+final Color _backgroundColor = Colors.blueGrey[800]!;
+final Color _contentColor = Colors.white;
+
 class TimerPage extends StatelessWidget {
   final Initiative initiative;
   final List<Initiative> initiativeList;
@@ -20,18 +23,19 @@ class TimerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TimerViewModel(
-        initialInitiative: initiative,
-        initiativeList: initiativeList,
-        onComplete: onComplete,
-      ),
-      child: const _TimerPageBody(),
+      create: (_) =>
+          TimerViewModel(
+            initialInitiative: initiative,
+            initiativeList: initiativeList,
+            onComplete: onComplete,
+          ),
+      child: _TimerPageBody(),
     );
   }
 }
 
 class _TimerPageBody extends StatelessWidget {
-  const _TimerPageBody();
+  _TimerPageBody();
 
   // UI Constants
   final double circleRadius = 150.0;
@@ -39,21 +43,21 @@ class _TimerPageBody extends StatelessWidget {
   final double pieGraphGap = 60.0;
   final double tickLength = 10.0;
   final bool showNumbers = true;
-  final Color tickColor = Colors.white;
+  final Color tickColor = _contentColor;
   final double numberFontSize = 12.0;
-  final Color numberColor = Colors.white;
+  final Color numberColor = _contentColor;
   final double numberDistanceOffset = 30;
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TimerViewModel>();
-    final backgroundColor = Colors.blueGrey;
+    // final backgroundColor = Colors.blueGrey;
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
-        backgroundColor: backgroundColor,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: _backgroundColor,
+        iconTheme: IconThemeData(color: _contentColor),
         elevation: 0,
       ),
       body: SafeArea(
@@ -64,7 +68,7 @@ class _TimerPageBody extends StatelessWidget {
               vm.isAllDone
                   ? "All tasks completed!"
                   : vm.currentInitiative.title,
-              style: const TextStyle(color: Colors.white, fontSize: 32),
+              style: TextStyle(color: _contentColor, fontSize: 32),
               textAlign: TextAlign.center,
             ),
 
@@ -78,10 +82,10 @@ class _TimerPageBody extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: circleRadius,
-                        backgroundColor: Colors.white,
+                        backgroundColor: _contentColor,
                         child: CircleAvatar(
                           radius: circleRadius - ringThickness,
-                          backgroundColor: backgroundColor,
+                          backgroundColor: _backgroundColor,
                           child: CustomPaint(
                             size: Size(
                               circleRadius * 2 - pieGraphGap,
@@ -90,12 +94,12 @@ class _TimerPageBody extends StatelessWidget {
                             painter: PieChartPainter(
                               color: vm.isPaused
                                   ? const Color.fromRGBO(255, 255, 255, 0.5)
-                                  : Colors.white,
+                                  : _contentColor,
                               tickLength: tickLength,
                               tickDistanceFromCenter:
-                                  circleRadius - ringThickness - 15,
+                              circleRadius - ringThickness - 15,
                               numberDistanceFromCenter:
-                                  circleRadius - ringThickness + numberDistanceOffset,
+                              circleRadius - ringThickness + numberDistanceOffset,
                               progress: vm.progress,
                               totalNumberOfTicks: vm.totalTicks,
                               showNumbers: showNumbers,
@@ -107,7 +111,7 @@ class _TimerPageBody extends StatelessWidget {
                         ),
                       ),
                       if (vm.isPaused && !vm.isAllDone)
-                        const Icon(Icons.pause, size: 100, color: Colors.white),
+                        Icon(Icons.pause, size: 100, color: _contentColor),
                     ],
                   ),
                 ),
@@ -119,7 +123,7 @@ class _TimerPageBody extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
                 vm.isAllDone ? "" : vm.formattedTime,
-                style: const TextStyle(color: Colors.white, fontSize: 32),
+                style: TextStyle(color: _contentColor, fontSize: 32),
               ),
             ),
 
@@ -140,7 +144,7 @@ class _TimerPageBody extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Complete?', style: TextStyle(color: Colors.white)),
+                  Text('Complete?', style: TextStyle(color: _contentColor)),
                   Checkbox(
                     value: vm.currentInitiative.isComplete,
                     onChanged: vm.handleManualComplete,
@@ -158,7 +162,7 @@ class _TimerPageBody extends StatelessWidget {
                 "next: ${vm.onBreak
                     ? (vm.nextInitiative != null ? vm.nextInitiative!.title : "No Initiative left")
                     : vm.currentInitiative.studyBreak.title}",
-                style: const TextStyle(color: Colors.white70, fontSize: 16),
+                style: TextStyle(color: _contentColor.withValues(alpha: 0.5), fontSize: 16),
               ),
             ),
 

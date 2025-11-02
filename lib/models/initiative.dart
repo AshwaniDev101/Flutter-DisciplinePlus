@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:discipline_plus/models/study_break.dart';
 import '../core/utils/helper.dart';
 import 'app_time.dart';
@@ -6,16 +7,20 @@ import 'app_time.dart';
 class InitiativeCompletion {
   final String id;
   final bool isComplete;
+  final Timestamp timestamp;
 
   InitiativeCompletion({
     required this.id,
     required this.isComplete,
+    required this.timestamp,
   });
 
   factory InitiativeCompletion.fromMap(String id, Map<String, dynamic> map) {
     return InitiativeCompletion(
       id: id,
       isComplete: map['isComplete'] as bool? ?? false,
+      timestamp: map['timestamp'] as Timestamp,
+
     );
   }
 }
