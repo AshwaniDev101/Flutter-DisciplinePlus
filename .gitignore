@@ -76,7 +76,7 @@ app.*.symbols
 # Obfuscation
 app.*.map.json
 
-# Optional: Ignore metadata (not needed in repo)
+# Firebase configs and metadata
 .metadata
 /android/app/google-services.json
 /firestore.rules
@@ -84,3 +84,6 @@ app.*.map.json
 /lib/firebase_options.dart
 /firebase.json
 /.firebaserc
+
+# Local archive folder
+lib/_archive/
