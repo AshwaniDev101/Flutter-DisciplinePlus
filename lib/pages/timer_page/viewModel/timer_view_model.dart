@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:discipline_plus/models/initiative.dart';
 import 'package:discipline_plus/models/app_time.dart';
@@ -124,6 +125,7 @@ class TimerViewModel extends ChangeNotifier {
         title: originalInitiative.studyBreak.title,
         completionTime: originalInitiative.studyBreak.completionTime,
         id: originalInitiative.id, // link break to work initiative
+        timestamp: Timestamp.now()
       );
       onBreak = true;
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../models/app_time.dart';
@@ -86,6 +87,7 @@ class _NewInitiativeDialogWidgetState extends State<_NewInitiativeDialogWidget> 
         title: '$_break min break',
         completionTime: AppTime(0, _break),
       ),
+      timestamp: Timestamp.now(),
     );
 
     if (widget.onEditSave != null) {

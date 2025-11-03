@@ -7,9 +7,9 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../drawer/drawer.dart';
 import '../../models/initiative.dart';
 import '../../theme/app_colors.dart';
-import '../global_initiative_list_page/global_initiative_list/global_initiative_list_page.dart';
-import '../global_initiative_list_page/manager/global_list_manager.dart';
-import '../global_initiative_list_page/new_initiatives/new_initiative_dialog.dart';
+import '../global_initiative_list/global_initiative_list_page/global_initiative_list_page.dart';
+import '../global_initiative_list/global_initiative_list_page/manager/global_list_manager.dart';
+import '../global_initiative_list/new_initiatives_dialog/new_initiative_dialog.dart';
 import '../heatmap_page/heatmap_panel.dart';
 import '../timer_page/timer_page.dart';
 
@@ -62,7 +62,10 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
                     builder: (context) => GlobalInitiativeListPage(
                           currentWeekDay: vm.currentWeekDay,
                           onAdd: (initiative) {
-                            vm.addInitiativeIn(vm.currentWeekDay, initiative.id);
+
+
+                            vm.addInitiativeIn(vm.currentWeekDay, InitiativeCompletion.fromInitiative(initiative));
+
                           },
                         )));
               },

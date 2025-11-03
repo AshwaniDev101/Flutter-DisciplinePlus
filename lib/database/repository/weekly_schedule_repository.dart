@@ -15,8 +15,8 @@ class WeeklyScheduleRepository {
   }
 
   /// Add a new initiative to [day]
-  Future<void> add(String day, String initiativeID) {
-    return _service.addInitiative(day, initiativeID);
+  Future<void> add(String day, InitiativeCompletion initiativeCompletion) {
+    return _service.addInitiative(day, initiativeCompletion);
   }
 
   /// Delete initiative by [id] from [day]

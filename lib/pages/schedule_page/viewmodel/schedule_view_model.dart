@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../../database/repository/weekly_schedule_repository.dart';
 import '../../../../models/initiative.dart';
 import '../../../database/repository/heatmap_repository.dart';
-import '../../global_initiative_list_page/manager/global_list_manager.dart';
+import '../../global_initiative_list/global_initiative_list_page/manager/global_list_manager.dart';
 
 /// Singleton class to manage weekly initiatives, active day,
 /// and merging with global initiatives.
@@ -12,7 +12,13 @@ class ScheduleViewModel extends ChangeNotifier {
 
   ScheduleViewModel() {
     // Keep the latest merged initiatives cached
-    mergedDayInitiatives.listen((list) => _latestMerged = list);
+    // mergedDayInitiatives.listen((list) => _latestMerged = list);
+    mergedDayInitiatives.listen((list) {
+      _latestMerged = list;
+
+      print("'================= List Merged ===================");
+      print(_latestMerged);
+    } );
   }
   // static final ScheduleViewModel instance = ScheduleViewModel._internal();
 
@@ -72,8 +78,8 @@ class ScheduleViewModel extends ChangeNotifier {
       .shareReplay(maxSize: 1);
 
   /// Add an initiative to a given weekday
-  Future<void> addInitiativeIn(String weekDayName, String initiativeID) =>
-      _repository.add(weekDayName, initiativeID);
+  Future<void> addInitiativeIn(String weekDayName, InitiativeCompletion initiativeCompletion) =>
+      _repository.add(weekDayName, initiativeCompletion);
 
   /// Delete an initiative from a given weekday
   Future<void> deleteInitiativeFrom(String weekDayName, String id) =>
@@ -88,21 +94,40 @@ class ScheduleViewModel extends ChangeNotifier {
 
   /// Stream combining daily initiatives with schedule initiative
 
+  /// Merges the global initiatives with their daily completion states,
+  /// and sorts them by the completion timestamp.
   Stream<List<Initiative>> get mergedDayInitiatives {
-    return Rx.combineLatest2<Map<String, InitiativeCompletion>, List<Initiative>, List<Initiative>>(
-      schedule$,
-      GlobalListManager.instance.watch(),
+    return Rx.combineLatest2<
+        Map<String, InitiativeCompletion>,
+        List<Initiative>,
+        List<Initiative>>(
+      schedule$, // Stream of completion data for a given day
+      GlobalListManager.instance.watch(), // Stream of all global initiatives
           (dailyMap, globalList) {
-        return globalList
+        // keep only initiatives that exist in the daily map (completed ones)
+        final merged = globalList
             .where((i) => dailyMap.containsKey(i.id))
-            .map((i) => i.copyWith(isComplete: dailyMap[i.id]!.isComplete))
+            .map((i) {
+          final completion = dailyMap[i.id]!;
+          // merge initiative data with its completion state
+          return i.copyWith(
+            isComplete: completion.isComplete,
+            timestamp: completion.timestamp,
+          );
+        })
             .toList();
+
+        // sort by completion timestamp (oldest → newest)
+        merged.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+        return merged;
       },
     );
   }
 
 
-  List<Initiative> get latestMergedList => _latestMerged;
+  List<Initiative> get latestMergedList => _latestMerged;//? un-used for now
+
 
 
   // Initiative? getNextByCurrent(Initiative current) {

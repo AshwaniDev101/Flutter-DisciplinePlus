@@ -23,6 +23,24 @@ class InitiativeCompletion {
 
     );
   }
+
+  Map<String,dynamic> toMap() {
+    return {
+      'id': id,
+      'isComplete':isComplete,
+      'timestamp': timestamp,
+    };
+  }
+
+  factory InitiativeCompletion.fromInitiative(Initiative initiative)
+  {
+    return InitiativeCompletion(
+      id: initiative.id,
+      isComplete: initiative.isComplete,
+      timestamp: Timestamp.now(),
+    );
+
+  }
 }
 
 
@@ -35,6 +53,7 @@ class Initiative {
   bool isComplete;
   final StudyBreak studyBreak;
   int index;
+  Timestamp timestamp;
 
   Initiative({
     String? id,
@@ -44,6 +63,7 @@ class Initiative {
     this.isComplete = false,
     this.studyBreak = const StudyBreak(),
     required this.index,
+    required this.timestamp,
   }) : id = id ?? generateReadableTimestamp();
 
 
@@ -59,6 +79,7 @@ class Initiative {
       'completionTime': completionTime.toMap(),
       'studyBreak': studyBreak.toMap(),
       'index': index, // Add index to map
+      'timestamp': timestamp,
     };
   }
 
@@ -71,6 +92,7 @@ class Initiative {
       isComplete: map['isComplete'] as bool? ?? false,
       studyBreak: StudyBreak.fromMap(Map<String, dynamic>.from(map['studyBreak'])),
       index: map['index'] as int? ?? 0, // Safely load index or default to 0
+      timestamp: map['timestamp'] as Timestamp,
     );
   }
 
@@ -85,6 +107,7 @@ class Initiative {
     bool? isComplete,
     StudyBreak? studyBreak,
     int? index,
+    Timestamp? timestamp,
   }) {
     return Initiative(
       id: id ?? this.id,
@@ -94,6 +117,8 @@ class Initiative {
       isComplete: isComplete ?? this.isComplete,
       studyBreak: studyBreak ?? this.studyBreak,
       index: index ?? this.index,
+      timestamp: timestamp ?? this.timestamp,
+
     );
   }
 

@@ -14,7 +14,7 @@ class FirebaseGlobalInitiativeListService {
       _db.collection(_root).doc(_userId).collection('initiative_list');
 
   Stream<List<Initiative>> watchInitiatives() {
-    return _initiativeCollection.orderBy('index').snapshots().map(
+    return _initiativeCollection.orderBy('timestamp').snapshots().map(
           (snapshot) => snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         data['id'] = doc.id;

@@ -20,35 +20,45 @@ class FirebaseWeeklyScheduleService {
     return _initiativeCollection
         .doc(day)
         .collection(_initiative_list)
+        // .orderBy('timestamp')
         .snapshots()
-        .map((snapshot) {
-      final result = <String, InitiativeCompletion>{};
-
-      for (var doc in snapshot.docs) {
-        final data = doc.data();
-        // ensure data is Map<String, dynamic>
-        final mapData = Map<String, dynamic>.from(data);
-        result[doc.id] = InitiativeCompletion.fromMap(doc.id, mapData);
-      }
-
-      return result;
+        .map((snapshot) => {
+      for (var doc in snapshot.docs)
+        doc.id: InitiativeCompletion.fromMap(doc.id, doc.data())
     });
   }
+  // Stream<Map<String, InitiativeCompletion>> watchWeekDay(String day) {
+  //   return _initiativeCollection
+  //       .doc(day)
+  //       .collection(_initiative_list)
+  //       .snapshots()
+  //       .map((snapshot) {
+  //     final result = <String, InitiativeCompletion>{};
+  //
+  //     for (var doc in snapshot.docs) {
+  //       final data = doc.data();
+  //       // ensure data is Map<String, dynamic>
+  //       final mapData = Map<String, dynamic>.from(data);
+  //       result[doc.id] = InitiativeCompletion.fromMap(doc.id, mapData);
+  //     }
+  //
+  //     return result;
+  //   });
+  // }
 
 
 
 
 
   /// Add a new [initiative] under [day].
-  Future<void> addInitiative(String day, String initiativeID) {
+  Future<void> addInitiative(String day, InitiativeCompletion initiativeCompletion) {
     final ref = _initiativeCollection.doc(day)
         .collection(_initiative_list)
-        .doc(initiativeID);
+        .doc(initiativeCompletion.id);
     // final map = initiative.toMap()..remove('id');
-final map = {
-  'isComplete':false,
-  'index':0
-};
+
+    final map = initiativeCompletion.toMap()..remove('id');
+
 
     return ref.set(map);
   }

@@ -120,7 +120,7 @@ class _CalorieProgressBarDashboardState extends State<CalorieProgressBarDashboar
                               children: [
                                 Text(
 
-                                  '${formatNumber(caloriesCount)}',
+                                  formatNumber(caloriesCount),
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
