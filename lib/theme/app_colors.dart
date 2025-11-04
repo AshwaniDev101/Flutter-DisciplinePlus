@@ -7,16 +7,17 @@ class AppColors {
   static const Color third = Color(0xFF9ECFD4);
   static const Color fourth = Color(0xFFE5E9C5);
 
-
   // App bar
-  static  Color appbar = Colors.grey[100]!;
+  static Color appbar = Colors.grey[100]!;
 
   // Value for Colors.blueGrey.shade50
-  static  Color appbarContent = Color(0xFF546E7A);
+  static Color appbarContent = Color(0xFF546E7A);
+
   // static const Color appbarContent = Color(0xFFECEFF1);
 
-  static  Color backgroundColor = Colors.grey[100]!;
-  static  Color slideUpPanelColor = Colors.grey[100]!;
+  static Color backgroundColor = Colors.grey[100]!;
+  static Color slideUpPanelColor = Colors.grey[100]!;
+
   // Option Menu
   // Value for Colors.grey.shade50
   static const Color optionMenuBackground = Color(0xFFFAFAFA);
@@ -64,12 +65,24 @@ class AppColors {
   ];
 }
 
-
-
 class AppTextStyle {
   // Option Menu
-  static TextStyle optionMenuTextStyle = TextStyle(fontSize: 14, color: AppColors.optionMenuContent);
-  static TextStyle appBarTextStyle = TextStyle(fontSize: 18,fontWeight: FontWeight.bold, color: AppColors.appbarContent);
+  static final TextStyle optionMenuTextStyle = TextStyle(fontSize: 14, color: AppColors.optionMenuContent);
+  static final TextStyle appBarTextStyle =
+      TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.appbarContent);
+
+
+
+  // Card Text Style -- Calorie Counter
+  static final TextStyle textStyleCardTitle = TextStyle(
+    fontSize: 14, // more readable on mobile
+    color: Colors.blueGrey[800],
+    fontWeight: FontWeight.w600,
+  );
+
+  static final TextStyle textStyleCardSubTitle = TextStyle(
+    fontSize: 12,
+    color: Colors.grey[600],
+    fontWeight: FontWeight.w400,
+  );
 }
-
-
