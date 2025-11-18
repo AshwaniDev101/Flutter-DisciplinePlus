@@ -1,9 +1,10 @@
 
 import 'package:discipline_plus/database/repository/global_initiative_list_repository.dart';
 
+
 import '../../../../../models/initiative.dart';
 
-class GlobalListManager {
+class GlobalListManager{
   GlobalListManager._internal();
   static final GlobalListManager instance = GlobalListManager._internal();
 

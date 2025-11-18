@@ -28,7 +28,8 @@ class TimerViewModel extends ChangeNotifier {
   final Function(Initiative init, bool isManual) onComplete;
 
   // Timer & Test Settings
-  final int? clockSpeed = 80; // null = real-time, >1 = faster for testing
+  // final int? clockSpeed = 80; // null = real-time, >1 = faster for testing
+  final int? clockSpeed = null; // null = real-time, >1 = faster for testing
   late int totalTimeSeconds;
   int elapsedSeconds = 0;
   Timer? _timer;
