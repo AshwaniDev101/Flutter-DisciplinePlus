@@ -1,11 +1,17 @@
-
+import 'package:discipline_plus/pages/habit_tracker_page/habit_tracker_page.dart';
 import 'package:discipline_plus/pages/import_exporter/import_exporter_page.dart';
+import 'package:discipline_plus/pages/schedule_page/schedule_page.dart';
+import 'package:discipline_plus/pages/schedule_page/viewModel/schedule_view_model.dart';
 import 'package:discipline_plus/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
 import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
+
 import 'firebase_options.dart';
 import 'managers/audio_manager.dart';
+
 
 
 Future<void> main() async {
@@ -50,7 +56,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'DisciplinePlus',
         debugShowCheckedModeBanner: false,
-
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.light,
@@ -61,12 +66,13 @@ class MyApp extends StatelessWidget {
         //   child: SchedulePage(),
         // )
 
+        home: HabitTrackerPage()
         // home: SchedulePage(),
         // home: CaloriesCounterPage()
         // home: CalorieHistoryPage()
         // home: HomePage()
         // home: HabitTrackerDemo()
-        home: ImportExporterPage()
+        // home: ImportExporterPage()
         );
   }
 }
