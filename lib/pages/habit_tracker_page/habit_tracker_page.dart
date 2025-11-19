@@ -184,7 +184,7 @@ class _HabitTrackerPageState extends State<HabitTrackerPage> {
           children: [
             _buildHeader(overallProgress, todayCompleted, total),
             const SizedBox(height: 12),
-            ..._habits.map((h) => _buildHabitCard(h)).toList(),
+            ..._habits.map((h) => _buildHabitCard(h)),
             const SizedBox(height: 24),
           ],
         ),
@@ -421,7 +421,9 @@ class _HabitTrackerPageState extends State<HabitTrackerPage> {
                   onPressed: () {
                     // Mark entire month for this habit (demo convenience)
                     setState(() {
-                      for (final d in _monthDays) habit.completedDates.add(_dateKey(d));
+                      for (final d in _monthDays) {
+                        habit.completedDates.add(_dateKey(d));
+                      }
                     });
                   },
                   icon: const Icon(Icons.done_all),
@@ -432,7 +434,9 @@ class _HabitTrackerPageState extends State<HabitTrackerPage> {
                   onSelected: (v) {
                     if (v == 'clear') {
                       setState(() {
-                        for (final d in _monthDays) habit.completedDates.remove(_dateKey(d));
+                        for (final d in _monthDays) {
+                          habit.completedDates.remove(_dateKey(d));
+                        }
                       });
                     }
                   },
