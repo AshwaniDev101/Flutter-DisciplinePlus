@@ -29,6 +29,7 @@ class WeeklyScheduleRepository {
     return _service.completeInitiative(day, initiativeID, isComplete);
   }
 
+
   /// Reorder the list under [day] by updating each Initiative.index
   Future<void> reorderDayList(String day, List<Initiative> list) {
     return _service.reorderDayList(day, list);
