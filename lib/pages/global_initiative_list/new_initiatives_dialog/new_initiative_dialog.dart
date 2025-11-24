@@ -141,8 +141,8 @@ class _NewInitiativeDialogWidgetState extends State<_NewInitiativeDialogWidget> 
       ),
       actionsPadding: const EdgeInsets.all(16),
       actions: [
-        TextButton(onPressed: () => Navigator.of(c).pop(), child: const Text('Cancel')),
-        ElevatedButton(onPressed: _save, child: Text(widget.onEditSave != null ? 'Save' : 'Add')),
+        TextButton(onPressed: () => Navigator.of(c).pop(), child: const Text('Cancel',style: TextStyle(color: Colors.blue),)),
+        ElevatedButton(onPressed: _save, child: Text(widget.onEditSave != null ? 'Save' : 'Add', style: TextStyle(color: Colors.blue),)),
       ],
     );
   }

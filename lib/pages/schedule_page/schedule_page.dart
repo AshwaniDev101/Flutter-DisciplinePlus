@@ -1,4 +1,3 @@
-
 import 'package:discipline_plus/pages/schedule_page/viewModel/schedule_view_model.dart';
 import 'package:discipline_plus/pages/schedule_page/widgets/schedule_listview.dart';
 import 'package:flutter/material.dart';
@@ -24,52 +23,75 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
   final double _panelMinHeight = 80;
   final double _panelMaxHeight = 550;
 
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ScheduleViewModel>();
 
     return Scaffold(
       appBar: AppBar(
-        title: StreamBuilder<String>(
-            stream: vm.weekDayName$,
-            builder: (context, snapshot) {
-              final day = snapshot.data ?? '';
-              return Text(
-                day,
-                style: AppTextStyle.appBarTextStyle,
-              );
-            }),
+        automaticallyImplyLeading: false,
+        title: Builder(
+          builder: (context) {
+            return InkWell(
+              onTap: () {
+                Scaffold.of(context).openDrawer(); // THIS NOW WORKS
+              },
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.indigo.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.notes, color: Colors.indigo),
+                  ),
+                  const SizedBox(width: 12),
+                  StreamBuilder<String>(
+                    stream: vm.weekDayName$,
+                    builder: (context, snapshot) {
+                      final day = snapshot.data ?? '';
+                      return Text(
+                        day,
+                        style: AppTextStyle.appBarTextStyle,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
         iconTheme: IconThemeData(color: AppColors.appbarContent),
         backgroundColor: AppColors.appbar,
         surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
-              onPressed: () {
-                vm.toPreviousDay();
-                // ScheduleManager.instance.changeDay(ScheduleManager.instance.currentDay);
-              },
-              icon: Icon(Icons.keyboard_arrow_left_rounded)),
+            icon: const Icon(Icons.keyboard_arrow_left_rounded),
+            onPressed: () => vm.toPreviousDay(),
+          ),
           IconButton(
-              onPressed: () {
-                vm.toNextDay();
-                // ScheduleManager.instance.changeDay(ScheduleManager.instance.currentDay);
-              },
-              icon: Icon(Icons.keyboard_arrow_right_rounded)),
+            icon: const Icon(Icons.keyboard_arrow_right_rounded),
+            onPressed: () => vm.toNextDay(),
+          ),
           IconButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => GlobalInitiativeListPage(
-                          currentWeekDay: vm.currentWeekDay,
-                          onAdd: (initiative) {
-
-
-                            vm.addInitiativeIn(vm.currentWeekDay, InitiativeCompletion.fromInitiative(initiative));
-
-                          },
-                        )));
-              },
-              icon: Icon(Icons.add)),
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => GlobalInitiativeListPage(
+                    currentWeekDay: vm.currentWeekDay,
+                    onAdd: (initiative) {
+                      vm.addInitiativeIn(
+                        vm.currentWeekDay,
+                        InitiativeCompletion.fromInitiative(initiative),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
       drawer: const CustomDrawer(),
@@ -78,7 +100,6 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
         maxHeight: _panelMaxHeight,
         boxShadow: const <BoxShadow>[],
         color: AppColors.slideUpPanelColor,
-
         panel: HeatmapPanel(
           currentDateTime: vm.dateTimeNow,
         ),
@@ -108,7 +129,6 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
                     );
                   },
                   onItemComplete: (initiative, isComplete) {
-
                     vm.onComplete(initiative, isComplete);
                     // WeeklyScheduleRepository.instance.completeInitiative(vm.currentWeekDay, initiative.id, isComplete);
                     //
@@ -117,7 +137,6 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
                     // HeatmapRepository.instance
                     //     .updateEntry(heatmapID: HeatmapID.overallInitiative, date: dateTimeNow, value: latest);
                     //
-
                   },
                   onPlay: (initiative) {
                     Navigator.push(

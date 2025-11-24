@@ -40,12 +40,15 @@ class _GlobalInitiativeListviewState extends State<GlobalInitiativeListview> {
         return ListView.builder(
           itemBuilder: (context, index) {
             final initiative = initiatives[index];
-            return _GlobalInitiativeCard(
-                onAdd: widget.onAdd,
-                onEdit: widget.onEdit,
-                onDelete: widget.onDelete,
+            return Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: _GlobalInitiativeCard(
+                  onAdd: widget.onAdd,
+                  onEdit: widget.onEdit,
+                  onDelete: widget.onDelete,
 
-                initiative: initiative);
+                  initiative: initiative),
+            );
           },
           itemCount: initiatives.length,
         );
@@ -115,7 +118,7 @@ class _GlobalInitiativeCard extends StatelessWidget {
                             if (initiative.studyBreak.completionTime.minute != 0)
                               TextSpan(
                                 text:
-                                "   ${initiative.studyBreak.completionTime.minute}m brk",
+                                "   ${initiative.studyBreak.completionTime.minute}m break",
                                 style: scheduleBrake,
                               ),
                           ],

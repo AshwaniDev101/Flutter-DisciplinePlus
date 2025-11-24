@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
 
-/// Simple Habit model. `completedDates` stores days as 'yyyy-MM-dd' strings.
+void main() => runApp(const HabitApp());
+
+class HabitApp extends StatelessWidget {
+  const HabitApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      // title: 'Habit Tracker (Soft + Compact)',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+        scaffoldBackgroundColor: Colors.grey[50],
+        visualDensity: VisualDensity.compact,
+      ),
+      home: const HabitHomePage(),
+    );
+  }
+}
+
 class Habit {
   final String id;
   final String title;
   final Color color;
   final IconData icon;
-  final Set<String> completedDates;
+  final Set<String> completedDates; // stored as 'yyyy-M-d' for simplicity
 
   Habit({
     required this.id,
@@ -17,473 +36,342 @@ class Habit {
   }) : completedDates = completedDates ?? <String>{};
 }
 
-String _dateKey(DateTime d) =>
-    '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+String _dateKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
+const _weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-const List<String> _weekdayShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-/// Entry page for the habit tracker — shows a vertical list of habit cards.
-class HabitTrackerPage extends StatefulWidget {
-  const HabitTrackerPage({super.key});
+class HabitHomePage extends StatefulWidget {
+  const HabitHomePage({super.key});
 
   @override
-  State<HabitTrackerPage> createState() => _HabitTrackerPageState();
+  State<HabitHomePage> createState() => _HabitHomePageState();
 }
 
-class _HabitTrackerPageState extends State<HabitTrackerPage> {
+class _HabitHomePageState extends State<HabitHomePage> {
   final DateTime _now = DateTime.now();
-  late final int _daysInMonth;
   late final List<DateTime> _monthDays;
-
-  // Example habits: replace with your data source later
   final List<Habit> _habits = [];
 
   @override
   void initState() {
     super.initState();
-    _daysInMonth = DateTime(_now.year, _now.month + 1, 0).day;
-    _monthDays = List.generate(
-      _daysInMonth,
-          (i) => DateTime(_now.year, _now.month, i + 1),
-    );
+    final daysInMonth = DateTime(_now.year, _now.month + 1, 0).day;
+    _monthDays = List.generate(daysInMonth, (i) => DateTime(_now.year, _now.month, i + 1));
 
-    // Seed example habits
+    // softer / pastel colors (lighter shades)
     _habits.addAll([
       Habit(
-        id: 'h1',
+        id: 'a',
         title: 'Morning Run',
-        color: Colors.orange,
+        color: Colors.orange.shade300,
         icon: Icons.directions_run,
-        completedDates: {
-          _dateKey(DateTime(_now.year, _now.month, _now.day)), // today
-          _dateKey(DateTime(_now.year, _now.month, _now.day - 1)),
-        },
+        completedDates: {_dateKey(_now), _dateKey(_now.subtract(const Duration(days: 1)))},
       ),
       Habit(
-        id: 'h2',
-        title: 'Read (30 min)',
-        color: Colors.blue,
+        id: 'b',
+        title: 'Read 30m',
+        color: Colors.blue.shade300,
         icon: Icons.menu_book,
-        completedDates: {
-          _dateKey(DateTime(_now.year, _now.month, (_now.day - 2).clamp(1, _daysInMonth))),
-        },
+        completedDates: {_dateKey(_now.subtract(const Duration(days: 2)))},
       ),
-      Habit(
-        id: 'h3',
-        title: 'Meditation',
-        color: Colors.green,
-        icon: Icons.self_improvement,
-      ),
-      Habit(
-        id: 'h4',
-        title: 'Practice Coding',
-        color: Colors.purple,
-        icon: Icons.code,
-      ),
+      Habit(id: 'c', title: 'Meditation', color: Colors.green.shade300, icon: Icons.self_improvement),
+      Habit(id: 'd', title: 'Drink Water', color: Colors.teal.shade300, icon: Icons.water),
+      Habit(id: 'e', title: 'Learn Coding', color: Colors.purple.shade300, icon: Icons.code),
     ]);
   }
 
-  bool _isDoneOn(Habit habit, DateTime day) => habit.completedDates.contains(_dateKey(day));
-
-  void _toggle(Habit habit, DateTime day) {
-    final key = _dateKey(day);
+  bool _doneOn(Habit h, DateTime d) => h.completedDates.contains(_dateKey(d));
+  void _toggle(Habit h, DateTime d) {
+    final k = _dateKey(d);
     setState(() {
-      if (habit.completedDates.contains(key)) {
-        habit.completedDates.remove(key);
-      } else {
-        habit.completedDates.add(key);
-      }
-    });
-  }
-
-  int _currentStreak(Habit habit) {
-    int streak = 0;
-    DateTime cursor = DateTime(_now.year, _now.month, _now.day);
-    while (_isDoneOn(habit, cursor)) {
-      streak++;
-      cursor = cursor.subtract(const Duration(days: 1));
-    }
-    return streak;
-  }
-
-  int _longestStreak(Habit habit) {
-    if (habit.completedDates.isEmpty) return 0;
-    final dates = habit.completedDates
-        .map((s) {
-      final p = s.split('-');
-      return DateTime(int.parse(p[0]), int.parse(p[1]), int.parse(p[2]));
-    })
-        .toList()
-      ..sort();
-    int longest = 1;
-    int current = 1;
-    for (var i = 1; i < dates.length; i++) {
-      final diff = dates[i].difference(dates[i - 1]).inDays;
-      if (diff == 1) {
-        current++;
-        if (current > longest) longest = current;
-      } else if (diff > 1) {
-        current = 1;
-      }
-    }
-    return longest;
-  }
-
-  double _habitProgress(Habit habit) {
-    if (_monthDays.isEmpty) return 0.0;
-    final completed = habit.completedDates.where((k) {
-      // count only dates in this month
-      return k.startsWith('${_now.year.toString().padLeft(4, '0')}-${_now.month.toString().padLeft(2, '0')}');
-    }).length;
-    return completed / _monthDays.length;
-  }
-
-  void _markAllToday() {
-    final todayKey = _dateKey(DateTime(_now.year, _now.month, _now.day));
-    setState(() {
-      for (final h in _habits) {
-        h.completedDates.add(todayKey);
-      }
-    });
-  }
-
-  void _clearAllToday() {
-    final todayKey = _dateKey(DateTime(_now.year, _now.month, _now.day));
-    setState(() {
-      for (final h in _habits) {
-        h.completedDates.remove(todayKey);
-      }
+      if (h.completedDates.contains(k)) h.completedDates.remove(k);
+      else h.completedDates.add(k);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final total = _habits.length;
-    final todayCompleted = _habits.where((h) => _isDoneOn(h, DateTime(_now.year, _now.month, _now.day))).length;
-    final overallProgress = total == 0 ? 0.0 : todayCompleted / total;
+    final today = DateTime(_now.year, _now.month, _now.day);
+    final doneToday = _habits.where((h) => _doneOn(h, today)).length;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Habit Tracker'),
-        actions: [
-          IconButton(
-            tooltip: 'Mark all done today',
-            onPressed: _markAllToday,
-            icon: const Icon(Icons.done_all),
-          ),
-          IconButton(
-            tooltip: 'Clear today',
-            onPressed: _clearAllToday,
-            icon: const Icon(Icons.clear_all),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: ListView(
-          children: [
-            _buildHeader(overallProgress, todayCompleted, total),
-            const SizedBox(height: 12),
-            ..._habits.map((h) => _buildHabitCard(h)),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(double overallProgress, int doneCount, int total) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 86,
-              height: 86,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    value: 1,
-                    strokeWidth: 10,
-                    valueColor: AlwaysStoppedAnimation(Colors.grey.shade200),
-                  ),
-                  TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0, end: overallProgress),
-                    duration: const Duration(milliseconds: 500),
-                    builder: (context, value, child) {
-                      final color = value < 0.4
-                          ? Colors.orange
-                          : (value < 0.9 ? Colors.blue : Colors.green);
-                      return CircularProgressIndicator(
-                        value: value,
-                        strokeWidth: 10,
-                        valueColor: AlwaysStoppedAnimation(color),
-                      );
-                    },
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('${(overallProgress * 100).toInt()}%',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text('$doneCount / $total', style: const TextStyle(fontSize: 12)),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Today • ${_now.day}-${_now.month}-${_now.year}',
-                      style: TextStyle(color: Colors.grey.shade700)),
-                  const SizedBox(height: 6),
-                  const Text('Your Habits', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
-                    children: [
-                      _StatChip(label: 'Total', value: '$total', color: Colors.indigo, icon: Icons.list),
-                      _StatChip(label: 'Done Today', value: '$doneCount', color: Colors.green, icon: Icons.check_circle),
-                      _StatChip(label: 'Month Days', value: '$_daysInMonth', color: Colors.teal, icon: Icons.calendar_today),
-                    ],
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHabitCard(Habit habit) {
-    final curr = _currentStreak(habit);
-    final longest = _longestStreak(habit);
-    final progress = _habitProgress(habit);
-
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // header row
-            Row(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            // title: const Text('Habits'),
+            title: Row(
               children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: habit.color.withOpacity(0.14),
-                  child: Icon(habit.icon, color: habit.color),
+                Container(
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(color: Colors.indigo.shade50, borderRadius: BorderRadius.circular(10)),
+                  child: Icon(Icons.notes, color: Colors.indigo),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(habit.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 4),
-                      Text('Streak: $curr  •  Longest: $longest', style: const TextStyle(fontSize: 12, color: Colors.black54)),
-                    ],
-                  ),
-                ),
-                // small progress indicator
-                SizedBox(
-                  width: 56,
-                  height: 56,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        value: 1,
-                        strokeWidth: 6,
-                        valueColor: AlwaysStoppedAnimation(Colors.grey.shade200),
-                      ),
-                      CircularProgressIndicator(
-                        value: progress,
-                        strokeWidth: 6,
-                        valueColor: AlwaysStoppedAnimation(habit.color),
-                      ),
-                      Text('${(progress * 100).toInt()}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+                SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Habit Tracker', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700)),
 
-            const SizedBox(height: 12),
-
-            // weekday labels (aligned to each day cell)
-            SizedBox(
-              height: 22,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  children: _monthDays.map((d) {
-                    return Container(
-                      width: 56,
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.only(right: 6),
-                      child: Text(
-                        _weekdayShort[d.weekday % 7],
-                        style: const TextStyle(fontSize: 12, color: Colors.black54, fontWeight: FontWeight.w500),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 6),
-
-            // day circles (scrollable horizontally)
-            SizedBox(
-              height: 68,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  children: _monthDays.map((d) {
-                    final done = _isDoneOn(habit, d);
-                    return GestureDetector(
-                      onTap: () => _toggle(habit, d),
-                      child: Container(
-                        width: 56,
-                        margin: const EdgeInsets.only(right: 6),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 220),
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: done ? habit.color : Colors.transparent,
-                                borderRadius: BorderRadius.circular(44),
-                                border: Border.all(color: done ? habit.color : Colors.grey.shade300, width: 1.4),
-                                boxShadow: done
-                                    ? [
-                                  BoxShadow(
-                                    color: habit.color.withOpacity(0.18),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
-                                  )
-                                ]
-                                    : null,
-                              ),
-                              child: Center(
-                                child: done
-                                    ? const Icon(Icons.check, size: 20, color: Colors.white)
-                                    : Text('${d.day}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text('${d.day}', style: const TextStyle(fontSize: 11, color: Colors.black54)),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            // action row
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: habit.color,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onPressed: () {
-                    // quick toggle today for this habit
-                    _toggle(habit, DateTime(_now.year, _now.month, _now.day));
-                  },
-                  icon: Icon(_isDoneOn(habit, DateTime(_now.year, _now.month, _now.day)) ? Icons.done : Icons.radio_button_unchecked),
-                  label: Text(_isDoneOn(habit, DateTime(_now.year, _now.month, _now.day)) ? 'Done Today' : 'Mark Today'),
-                ),
-                const SizedBox(width: 10),
-                OutlinedButton.icon(
-                  onPressed: () {
-                    // Mark entire month for this habit (demo convenience)
-                    setState(() {
-                      for (final d in _monthDays) {
-                        habit.completedDates.add(_dateKey(d));
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.done_all),
-                  label: const Text('Mark Month'),
-                ),
-                const SizedBox(width: 8),
-                PopupMenuButton<String>(
-                  onSelected: (v) {
-                    if (v == 'clear') {
-                      setState(() {
-                        for (final d in _monthDays) {
-                          habit.completedDates.remove(_dateKey(d));
-                        }
-                      });
-                    }
-                  },
-                  itemBuilder: (_) => [
-                    const PopupMenuItem(value: 'clear', child: Text('Clear month')),
                   ],
                 )
               ],
-            )
-          ],
-        ),
+            ),
+            // centerTitle: true, // removed
+            floating: true,
+            pinned: false,
+            backgroundColor: Colors.grey[50],
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            // leading: IconButton(
+            //   icon: const Icon(Icons.menu),
+            //   onPressed: () {},
+            // ),
+            actions: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.calendar_month_rounded, size: 20)),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.add, size: 24),
+              ),
+            ],
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: _buildTopCard(doneToday),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => HabitTile(
+                  habit: _habits[index],
+                  monthDays: _monthDays,
+                  now: _now,
+                  onToggle: _toggle,
+                ),
+                childCount: _habits.length,
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+        ],
       ),
+    );
+  }
+
+  Widget _buildTopCard(int doneToday) {
+    final total = _habits.length;
+    final percent = total == 0 ? 0.0 : doneToday / total;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12, offset: const Offset(0, 6))],
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 80,
+            height: 80,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: CircularProgressIndicator(
+                    value: 1,
+                    strokeWidth: 9,
+                    valueColor: AlwaysStoppedAnimation(Colors.grey.shade100),
+                  ),
+                ),
+                SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: percent),
+                    duration: const Duration(milliseconds: 500),
+                    builder: (context, v, child) {
+                      final color = v < 0.4 ? Colors.orange.shade300 : (v < 0.9 ? Colors.blue.shade300 : Colors.green.shade300);
+                      return CircularProgressIndicator(value: v, strokeWidth: 9, strokeCap: StrokeCap.round, valueColor: AlwaysStoppedAnimation(color));
+                    },
+                  ),
+                ),
+                Column(mainAxisSize: MainAxisSize.min, children: [
+                  Text('${(percent * 100).toInt()}%', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text('$doneToday / $total', style: const TextStyle(fontSize: 10, color: Colors.black54)),
+                ]),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Today', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[800])),
+                  Text('${_now.day}/${_now.month}/${_now.year}', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(child: _roundedStat('Habits', '$total', Icons.list_alt, Colors.indigo.shade300)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _roundedStat('Done', '$doneToday', Icons.check_circle, Colors.green.shade300)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _roundedStat('Month', '${_monthDays.length}', Icons.calendar_month, Colors.teal.shade300)),
+                ],
+              ),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _roundedStat(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+      child: Column(children: [
+        Icon(icon, color: color, size: 18),
+        const SizedBox(height: 4),
+        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+        Text(label, style: const TextStyle(fontSize: 10, color: Colors.black54), overflow: TextOverflow.ellipsis),
+      ]),
     );
   }
 }
 
-/// Small reusable stat chip used in the header.
-class _StatChip extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color color;
-  final IconData icon;
-  const _StatChip({
-    required this.label,
-    required this.value,
-    required this.color,
-    required this.icon,
+class HabitTile extends StatefulWidget {
+  final Habit habit;
+  final List<DateTime> monthDays;
+  final DateTime now;
+  final Function(Habit, DateTime) onToggle;
+
+  const HabitTile({
+    super.key,
+    required this.habit,
+    required this.monthDays,
+    required this.now,
+    required this.onToggle,
   });
 
   @override
+  State<HabitTile> createState() => _HabitTileState();
+}
+
+class _HabitTileState extends State<HabitTile> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        final dayIndex = widget.now.day - 1;
+        final itemWidth = 42.0;
+        final viewportWidth = _scrollController.position.viewportDimension;
+        final offset = (dayIndex * itemWidth) - (viewportWidth / 2) + (itemWidth / 2);
+        _scrollController.jumpTo(offset.clamp(0.0, _scrollController.position.maxScrollExtent));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  bool _doneOn(DateTime d) => widget.habit.completedDates.contains(_dateKey(d));
+
+  int _streak() {
+    int s = 0;
+    DateTime cursor = DateTime(widget.now.year, widget.now.month, widget.now.day);
+    while (_doneOn(cursor)) {
+      s++;
+      cursor = cursor.subtract(const Duration(days: 1));
+    }
+    return s;
+  }
+
+  double _weeklyProgress() {
+    final last7 = List.generate(7, (i) => DateTime(widget.now.year, widget.now.month, widget.now.day).subtract(Duration(days: i)));
+    final done = last7.where((d) => _doneOn(d)).length;
+    return done / last7.length;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final weekly = _weeklyProgress();
+    final streak = _streak();
+    final h = widget.habit;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: const Offset(0, 6))],
       ),
-      child: Row(children: [
-        Icon(icon, size: 14, color: color),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: const TextStyle(fontSize: 11, color: Colors.black54)),
-            Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color)),
-          ],
-        )
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          CircleAvatar(radius: 18, backgroundColor: h.color.withOpacity(0.18), child: Icon(h.icon, color: h.color, size: 16)),
+          const SizedBox(width: 10),
+          Expanded(child: Text(h.title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600))),
+          const SizedBox(width: 6),
+          Column(children: [
+            Text('${(weekly * 100).toInt()}%', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            const SizedBox(height: 2),
+            Text('Streak: $streak', style: const TextStyle(fontSize: 11, color: Colors.black54)),
+          ]),
+        ]),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 60,
+          child: ListView.builder(
+            controller: _scrollController,
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.monthDays.length,
+            itemBuilder: (c, i) {
+              final d = widget.monthDays[i];
+              final done = _doneOn(d);
+              final isToday = d.year == widget.now.year && d.month == widget.now.month && d.day == widget.now.day;
+
+              return Padding(
+                padding: const EdgeInsets.only(right: 6),
+                child: GestureDetector(
+                  onTap: () => widget.onToggle(h, d),
+                  child: Column(children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: done ? h.color.withOpacity(0.34) : Colors.grey[100],
+                        borderRadius: BorderRadius.circular(999),
+                        boxShadow: done ? [BoxShadow(color: h.color.withOpacity(0.18), blurRadius: 8, offset: const Offset(0, 4))] : null,
+                        border: isToday
+                            ? Border.all(color: Colors.amber, width: 2)
+                            : Border.all(color: done ? h.color.withOpacity(0.7) : Colors.grey.shade300),
+                      ),
+                      child: Center(child: done ? const Icon(Icons.check, color: Colors.white, size: 14) : Text('${d.day}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                    ),
+                    const SizedBox(height: 4),
+                    SizedBox(width: 36, child: Text(_weekDays[d.weekday - 1], textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.black54))),
+                  ]),
+                ),
+              );
+            },
+          ),
+        ),
       ]),
     );
   }
