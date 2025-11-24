@@ -136,7 +136,7 @@ class _NotesHomeScreenState extends State<NotesHomeScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('My Notes', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700)),
+              Text('Log Notes', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700)),
               SizedBox(height: 4),
               Text('${sampleNotes.length} logs', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
             ],
