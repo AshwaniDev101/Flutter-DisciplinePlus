@@ -9,29 +9,40 @@ DisciplinePlus is a lightweight, offline-first productivity app I built to help 
 
 <div style="text-align: center">
   <img src="screenshots/drawer.jpg" width="22%" alt="Drawer Menu" />
-  <img src="screenshots/lm_tags.jpg" width="22%" alt="Tags Management" />
-  <img src="screenshots/im_global.jpg" width="22%" alt="Global Initiatives" />
-  <img src="screenshots/lm_a_notes.jpg" width="22%" alt="Notes View" />
-</div>
-
-<div style="text-align: center">
-  <img src="screenshots/lm_new_log.jpg" width="22%" alt="New Log Entry" />
   <img src="screenshots/im_homepage.jpg" width="22%" alt="Initiative Homepage" />
   <img src="screenshots/lm_homepage.jpg" width="22%" alt="Log Homepage" />
   <img src="screenshots/htm_homepage.jpg" width="22%" alt="Habit Tracker Homepage" />
+
+
 </div>
 
 <div style="text-align: center">
+
   <img src="screenshots/im_homepage_c.jpg" width="22%" alt="Initiative Completed" />
-  <img src="screenshots/im_homepage_nc.jpg" width="22%" alt="Initiative Not Completed" />
-  <img src="screenshots/im_global_new_i.jpg" width="22%" alt="New Initiative" />
+  <img src="screenshots/im_global.jpg" width="22%" alt="Global Initiatives" />
+  <img src="screenshots/im_homepage_heatmap.jpg" width="22%" alt="Heatmap" />
   <img src="screenshots/timerpage_pause.jpg" width="22%" alt="Timer Paused" />
+
+[//]: # (  <img src="screenshots/im_global_new_i.jpg" width="22%" alt="New Initiative" />)
+[//]: # (  <img src="screenshots/timerpage_unpause.jpg" width="22%" alt="Timer Running" />)
+[//]: # (  <img src="screenshots/im_homepage_nc.jpg" width="22%" alt="Initiative Not Completed" />)
+[//]: # (  <img src="screenshots/im_homepage.jpg" width="22%" alt="Initiative Homepage" />)
 </div>
 
 <div style="text-align: center">
-  <img src="screenshots/im_user_settings.jpg" width="22%" alt="User Settings" />
-  <img src="screenshots/timerpage_unpause.jpg" width="22%" alt="Timer Running" />
-  <img src="screenshots/im_homepage_heatmap.jpg" width="22%" alt="Heatmap" />
+  <img src="screenshots/lm_homepage.jpg" width="22%" alt="Log Homepage" />
+  <img src="screenshots/lm_new_log.jpg" width="22%" alt="New Log Entry" />
+  <img src="screenshots/lm_a_notes.jpg" width="22%" alt="Notes View" />
+  <img src="screenshots/lm_tags.jpg" width="22%" alt="Tags Management" />
+
+[//]: # (  <img src="screenshots/lm_user_settings.jpg" width="22%" alt="User Settings" />)
+
+
+</div>
+
+<div style="text-align: center">
+  <img src="screenshots/htm_homepage.jpg" width="22%" alt="Habit Tracker Homepage" />
+
 </div>
 
 ---
