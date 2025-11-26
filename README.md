@@ -7,12 +7,32 @@ DisciplinePlus is a lightweight, offline-first productivity app I built to help 
 
 ## 📸 Screenshots
 
+<p align="center">
+  <img src="screenshots/drawer.jpg" width="22%" />
+  <img src="screenshots/lm_tags.jpg" width="22%" />
+  <img src="screenshots/im_global.jpg" width="22%" />
+  <img src="screenshots/lm_a_notes.jpg" width="22%" />
+</p>
 
-![Homepage](screenshots/im_homepage.jpg)  
-![Heatmap](screenshots/im_homepage_heatmap.jpg)  
-![New Log](screenshots/im_new_log.jpg)  
-![Drawer](screenshots/drawer.jpg)  
-![Timer Paused](screenshots/timerpage_pause.jpg)
+<p align="center">
+  <img src="screenshots/lm_new_log.jpg" width="22%" />
+  <img src="screenshots/im_homepage.jpg" width="22%" />
+  <img src="screenshots/lm_homepage.jpg" width="22%" />
+  <img src="screenshots/htm_homepage.jpg" width="22%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/im_homepage_c.jpg" width="22%" />
+  <img src="screenshots/im_homepage_nc.jpg" width="22%" />
+  <img src="screenshots/im_global_new_i.jpg" width="22%" />
+  <img src="screenshots/timerpage_pause.jpg" width="22%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/im_user_settings.jpg" width="22%" />
+  <img src="screenshots/timerpage_unpause.jpg" width="22%" />
+  <img src="screenshots/im_homepage_heatmap.jpg" width="22%" />
+</p>
 
 ---
 
@@ -59,7 +79,7 @@ Password protection is optional based on user settings.
 ```bash
 git clone git clone https://github.com/AshwaniDev101/Flutter-DisciplinePlus.git
 cd Flutter-DisciplinePlus
-
+```
 
 MIT License  
 © 2025 Ashwani yadav
