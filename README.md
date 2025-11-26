@@ -25,10 +25,12 @@ DisciplinePlus is a lightweight, offline-first productivity app I built to help 
 
 ### 📝 Daily Log & Notes
 <div style="text-align: center">
+  <img src="screenshots/lm_homepage.jpg" width="22%" alt="Log Module Homepage" />
   <img src="screenshots/lm_new_log.jpg" width="22%" alt="New Log Entry" />
   <img src="screenshots/lm_a_notes.jpg" width="22%" alt="Notes List" />
   <img src="screenshots/lm_tags.jpg" width="22%" alt="Tags Management" />
-  <img src="screenshots/im_user_settings.jpg" width="22%" alt="User Settings" />
+
+[//]: # (  <img src="screenshots/lm_user_settings.jpg" width="22%" alt="User Settings" />)
 </div>
 
 ### 🔥 Habit Tracker
