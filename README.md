@@ -9,7 +9,7 @@ DisciplinePlus is a lightweight, offline-first productivity app I built to help 
 
 ### 📱 App Overview
 <div style="text-align: center">
-  <img src="screenshots/drawer.jpg" width="22%" alt="Drawer Menu" />
+  <img src="doc/screenshots/drawer.jpg" width="22%" alt="Drawer Menu" />
   <img src="doc/screenshots/im_homepage.jpg" width="22%" alt="Initiative Homepage" />
   <img src="doc/screenshots/lm_homepage.jpg" width="22%" alt="Log Homepage" />
   <img src="doc/screenshots/htm_homepage.jpg" width="22%" alt="Habit Tracker Homepage" />
