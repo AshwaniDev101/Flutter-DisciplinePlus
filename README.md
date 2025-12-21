@@ -10,32 +10,32 @@ DisciplinePlus is a lightweight, offline-first productivity app I built to help 
 ### 📱 App Overview
 <div style="text-align: center">
   <img src="screenshots/drawer.jpg" width="22%" alt="Drawer Menu" />
-  <img src="screenshots/im_homepage.jpg" width="22%" alt="Initiative Homepage" />
-  <img src="screenshots/lm_homepage.jpg" width="22%" alt="Log Homepage" />
-  <img src="screenshots/htm_homepage.jpg" width="22%" alt="Habit Tracker Homepage" />
+  <img src="doc/screenshots/im_homepage.jpg" width="22%" alt="Initiative Homepage" />
+  <img src="doc/screenshots/lm_homepage.jpg" width="22%" alt="Log Homepage" />
+  <img src="doc/screenshots/htm_homepage.jpg" width="22%" alt="Habit Tracker Homepage" />
 </div>
 
 ### 🎯 Initiative Manager
 <div style="text-align: center">
-  <img src="screenshots/im_global.jpg" width="22%" alt="Global Initiatives" />
-  <img src="screenshots/im_homepage_c.jpg" width="22%" alt="Completed Initiatives" />
-  <img src="screenshots/timerpage_pause.jpg" width="22%" alt="Timer Function" />
-  <img src="screenshots/im_homepage_heatmap.jpg" width="22%" alt="Initiative Heatmap" />
+  <img src="doc/screenshots/im_global.jpg" width="22%" alt="Global Initiatives" />
+  <img src="doc/screenshots/im_homepage_c.jpg" width="22%" alt="Completed Initiatives" />
+  <img src="doc/screenshots/timerpage_pause.jpg" width="22%" alt="Timer Function" />
+  <img src="doc/screenshots/im_homepage_heatmap.jpg" width="22%" alt="Initiative Heatmap" />
 </div>
 
 ### 📝 Daily Log & Notes
 <div style="text-align: center">
-  <img src="screenshots/lm_homepage.jpg" width="22%" alt="Log Module Homepage" />
-  <img src="screenshots/lm_new_log.jpg" width="22%" alt="New Log Entry" />
-  <img src="screenshots/lm_a_notes.jpg" width="22%" alt="Notes List" />
-  <img src="screenshots/lm_tags.jpg" width="22%" alt="Tags Management" />
+  <img src="doc/screenshots/lm_homepage.jpg" width="22%" alt="Log Module Homepage" />
+  <img src="doc/screenshots/lm_new_log.jpg" width="22%" alt="New Log Entry" />
+  <img src="doc/screenshots/lm_a_notes.jpg" width="22%" alt="Notes List" />
+  <img src="doc/screenshots/lm_tags.jpg" width="22%" alt="Tags Management" />
 
 [//]: # (  <img src="screenshots/lm_user_settings.jpg" width="22%" alt="User Settings" />)
 </div>
 
 ### 🔥 Habit Tracker
 <div style="text-align: center">
-  <img src="screenshots/htm_homepage.jpg" width="22%" alt="Habit Tracker Overview" />
+  <img src="doc/screenshots/htm_homepage.jpg" width="22%" alt="Habit Tracker Overview" />
 </div>
 
 ---
