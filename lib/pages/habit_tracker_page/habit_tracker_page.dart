@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(const HabitApp());
 
 class HabitApp extends StatelessWidget {
   const HabitApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,6 +39,7 @@ class Habit {
 }
 
 String _dateKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
+
 const _weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 class HabitHomePage extends StatefulWidget {
@@ -50,6 +53,7 @@ class _HabitHomePageState extends State<HabitHomePage> {
   final DateTime _now = DateTime.now();
   late final List<DateTime> _monthDays;
   final List<Habit> _habits = [];
+  late SharedPreferences _prefs;
 
   @override
   void initState() {
@@ -77,22 +81,74 @@ class _HabitHomePageState extends State<HabitHomePage> {
       Habit(id: 'd', title: 'Drink Water', color: Colors.teal.shade300, icon: Icons.water),
       Habit(id: 'e', title: 'Learn Coding', color: Colors.purple.shade300, icon: Icons.code),
     ]);
+
+    _initializePreferences();
+  }
+
+  Future<void> _initializePreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    await _loadHabits();
+  }
+
+  Future<void> _loadHabits() async {
+    for (final habit in _habits) {
+      final savedKey = 'habit_${habit.id}_completed';
+      final saved = _prefs.getString(savedKey);
+      if (saved != null && saved.isNotEmpty) {
+        habit.completedDates.addAll(saved.split(','));
+      }
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _saveHabit(Habit habit) async {
+    final savedKey = 'habit_${habit.id}_completed';
+    await _prefs.setString(savedKey, habit.completedDates.join(','));
   }
 
   bool _doneOn(Habit h, DateTime d) => h.completedDates.contains(_dateKey(d));
+
   void _toggle(Habit h, DateTime d) {
     final k = _dateKey(d);
     setState(() {
-      if (h.completedDates.contains(k)) h.completedDates.remove(k);
-      else h.completedDates.add(k);
+      if (h.completedDates.contains(k)) {
+        h.completedDates.remove(k);
+      } else {
+        h.completedDates.add(k);
+      }
     });
+    // Persist the change during runtime (demo persistence across app restarts)
+    _saveHabit(h);
+  }
+
+  // Stub function for future implementation of Drift database.
+  // This can be expanded to migrate data to a Drift database for reactive persistence.
+  Future<void> _migrateToDrift() async {
+    // TODO: Integrate Drift (add 'drift' dependency in pubspec.yaml).
+    // Define tables, e.g., HabitsTable and CompletionsTable.
+    // Example migration logic:
+    // final db = AppDatabase(); // Your Drift database instance
+    // for (final habit in _habits) {
+    //   await db.into(db.habitsTable).insertOnConflictUpdate(
+    //     HabitsTableCompanion.insert(id: habit.id, title: habit.title, /* ... */)
+    //   );
+    //   for (final date in habit.completedDates) {
+    //     await db.into(db.completionsTable).insertOnConflictDoNothing(
+    //       CompletionsTableCompanion.insert(habitId: habit.id, date: date)
+    //     );
+    //   }
+    // }
+    // After migration, replace _loadHabits and _saveHabit with db queries.
+    // For toggles: Use db transactions for atomic updates.
+    print('Drift migration stub called. Implement full integration as needed.');
   }
 
   @override
   Widget build(BuildContext context) {
     final today = DateTime(_now.year, _now.month, _now.day);
     final doneToday = _habits.where((h) => _doneOn(h, today)).length;
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -110,13 +166,12 @@ class _HabitHomePageState extends State<HabitHomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Habit Tracker', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700)),
-
                   ],
                 )
               ],
             ),
             // centerTitle: true, // removed
-            floating: true,
+            // removed floating: true,
             pinned: false,
             backgroundColor: Colors.grey[50],
             surfaceTintColor: Colors.transparent,
@@ -143,7 +198,7 @@ class _HabitHomePageState extends State<HabitHomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) => HabitTile(
+                    (context, index) => HabitTile(
                   habit: _habits[index],
                   monthDays: _monthDays,
                   now: _now,
@@ -167,7 +222,9 @@ class _HabitHomePageState extends State<HabitHomePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12, offset: const Offset(0, 6))],
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 12, offset: const Offset(0, 6))
+        ],
       ),
       child: Row(
         children: [
@@ -193,8 +250,15 @@ class _HabitHomePageState extends State<HabitHomePage> {
                     tween: Tween(begin: 0, end: percent),
                     duration: const Duration(milliseconds: 500),
                     builder: (context, v, child) {
-                      final color = v < 0.4 ? Colors.orange.shade300 : (v < 0.9 ? Colors.blue.shade300 : Colors.green.shade300);
-                      return CircularProgressIndicator(value: v, strokeWidth: 9, strokeCap: StrokeCap.round, valueColor: AlwaysStoppedAnimation(color));
+                      final color = v < 0.4
+                          ? Colors.orange.shade300
+                          : (v < 0.9 ? Colors.blue.shade300 : Colors.green.shade300);
+                      return CircularProgressIndicator(
+                        value: v,
+                        strokeWidth: 9,
+                        strokeCap: StrokeCap.round,
+                        valueColor: AlwaysStoppedAnimation(color),
+                      );
                     },
                   ),
                 ),
@@ -312,14 +376,15 @@ class _HabitTileState extends State<HabitTile> {
     final weekly = _weeklyProgress();
     final streak = _streak();
     final h = widget.habit;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: const Offset(0, 6))],
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: const Offset(0, 6))
+        ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -344,7 +409,6 @@ class _HabitTileState extends State<HabitTile> {
               final d = widget.monthDays[i];
               final done = _doneOn(d);
               final isToday = d.year == widget.now.year && d.month == widget.now.month && d.day == widget.now.day;
-
               return Padding(
                 padding: const EdgeInsets.only(right: 6),
                 child: GestureDetector(
@@ -357,7 +421,9 @@ class _HabitTileState extends State<HabitTile> {
                       decoration: BoxDecoration(
                         color: done ? h.color.withOpacity(0.34) : Colors.grey[100],
                         borderRadius: BorderRadius.circular(999),
-                        boxShadow: done ? [BoxShadow(color: h.color.withOpacity(0.18), blurRadius: 8, offset: const Offset(0, 4))] : null,
+                        boxShadow: done
+                            ? [BoxShadow(color: h.color.withOpacity(0.18), blurRadius: 8, offset: const Offset(0, 4))]
+                            : null,
                         border: isToday
                             ? Border.all(color: Colors.amber, width: 2)
                             : Border.all(color: done ? h.color.withOpacity(0.7) : Colors.grey.shade300),
