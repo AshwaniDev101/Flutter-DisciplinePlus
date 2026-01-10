@@ -4,6 +4,7 @@ import 'app_settings.dart';
 import 'note_edit_pages.dart';
 import 'log_note_sub_pages.dart';
 import 'shared_preferences_manager.dart';
+import 'about_loge_note.dart';
 
 class NotesHomeScreen extends StatefulWidget {
   final ValueNotifier<AppSettings> settingsNotifier;
@@ -241,15 +242,21 @@ class _NotesHomeScreenState extends State<NotesHomeScreen> {
         ],
       ),
       actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.search,
-            color: Theme.of(context).iconTheme.color,
-          ),
-        ),
-        IconButton(
-          onPressed: () {},
+        PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == 'about') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AboutLogeNote()),
+              );
+            }
+          },
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+            const PopupMenuItem<String>(
+              value: 'about',
+              child: Text('About'),
+            ),
+          ],
           icon: Icon(
             Icons.more_vert,
             color: Theme.of(context).iconTheme.color?.withOpacity(0.54),
@@ -270,9 +277,9 @@ class _NotesHomeScreenState extends State<NotesHomeScreen> {
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).shadowColor,
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+                  color: Theme.of(context).shadowColor.withOpacity(0.5),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -392,9 +399,9 @@ class _NotesHomeScreenState extends State<NotesHomeScreen> {
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).shadowColor,
-                blurRadius: 10,
-                offset: const Offset(0, 6),
+                color: Theme.of(context).shadowColor.withOpacity(0.5),
+                blurRadius: 5,
+                offset: const Offset(0, 3),
               ),
             ],
             border: Border.all(

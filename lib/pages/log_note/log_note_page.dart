@@ -41,34 +41,50 @@ class _LogNoteModuleState extends State<LogNoteModule> {
         );
 
         final lightTheme = ThemeData(
-          primarySwatch: Colors.indigo,
+          useMaterial3: true,
           brightness: Brightness.light,
+          primaryColor: Colors.blueGrey[800],
           scaffoldBackgroundColor: Colors.grey[100],
-          textTheme: baseTextTheme,
-          appBarTheme: const AppBarTheme(
+          cardColor: Colors.white,
+          textTheme: baseTextTheme.apply(bodyColor: Colors.grey[800], displayColor: Colors.black),
+          appBarTheme: AppBarTheme(
             elevation: 0,
-            backgroundColor: Colors.transparent,
-            iconTheme: IconThemeData(color: Colors.black),
+            backgroundColor: Colors.blueGrey[800],
+            foregroundColor: Colors.white,
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: Colors.blueGrey[600],
+            foregroundColor: Colors.white,
+          ),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(secondary: Colors.lightBlueAccent),
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          cardTheme: const CardThemeData(elevation: 0, shadowColor: Colors.transparent),
         );
 
         final darkTheme = ThemeData(
-          primarySwatch: Colors.indigo,
+          useMaterial3: true,
           brightness: Brightness.dark,
-          scaffoldBackgroundColor: Colors.grey[900],
-          textTheme: baseTextTheme.apply(
-            bodyColor: Colors.white,
-            displayColor: Colors.white,
-          ),
-          appBarTheme: const AppBarTheme(
+          primaryColor: Colors.blueGrey[900],
+          scaffoldBackgroundColor: const Color(0xFF121212),
+          cardColor: Colors.grey[900],
+          textTheme: baseTextTheme.apply(bodyColor: Colors.grey[300], displayColor: Colors.white),
+          appBarTheme: AppBarTheme(
             elevation: 0,
-            backgroundColor: Colors.transparent,
-            iconTheme: IconThemeData(color: Colors.white),
+            backgroundColor: Colors.grey[900],
+            foregroundColor: Colors.white,
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: Colors.tealAccent[400],
+            foregroundColor: Colors.black,
+          ),
+          colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark, primarySwatch: Colors.blueGrey).copyWith(secondary: Colors.tealAccent[400]),
           visualDensity: VisualDensity.adaptivePlatformDensity,
-          cardTheme: CardTheme(
-            color: Colors.grey[800],
+          cardTheme: CardThemeData(
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            color: Colors.grey[850],
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         );

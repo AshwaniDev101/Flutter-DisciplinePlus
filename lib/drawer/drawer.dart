@@ -1,11 +1,11 @@
-import 'package:discipline_plus/_archive/habit_tracker_page/habit_tracker_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/habit_tracker_page/habit_tracker_page.dart';
+import '../pages/log_note/log_note_page.dart';
 import '../pages/schedule_page/schedule_page.dart';
 import '../pages/schedule_page/viewModel/schedule_view_model.dart';
-import '../_archive/temp/note_app.dart';
 
 class DrawerItem {
   final String title;
@@ -40,7 +40,7 @@ class CustomDrawer extends StatelessWidget {
         title: 'Log Note',
         icon: Icons.sticky_note_2_rounded,
         color: Colors.amber.shade200,
-        routeBuilder: (ctx) => NoteApp(),
+        routeBuilder: (ctx) => LogNoteModule(),
       ),
       DrawerItem(
         title: 'Habit Tracker',

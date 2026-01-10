@@ -1,16 +1,11 @@
-import 'package:discipline_plus/_archive/temp/note_app.dart';
-import 'package:discipline_plus/_archive/habit_tracker_page/habit_tracker_page.dart';
+
 import 'package:discipline_plus/pages/schedule_page/schedule_page.dart';
 import 'package:discipline_plus/pages/schedule_page/viewModel/schedule_view_model.dart';
 import 'package:discipline_plus/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
-
-import '_archive/habit_tracker_page/habit_tracker_page.dart';
-
 import 'firebase_options.dart';
 import 'managers/audio_manager.dart';
 
