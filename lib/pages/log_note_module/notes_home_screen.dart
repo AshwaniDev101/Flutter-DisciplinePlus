@@ -206,27 +206,31 @@ class _NotesHomeScreenState extends State<NotesHomeScreen> {
   }
 
   PreferredSizeWidget buildAppBar(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    // final textTheme = Theme.of(context).textTheme;
     return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
+
       toolbarHeight: 80,
       title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Log Notes',
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              Text('Log Notes',
+                  style: TextStyle(
+                      color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
               Text(
                 '${notes.length} logs',
-                style: textTheme.bodySmall,
+                style: TextStyle(fontSize: 14,color: Colors.grey),
               ),
             ],
           ),
+
+      iconTheme: const IconThemeData(
+        color: Colors.blueGrey,           // ← or Colors.grey[900], Colors.blue, etc.
+      ),
+
+      backgroundColor: Colors.grey[50],
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
       actions: [
         PopupMenuButton<String>(
           onSelected: (value) {
