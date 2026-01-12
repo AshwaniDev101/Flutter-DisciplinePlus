@@ -1,8 +1,11 @@
+import 'package:discipline_plus/drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'habit_model.dart';
 import 'habit_tile.dart';
 import 'habit_progress_card.dart';
 import 'shared_preferences_manager.dart';
+import 'create_habit.dart';
+import 'edit_habit.dart';
 
 void main() => runApp(const HabitApp());
 
@@ -34,48 +37,29 @@ class HabitHomePage extends StatefulWidget {
 class _HabitHomePageState extends State<HabitHomePage> {
   final DateTime _now = DateTime.now();
   late final List<DateTime> _monthDays;
-  final List<Habit> _habits = [];
+  List<Habit> _habits = [];
 
   @override
   void initState() {
     super.initState();
     final daysInMonth = DateTime(_now.year, _now.month + 1, 0).day;
     _monthDays = List.generate(daysInMonth, (i) => DateTime(_now.year, _now.month, i + 1));
-
-    _habits.addAll([
-      Habit(
-        id: 'a',
-        title: 'Morning Run',
-        color: Colors.orange.shade300,
-        icon: Icons.directions_run,
-        completedDates: {dateKey(_now), dateKey(_now.subtract(const Duration(days: 1)))},
-      ),
-      Habit(
-        id: 'b',
-        title: 'Read 30m',
-        color: Colors.blue.shade300,
-        icon: Icons.menu_book,
-        completedDates: {dateKey(_now.subtract(const Duration(days: 2)))},
-      ),
-      Habit(id: 'c', title: 'Meditation', color: Colors.green.shade300, icon: Icons.self_improvement),
-      Habit(id: 'd', title: 'Drink Water', color: Colors.teal.shade300, icon: Icons.water),
-      Habit(id: 'e', title: 'Learn Coding', color: Colors.purple.shade300, icon: Icons.code),
-    ]);
-
-    _initializeData();
+    _loadHabits();
   }
 
-  Future<void> _initializeData() async {
+  Future<void> _loadHabits() async {
     await SharedPreferencesManager.init();
-    await SharedPreferencesManager.loadHabits(_habits);
+    final habits = await SharedPreferencesManager.getHabits();
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _habits = habits;
+      });
     }
   }
 
   bool _doneOn(Habit h, DateTime d) => h.completedDates.contains(dateKey(d));
 
-  void _toggle(Habit h, DateTime d) {
+  void _toggle(Habit h, DateTime d) async {
     final k = dateKey(d);
     setState(() {
       if (h.completedDates.contains(k)) {
@@ -84,12 +68,7 @@ class _HabitHomePageState extends State<HabitHomePage> {
         h.completedDates.add(k);
       }
     });
-    SharedPreferencesManager.saveHabit(h);
-  }
-
-  Future<void> _migrateToDrift() async {
-    // Stub function for future implementation of Drift database.
-    print('Drift migration stub called. Implement full integration as needed.');
+    await SharedPreferencesManager.updateHabit(h);
   }
 
   @override
@@ -98,6 +77,7 @@ class _HabitHomePageState extends State<HabitHomePage> {
     final doneToday = _habits.where((h) => _doneOn(h, today)).length;
     
     return Scaffold(
+      drawer: const CustomDrawer(),
       body: CustomScrollView(
         slivers: [
           _buildAppBar(),
@@ -116,11 +96,17 @@ class _HabitHomePageState extends State<HabitHomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) => HabitTile(
-                  habit: _habits[index],
-                  monthDays: _monthDays,
-                  now: _now,
-                  onToggle: _toggle,
+                (context, index) => GestureDetector(
+                  onTap: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditHabitPage(habit: _habits[index])));
+                    _loadHabits();
+                  },
+                  child: HabitTile(
+                    habit: _habits[index],
+                    monthDays: _monthDays,
+                    now: _now,
+                    onToggle: _toggle,
+                  ),
                 ),
                 childCount: _habits.length,
               ),
@@ -134,23 +120,12 @@ class _HabitHomePageState extends State<HabitHomePage> {
 
   Widget _buildAppBar() {
     return SliverAppBar(
-      title: Row(
+      title: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-                color: Colors.indigo.shade50, borderRadius: BorderRadius.circular(10)),
-            child: const Icon(Icons.notes, color: Colors.indigo),
-          ),
-          const SizedBox(width: 12),
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Habit Tracker',
-                  style: TextStyle(
-                      color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700)),
-            ],
-          )
+          Text('Habit Tracker',
+              style: TextStyle(
+                  color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700)),
         ],
       ),
       pinned: false,
@@ -159,9 +134,13 @@ class _HabitHomePageState extends State<HabitHomePage> {
       elevation: 0,
       actions: [
         IconButton(
-            onPressed: () {}, icon: const Icon(Icons.calendar_month_rounded, size: 20)),
+            onPressed: () {},
+            icon: const Icon(Icons.calendar_month_rounded, size: 20)),
         IconButton(
-          onPressed: () {},
+          onPressed: () async {
+            await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const CreateHabitPage()));
+            _loadHabits();
+          },
           icon: const Icon(Icons.add, size: 24),
         ),
       ],

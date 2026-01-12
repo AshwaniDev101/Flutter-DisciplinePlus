@@ -29,36 +29,13 @@ class _SchedulePageState extends State<SchedulePage> with RouteAware {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Builder(
-          builder: (context) {
-            return InkWell(
-              onTap: () {
-                Scaffold.of(context).openDrawer(); // THIS NOW WORKS
-              },
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.indigo.shade50,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.notes, color: Colors.indigo),
-                  ),
-                  const SizedBox(width: 12),
-                  StreamBuilder<String>(
-                    stream: vm.weekDayName$,
-                    builder: (context, snapshot) {
-                      final day = snapshot.data ?? '';
-                      return Text(
-                        day,
-                        style: AppTextStyle.appBarTextStyle,
-                      );
-                    },
-                  ),
-                ],
-              ),
+        title: StreamBuilder<String>(
+          stream: vm.weekDayName$,
+          builder: (context, snapshot) {
+            final day = snapshot.data ?? '';
+            return Text(
+              day,
+              style: AppTextStyle.appBarTextStyle,
             );
           },
         ),

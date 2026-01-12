@@ -1,3 +1,4 @@
+import 'package:discipline_plus/drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'note.dart';
 import 'app_settings.dart';
@@ -155,6 +156,7 @@ class _NotesHomeScreenState extends State<NotesHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: buildAppBar(context),
       body: SafeArea(child: _buildBody()),
       floatingActionButton: SizedBox(
@@ -209,21 +211,7 @@ class _NotesHomeScreenState extends State<NotesHomeScreen> {
       elevation: 0,
       backgroundColor: Colors.transparent,
       toolbarHeight: 80,
-      title: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              Icons.notes,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Column(
+      title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -239,8 +227,6 @@ class _NotesHomeScreenState extends State<NotesHomeScreen> {
               ),
             ],
           ),
-        ],
-      ),
       actions: [
         PopupMenuButton<String>(
           onSelected: (value) {

@@ -4,12 +4,9 @@ import 'package:discipline_plus/pages/schedule_page/viewModel/schedule_view_mode
 import 'package:discipline_plus/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'managers/audio_manager.dart';
-
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +15,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // initialize Hive for Flutter
-  await Hive.initFlutter();
-  await Hive.openBox('initiatives');
 
   // Choose which service to use:
   // final useLocal = false; // toggle this for Hive vs. Firebase

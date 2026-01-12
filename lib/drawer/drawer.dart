@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../pages/habit_tracker_page/habit_tracker_page.dart';
-import '../pages/log_note/log_note_page.dart';
+import '../pages/habit_tracker_module/habit_tracker_page.dart';
+import '../pages/log_note_module/log_note_page.dart';
 import '../pages/schedule_page/schedule_page.dart';
 import '../pages/schedule_page/viewModel/schedule_view_model.dart';
 

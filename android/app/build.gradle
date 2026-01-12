@@ -11,7 +11,7 @@ apply plugin: 'dev.flutter.flutter-gradle-plugin'
 
 android {
     namespace = "com.ashwanidev101.discipline_plus"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
